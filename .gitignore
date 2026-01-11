@@ -1,0 +1,30 @@
+# LaTeX 暫存檔
+*.aux
+*.log
+*.toc
+*.lof
+*.lot
+*.out
+*.bbl
+*.blg
+*.synctex.gz
+*.fdb_latexmk
+*.fls
+*.run.xml
+*.bcf
+*-blx.bib
+*.xdv
+
+# 編譯產物（可選：如果想追蹤 PDF 就移除這行）
+# thesis.pdf
+
+# SVG 轉換暫存
+svg-inkscape/
+
+# 編輯器暫存
+*.swp
+*.bak
+*~
+
+# macOS
+.DS_Store
