@@ -28,3 +28,20 @@ svg-inkscape/
 
 # macOS
 .DS_Store
+Thumbs.db
+
+# ===== 臨時檔案目錄 =====
+.temp/
+
+# ===== PDF 處理副產物 =====
+*_extracted.txt
+pdf_chunks/
+
+# ===== MATLAB 臨時檔案 =====
+*.asv
+# 保留 figsrc 中的 .mat 檔案
+*.mat
+!figsrc/**/*.mat
+
+# ===== 參考文獻目錄（PDF 太大不提交）=====
+Thesis/
