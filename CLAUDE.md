@@ -68,3 +68,32 @@ The template uses Chinese formatting for cross-references:
 ### Adding Chapters
 1. Create new `.tex` file (e.g., `02_methodology.tex`)
 2. Add `\input{02_methodology}` in thesis.tex between `\mainmatter` and bibliography section
+
+## 進階規則
+
+本專案使用模組化規則系統，詳細規範請參見：
+
+- **PDF 處理**：參見 @.claude/rules/pdf-handling.md
+- **MCP 管理**：參見 @.claude/rules/mcp-management.md
+- **大檔案處理**：參見 @.claude/rules/large-file-workflow.md
+- **副產物管理**：參見 @.claude/rules/artifact-management.md
+- **開發流程**：參見 @.claude/WORKFLOW.md
+
+### 臨時檔案目錄
+
+所有工具產出的臨時檔案放在 `.temp/` 目錄：
+```
+.temp/
+├── pdf_extracted/    # PDF 提取文字
+├── pdf_chunks/       # PDF 分割塊
+└── matlab_output/    # MATLAB 臨時輸出
+```
+
+### 常用指令速查
+
+| 指令 | 用途 |
+|------|------|
+| `/mcp` | 檢查 MCP 連接狀態 |
+| `/context` | 檢查 token 使用量 |
+| `/memory` | 查看載入的記憶檔案 |
+| `/clear` | 清除對話歷史 |
