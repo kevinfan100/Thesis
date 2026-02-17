@@ -2,17 +2,44 @@
 
 ## Context Token 管理
 
-### 目前 MCP 佔用（約 7.3k tokens）
+### 目前 MCP 佔用（約 5.3k tokens）
 
-| MCP Server | 用途 | Tokens |
-|------------|------|--------|
-| perplexity | 文獻搜索、最新研究 | ~1.0k |
-| context7 | 查詢套件文檔 | ~0.9k |
-| matlab | MATLAB 模擬 | ~0.8k |
-| filesystem | 檔案操作 | ~1.5k |
-| memory | 概念記憶 | ~1.0k |
-| sequential-thinking | 複雜推理 | ~1.1k |
-| pdf-reader | PDF 讀取/搜索 | ~0.5k |
+| MCP Server | 用途 | Tokens | 常用程度 |
+|------------|------|--------|----------|
+| perplexity | 文獻搜索、最新研究 | ~1.0k | 中 |
+| context7 | 查詢套件文檔 | ~0.9k | 低 |
+| matlab | MATLAB 模擬 | ~0.8k | 高 |
+| memory | 概念記憶 | ~1.0k | 中 |
+| sequential-thinking | 複雜推理 | ~1.1k | 低 |
+| pdf-reader | PDF 讀取/搜索 | ~0.5k | 高 |
+
+### 動態管理 MCP
+
+MCP 可隨時添加/移除（需重啟會話生效）：
+
+```bash
+# 移除不常用的 MCP
+claude mcp remove <name>
+
+# 需要時再添加
+claude mcp add <name> -- <command>
+
+# 查看目前 MCP
+claude mcp list
+```
+
+### 按需添加指令速查
+
+```bash
+# 文獻搜索
+claude mcp add perplexity -- npx -y @perplexity-ai/mcp-server
+
+# LaTeX 文檔查詢
+claude mcp add context7 -- npx -y @upstash/context7-mcp
+
+# PDF 讀取
+claude mcp add pdf-reader -- npx -y @fabriqa.ai/pdf-reader-mcp@latest
+```
 
 ### 最佳實踐
 
