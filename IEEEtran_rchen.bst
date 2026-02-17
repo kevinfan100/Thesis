@@ -302,7 +302,7 @@ ENTRY
     CTLdash_repeated_names
     CTLname_format_string
     CTLname_latex_cmd
-    CTLname_url_prefi
+    CTLname_url_prefix
   }
   {}
   { label }

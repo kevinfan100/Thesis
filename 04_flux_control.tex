@@ -1,0 +1,47 @@
+\chapter{內迴圈磁通控制器設計}
+\label{c:flux_control}
+
+\section{控制目標與規格}
+\label{sec:flux_ctrl_objective}
+
+% 磁通控制頻寬 >4kHz、抑制磁滯、解耦
+
+\section{R-Controller 精簡推導}
+\label{sec:r_controller}
+
+% 三組件統一推導框架
+
+\subsection{預濾波器設計}
+\label{subsec:prefilter}
+
+% Prefilter 零相位追蹤設計
+
+\subsection{擾動估測器設計}
+\label{subsec:disturbance_estimator}
+
+% 二階擾動模型、增益推導、eigenvalue 設計
+
+\subsection{回饋控制律}
+\label{subsec:feedback_law}
+
+% 回饋控制律推導
+
+\section{關鍵設計決策}
+\label{sec:design_decision}
+
+% 使用直接量測 δv 而非估測值 δv̂ 的穩定性分析
+
+\section{特徵方程分析}
+\label{sec:characteristic_eq}
+
+% 特徵多項式恆等式、極點配置
+
+\section{頻率響應驗證}
+\label{sec:flux_bode}
+
+% 閉迴圈 Bode：理論 vs 模擬、與 PI 控制器比較
+
+\section{參數設計指引}
+\label{sec:param_guidelines}
+
+% 頻寬參數選擇原則與 trade-off
