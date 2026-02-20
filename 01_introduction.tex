@@ -4,26 +4,189 @@
 \section{研究背景與動機}
 \label{sec:background}
 
-% 生物力學量測需求、磁性微操控技術 vs 光學鉗夾/AFM 的比較
-% 參考文獻佔位（確保 bibtex 正常運作）
-\nocite{meng2023ultraprecise, meng2024piconewton, long2021optimal}
+在生物力學與細胞生物學研究中，精確量測與施加皮牛頓（piconewton, pN）至奈牛頓（nanonewton, nN）等級的微小力量，是探索分子交互作用、細胞力學特性與生物結構動態行為的關鍵技術需求。目前主流的微尺度力量量測工具包括光學鉗夾（optical tweezers）\cite{ashkin1986observation}、原子力顯微鏡（atomic force microscope, AFM）\cite{binnig1986afm}、以及磁性鉗夾（magnetic tweezers）\cite{neuman2008singlemolecule}。這些技術各有其適用場景與固有限制。
 
+光學鉗夾利用高聚焦雷射光束產生的梯度力捕獲微粒，可實現次奈米級的定位精度，但其力量範圍通常限制在約 $0.1$--$100$~pN 之間，且高功率雷射對生物樣品可能造成光熱損傷（photothermal damage）。原子力顯微鏡透過探針與樣品間的直接接觸，可量測從皮牛頓到微牛頓範圍的力量，在表面拓撲掃描方面具有出色的空間解析度。然而，AFM 的物理接觸特性使其在水溶液中對活細胞的三維操控受到限制。相較之下，磁性鉗夾透過外加磁場梯度對磁性微粒施加遠端力量，具有無需物理接觸、無光損傷、且力量與位移量測互不干擾等優勢 \cite{gosse2002magnetic, devlaminck2012magnetic}。然而，傳統磁性鉗夾多採用單對磁極或簡單幾何配置，僅能在有限的空間維度上施力，難以實現完整的三維力量控制。
+
+六極電磁致動器（hexapole electromagnetic actuator）由 Menq 研究團隊開發 \cite{zhang2011design}，採用六個磁極尖端分布於上下兩個平面的對稱配置，構成一個過驅動系統（over-actuated system），可在三維空間中對磁性微探針施加任意方向的力量。此系統已成功應用於水溶液環境中磁性微探針的超精密高速無繫繩操控 \cite{meng2023ultraprecise}，以及皮牛頓等級的探針—樣品交互力量控制 \cite{meng2024piconewton}，展現了在生物力學量測領域的巨大潛力。
+
+在六極電磁致動器系統中，控制框架的設計與實現是決定系統效能的核心要素。系統涉及多項控制技術挑戰：磁極材料的磁滯效應（hysteresis）造成開迴圈響應的非線性與不確定性；六個通道間存在動態耦合（cross-coupling）；過驅動架構需要最佳化的力分配策略；以及零階保持器（zero-order hold, ZOH）離散化所產生的 ringing zero 問題限制了閉迴圈頻寬。前人的工作已系統性地解決了上述技術問題，並達成了優異的實驗成果。然而，從控制系統設計的角度而言，現有的設計過程仍高度依賴對特定系統的深入理解和豐富的調校經驗，缺乏自動化的設計工具與通用化的設計指引。控制律的推導涉及大量方程式，設計參數的選擇與系統的物理特性緊密綁定，使得設計流程難以直接移植至其他同類系統。
+
+基於上述觀察，本論文的研究動機在於：建立一套\textbf{自動化}、\textbf{簡化}、\textbf{泛化}且\textbf{參數化}的六極電磁致動器控制設計方法論，使控制系統的設計流程更可靠、更容易使用，並具備可重現性與可移植性。
+
+%% ================================================================
 \section{六極電磁致動器系統}
 \label{sec:hexapole_overview}
 
-% 系統概述、三層控制架構簡介
+本節概述六極電磁致動器的系統架構與三層控制概念，為後續章節的技術內容建立背景。
 
+\subsection{系統硬體配置}
+
+六極電磁致動器的核心結構由六個磁極尖端（pole tip）組成，分為上下兩層各三個，以對稱方式排列於倒置顯微鏡的物鏡上方 \cite{zhang2011design}。每個磁極由高磁導率軟磁材料製成，其尖端半徑約為 $40~\mu$m，極間距（pole gap）約為 594~$\mu$m。上下兩層的磁極尖端分別位於平行平面上，此配置避免了遮擋光學觀測路徑，使致動器可與倒置顯微鏡和高速攝影機系統整合，同時進行微珠的操控與位置觀測。
+
+各磁極透過磁軛（yoke）連結形成磁路，每個磁極配有獨立的線圈驅動。六個霍爾效應感測器（Hall effect sensor）分別安裝於各磁極表面，用於即時量測磁極處的磁通密度 \cite{long2022hallsensor}。感測器輸出的霍爾電壓 $v_{H,i}$ 與磁極尖端的磁通量之間存在穩定的比例關係，此特性使得透過霍爾感測器的回饋進行磁通閉迴圈控制成為可能，從根本上解決了磁極材料磁滯效應所造成的開迴圈建模誤差。
+
+操控目標為直徑約 $2.8~\mu$m 的超順磁性微珠（superparamagnetic microbead），懸浮於水溶液中。微珠在外加磁場梯度下受到磁梯度力（magnetic gradient force），六個磁極的獨立驅動提供了六個控制自由度，對應三維力量生成僅需三個自由度，因此構成一個過驅動系統。此冗餘度可透過最佳化方法加以利用，在滿足力量需求的同時最小化能量消耗。
+
+\subsection{三層控制架構}
+\label{subsec:three_layer}
+
+六極電磁致動器的控制系統採用三層式架構，如\cref{fig:three_layer_architecture}所示。各層對應不同的控制目標與取樣頻率：
+
+\begin{enumerate}
+  \item \textbf{內迴圈——磁通控制}（100~kHz 取樣率）：以霍爾感測器的量測電壓 $\mathbf{v}_m \in \mathbb{R}^6$ 作為回饋，透過數位控制器調節驅動電壓 $\mathbf{u} \in \mathbb{R}^6$，使量測磁通追蹤期望值 $\mathbf{v}_d$。此層的核心任務是抑制磁滯效應、消除通道間動態耦合、並提供足夠的磁通控制頻寬。
+
+  \item \textbf{力生成控制}（10~kHz 取樣率）：將外迴圈給定的期望三維力 $\mathbf{f}_d \in \mathbb{R}^3$ 透過最佳磁通分配（optimal flux allocation）與力模型逆運算，轉換為六個通道的期望磁通電壓向量 $\mathbf{v}_d \in \mathbb{R}^6$。此層涉及過驅動系統的最佳化問題。
+
+  \item \textbf{外迴圈——運動控制}（1.6~kHz 取樣率）：根據視覺伺服系統提供的微珠三維位置回饋 $\mathbf{p} \in \mathbb{R}^3$，計算所需的控制力 $\mathbf{f}_d$，以實現軌跡追蹤或力量控制等應用層任務。
+\end{enumerate}
+
+\begin{figure}[t]
+  \centering
+  \begin{tikzpicture}[
+    block/.style={draw, rectangle, minimum height=1.2cm, minimum width=5cm,
+                  align=center, font=\small, rounded corners=2pt},
+    arrow/.style={->, >=stealth, thick},
+    label/.style={font=\footnotesize}
+  ]
+    % Outer loop
+    \node[block, fill=blue!8] (outer) at (0, 4.5)
+      {外迴圈：運動控制\\(1.6~kHz)};
+    % Force generation
+    \node[block, fill=green!8] (force) at (0, 2.5)
+      {力生成控制：最佳磁通分配\\(10~kHz)};
+    % Inner loop
+    \node[block, fill=red!8] (inner) at (0, 0.5)
+      {內迴圈：磁通控制\\(100~kHz)};
+    % Plant
+    \node[block, fill=gray!10] (plant) at (0, -1.5)
+      {六極電磁致動器\\+ 霍爾感測器};
+
+    % Forward arrows
+    \draw[arrow] (outer) -- node[right, label] {$\mathbf{f}_d$} (force);
+    \draw[arrow] (force) -- node[right, label] {$\mathbf{v}_d$} (inner);
+    \draw[arrow] (inner) -- node[right, label] {$\mathbf{u}$} (plant);
+
+    % Feedback: v_m from plant to inner loop
+    \draw[arrow] (plant.east) -- ++(1.2, 0) |- (inner.east)
+      node[pos=0.25, right, label] {$\mathbf{v}_m$};
+
+    % Feedback: p from plant to outer loop
+    \draw[arrow] (plant.west) -- ++(-1.2, 0) |- (outer.west)
+      node[pos=0.25, left, label] {$\mathbf{p}$};
+  \end{tikzpicture}
+  \caption{六極電磁致動器三層控制架構示意圖。$\mathbf{f}_d$：期望力向量；$\mathbf{v}_d$：期望磁通電壓向量；$\mathbf{u}$：驅動電壓向量；$\mathbf{v}_m$：霍爾感測器量測電壓向量；$\mathbf{p}$：微珠三維位置。}
+  \label{fig:three_layer_architecture}
+\end{figure}
+
+在此三層架構中，內迴圈的磁通控制器扮演最為關鍵的角色。其控制頻寬直接決定了力生成的精度和動態響應速度，進而影響外迴圈的運動控制效能。換言之，內迴圈的控制品質從根本上決定了整個系統的效能上限，因此磁通控制器的設計是本論文的核心研究主題。
+
+%% ================================================================
 \section{前人工作與待解決問題}
 \label{sec:prior_work}
 
-% Long/Meng 的貢獻回顧；指出控制框架複雜度高、系統特定性強
+六極電磁致動器的研究始於 2011 年，歷經十餘年的發展，在致動器設計、力模型建構、感測器整合、以及控制系統設計等方面取得了顯著進展。本節回顧前人的主要貢獻，並指出現有方法在控制系統設計流程上的待解決問題。
 
+\subsection{致動器設計與力模型}
+
+Zhang 與 Menq \cite{zhang2011design} 首先提出六極電磁致動器的設計方案，建立了以磁荷模型（magnetic charge model）為基礎的集總參數力模型（lumped-parameter force model）：
+\begin{equation}
+  \label{eq:force_model_current}
+  \hat{\mathbf{F}} = \hat{\mathbf{I}}^T \mathbf{N}(\hat{\mathbf{p}}) \hat{\mathbf{I}}
+\end{equation}
+其中 $\hat{\mathbf{I}} \in \mathbb{R}^6$ 為正規化電流向量，$\mathbf{N}(\hat{\mathbf{p}}) \in \mathbb{R}^{6 \times 6 \times 3}$ 為與正規化位置 $\hat{\mathbf{p}}$ 相關的力矩陣。此電流基（current-based）力模型將六極系統的力生成簡化為單一力增益參數 $k_f$ 的二次型表示式，為後續的控制設計奠定了理論基礎。該系統以六極對稱配置整合於倒置顯微鏡上方，成功實現了磁性微珠在三維空間中的操控，Brownian motion 控制在 $\pm 210$~nm 以內。然而，此模型未考慮磁極材料的磁滯效應，且所提出的逆模型（inverse model）採用電流總和為零的常數約束（constant constraint），犧牲了部分力生成能力。
+
+Long 等人 \cite{long2021optimal} 進一步提出基於 Lagrange 乘子法的最佳電流分配方法，以方向相關的最佳化約束取代常數約束，將過驅動系統的冗餘度轉化為最佳化優勢。透過將力的大小和方向解耦（scalable optimal inverse），力生成包絡（force envelope）較常數約束方法顯著擴大，微珠定位的 Brownian motion 標準差從 $(123, 63, 110)$~nm 改善至 $(58, 44, 42)$~nm。此工作建立了六極系統力生成層的核心框架，但仍基於電流模型，磁滯效應所導致的建模誤差是定位精度的主要瓶頸。
+
+\subsection{霍爾感測器整合與磁通基模型}
+
+Long 等人 \cite{long2022hallsensor} 引入霍爾效應感測器，建立了磁通基（flux-based）力模型：
+\begin{equation}
+  \label{eq:force_model_flux}
+  \mathbf{F}(\mathbf{p}, \boldsymbol{\Phi}) = g_\Phi\, \boldsymbol{\Phi}^T \mathbf{L}(\hat{\mathbf{p}}) \boldsymbol{\Phi}
+\end{equation}
+其中 $\boldsymbol{\Phi} \in \mathbb{R}^6$ 為磁通量向量，$g_\Phi$ 為力增益係數，$\mathbf{L} \in \mathbb{R}^{6 \times 6 \times 3}$ 為正規化力矩陣。此模型直接使用感測器量測值取代電流作為力模型輸入，從根本上消除了磁滯效應造成的建模誤差。實驗結果顯示，力預測精度較電流基模型提升 50--65\%，$z$ 方向定位精度從 357.81~nm 改善至 27.36~nm（約 13 倍）。
+
+同時，\cite{long2022hallsensor} 首次引入了霍爾感測器內迴圈的概念——以比例-積分（PI）控制器在 200~kHz 取樣率下對各磁極進行獨立控制，建立了雙迴圈架構的雛形。然而，此初版內迴圈為六個獨立的單輸入單輸出（SISO）控制器，未考慮通道間的動態耦合。
+
+\subsection{磁通控制與完整三層架構}
+
+Meng 與 Menq \cite{meng2023ultraprecise} 將磁通控制推進至完整的三層控制架構。在內迴圈中，提出了由前饋（feedforward）、回饋（feedback）與擾動補償（disturbance compensation）三個組件構成的模型基控制器（model-based controller），取代了先前的簡單 PI 控制器。其控制律可統一表達為：
+\begin{equation}
+  \label{eq:meng_control_law}
+  \mathbf{u}[k] = \mathbf{B}^{-1}\left\{\mathbf{v}_{ff}[k] + \delta\mathbf{v}_{fb}[k] - \hat{\mathbf{w}}[k]\right\}
+\end{equation}
+其中 $\mathbf{B} \in \mathbb{R}^{6 \times 6}$ 為通道增益矩陣（用於解耦），$\mathbf{v}_{ff}$ 為前饋項，$\delta\mathbf{v}_{fb}$ 為回饋修正項，$\hat{\mathbf{w}}$ 為擾動估測值。在 \cite{meng2023ultraprecise} 中，內迴圈使用近似離散模型以迴避 ZOH 離散化產生的 ringing zero 問題，磁通控制頻寬達到 1~kHz。基於此內迴圈，力生成層結合最佳磁通分配，外迴圈以模型基運動控制律實現微珠在水溶液中的高速掃描（$40~\mu$m $\times$ $16~\mu$m in 2 seconds），追蹤標準差約 32~nm，已接近 Brownian motion 決定的物理極限。
+
+隨後，Meng 與 Menq \cite{meng2024piconewton} 實現了兩項關鍵改進。第一，改用精確的 ZOH 離散化模型，正面處理 ringing zero（$z \approx -0.97$），引入受零相位誤差追蹤控制（zero phase error tracking controller, ZPETC）\cite{tomizuka1987zpetc, xia1995precision} 啟發的預濾波器設計，將磁通控制頻寬從 1~kHz 提升至超過 4~kHz。第二，擾動估測器從六維耦合設計簡化為六個獨立的純量估測器，降低了運算複雜度。在外迴圈方面，提出了基於七狀態 Kalman 濾波器的皮牛頓級力控制方法，在活細胞壓痕實驗中達到力控制誤差標準差約 0.1~pN，小於熱力噪聲的 10\%。\cref{tab:prior_work_evolution} 彙整了前人工作在內迴圈控制架構上的演進。
+
+\begin{table}[t]
+  \centering
+  \caption{六極電磁致動器內迴圈控制架構演進}
+  \label{tab:prior_work_evolution}
+  \begin{tabular}{lllll}
+    \toprule
+    \textbf{文獻} & \textbf{內迴圈控制器} & \textbf{取樣率} & \textbf{頻寬} & \textbf{備註} \\
+    \midrule
+    \cite{long2022hallsensor} (2022) & PI（獨立 SISO） & 200~kHz & $\sim$500~Hz & 首次引入 \\
+    \cite{meng2023ultraprecise} (2023) & 三組件（近似模型） & 100~kHz & 1~kHz & 迴避 ringing zero \\
+    \cite{meng2024piconewton} (2024) & 三組件 + ZPETC & 100~kHz & $>$4~kHz & 正面處理 ringing zero \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{待解決問題}
+
+前人的研究成果充分展示了六極電磁致動器系統在微尺度操控與力量量測方面的卓越能力。然而，從控制系統設計方法論的角度審視，仍存在以下四個面向的待解決問題：
+
+\paragraph{需要自動化（Automation）}
+現有的系統鑑別（system identification）過程主要依賴手動操作：頻率掃描實驗的規劃與執行、穩態偵測的人工判斷、頻率響應數據的處理與轉移函數模型的擬合，皆需要操作者的深度參與。當系統需要重新校準或應用於新的致動器時，缺乏自動化的鑑別與模型建構工具，使得此過程耗時且難以標準化。對於 6$\times$6 多通道系統而言，需要鑑別 36 組頻率響應，自動化鑑別流程的需求尤為迫切。
+
+\paragraph{需要簡化（Simplification）}
+前人的控制律推導涉及大量的中間方程式和設計步驟。以 \cite{meng2024piconewton} 為例，控制器設計需要分別推導前饋預濾波器、回饋控制律、與擾動估測器三個組件，各組件有各自的設計參數。從 \cite{meng2023ultraprecise} 的近似模型到 \cite{meng2024piconewton} 的精確模型，控制架構經歷了結構性的調整。對於非專精於此特定系統的設計者而言，理解並正確實現整套控制律的門檻較高，需要一套更簡潔統一的推導框架。
+
+\paragraph{需要泛化（Generalization）}
+現有的設計參數——離散模型係數、ringing zero 位置、通道增益矩陣等——皆與特定致動器的物理特性緊密綁定。當致動器的幾何配置、材料特性、或取樣頻率發生改變時，所有設計參數均需重新推導。缺乏以頻寬為核心的通用設計參數化方式，使得設計經驗難以泛化至其他同類對稱六極致動器。
+
+\paragraph{需要參數化設計驗證（Parameterization）}
+在現有文獻中，控制器的設計驗證主要依賴實際硬體實驗。缺乏參數化的模擬軟體模組，使得設計者無法在實驗前系統性地評估不同設計參數組合對磁通產生精度、動態響應速度、以及所需控制力度的影響。一套參數化模擬工具不僅能加速設計迭代過程，更能為設計參數的選擇提供量化依據。
+
+%% ================================================================
 \section{研究目標與貢獻}
 \label{sec:objectives}
 
-% 提出精簡通用控制框架；列出具體貢獻
+基於前述的研究背景與待解決問題，本論文旨在發展六極電磁致動器的\textbf{自動化控制設計方法論}，涵蓋系統鑑別自動化、簡化的數位磁通控制律參數化設計、以及參數化模擬驗證工具，使設計流程可泛化應用於任意對稱六極電磁致動器。
 
+具體而言，本論文的貢獻包括以下四個方面：
+
+\begin{enumerate}
+  \item \textbf{系統鑑別自動化}：建立六極電磁致動器 $6 \times 6$ 多輸入多輸出（multi-input multi-output, MIMO）系統的完整鑑別方法，開發自動化的頻率掃描、穩態偵測、頻率響應分析、以及轉移函數模型擬合軟體模組。透過自動化流程，實現系統模型的快速校準與更新。
+
+  \item \textbf{簡化的觀測器型磁通控制律}：提出 R-Controller 架構，在保持與前人控制器相同功能的前提下，以更簡潔統一的推導路徑建立磁通控制律。R-Controller 將前饋預濾波、回饋控制、與擾動觀測統一於觀測器架構下，以少數頻寬設計參數取代大量與系統特定物理參數綁定的獨立設計變數，提升設計的直觀性與泛化能力。
+
+  \item \textbf{參數化模擬驗證}：開發參數化模擬軟體模組，可依據鑑別所得的系統模型參數，自動生成控制律並評估磁通產生精度、動態響應速度、以及控制力度等關鍵效能指標。此模擬工具作為設計自動化的一部分，為設計參數的選擇提供定量評估依據。
+
+  \item \textbf{硬體實現與實驗驗證}：完成控制律在現場可程式邏輯閘陣列（field-programmable gate array, FPGA）上的即時實現，在 100~kHz 取樣率下執行磁通控制律，並透過實際硬體實驗驗證設計方法論的有效性。
+\end{enumerate}
+
+%% ================================================================
 \section{論文架構}
 \label{sec:outline}
 
-% 各章節簡介
+本論文共分為八章，各章內容簡述如下：
+
+\cref{c:introduction}為緒論，說明研究背景、系統概述、前人工作回顧、以及研究動機與目標。
+
+\cref{c:modeling}建立六極電磁致動器的系統數學模型，涵蓋磁梯度力模型、過驅動系統的最佳磁通分配、霍爾感測器量測模型、以及粒子在水溶液中的動力學方程式。
+
+\cref{c:identification}提出 $6 \times 6$ MIMO 系統的自動化鑑別方法與實驗結果，建立多通道轉移函數模型，並分析耦合矩陣的物理意義與系統特性。
+
+\cref{c:flux_control}為本論文的核心章節，推導 R-Controller 觀測器型磁通控制律，分析預濾波器與擾動觀測器的關鍵設計決策，透過特徵方程分析與頻率響應模擬驗證控制器效能，並建立以頻寬為核心的參數設計指引。
+
+\cref{c:force_generation}將內迴圈磁通控制擴展至力生成控制層，分析期望磁通排程方法、非線性效應對力精度的影響、以及各層頻寬限制因素。
+
+\cref{c:implementation}描述控制律在 FPGA 上的即時實現，包含硬體架構設計、管線化運算流程、多速率同步機制、以及內迴圈磁通控制與力控制的實驗驗證結果。
+
+\cref{c:motion_control}建立完整的系統模擬架構，整合內外雙迴圈控制與粒子動力學模型，進行軌跡追蹤模擬與物理效應分析。
+
+\cref{c:conclusion}總結本論文的研究成果與貢獻，並提出未來工作方向。

@@ -35,10 +35,20 @@ Recommended environments: Overleaf, TeXLive, MikTeX, or MacTeX.
 
 ### Content Organization
 - `00_abstract.tex`, `00_acknowledgements.tex` - Front matter
-- `01_introduction.tex` through `06_conclusion.tex` - Chapter files (add via `\input{}` in thesis.tex)
+- `01_introduction.tex` through `08_conclusion.tex` - Chapter files (add via `\input{}` in thesis.tex)
 - `10_appendix.tex` - Appendix content
-- `thesis.bib` - BibTeX bibliography database
+- `thesis.bib` - BibTeX bibliography database (18 entries)
 - `figsrc/` - Image directory with chapter-based subdirectories (e.g., `figsrc/ch01/`)
+
+### Research Reference Files (`.claude/`)
+- `research_foundation.md` - **核心參考**：已驗證的物理理解 + 研究演進 + Kevin 定位 + 引用清單
+- `menq_team_research.md` - 12 篇 Menq 團隊論文按時間分期的完整分析
+- `latex-guide.md` - LaTeX 操作手冊（語法、圖表、引用模板）
+
+### Thesis Writing Status
+- Ch.1 緒論 + Abstract：初稿完成（待作者審閱修改）
+- Ch.2-8：骨架（placeholder）
+- research_foundation.md：10/10 節全部 VERIFIED
 
 ### Fonts
 - English: Times New Roman

@@ -1,9 +1,13 @@
 \begin{abstractzh}
 \setcounter{page}{1}
 
-% 待撰寫：中文摘要
+六極電磁致動器透過六個對稱配置的磁極尖端，可在三維空間中對水溶液中的磁性微探針施加任意方向的磁梯度力，是實現皮牛頓至奈牛頓等級生物力學量測的關鍵技術平台。然而，此系統的控制框架設計涉及磁滯效應抑制、多通道動態耦合消除、過驅動系統最佳化、以及非最小相位系統的頻寬突破等多項技術挑戰。前人的研究雖已驗證系統的卓越操控能力，但控制設計流程仍高度依賴系統專屬知識與人工調校經驗，缺乏自動化、系統化的設計方法論。
 
-\keywordzh{六極電磁致動器、磁通控制、系統鑑別、FPGA、磁性微探針}
+本論文旨在發展六極電磁致動器的自動化控制設計方法論，核心貢獻包含四個面向：（一）建立 $6\times6$ 多輸入多輸出系統的自動化鑑別方法，涵蓋自動化頻率掃描、穩態偵測、頻率響應分析與轉移函數擬合；（二）提出 R-Controller 觀測器型磁通控制律，將前饋預濾波、回饋控制與擾動觀測統一於簡潔的推導框架中，以少數頻寬設計參數取代大量系統特定參數，提升設計的泛化能力；（三）開發參數化模擬軟體模組，可依據鑑別所得的系統模型自動生成控制律並評估磁通產生精度與動態響應；（四）完成控制律在 FPGA 上的即時實現與實驗驗證。
+
+所提出的設計方法論以自動化、簡化、泛化與參數化為核心理念，使控制系統設計流程具備可重現性與可移植性，可泛化應用於任意對稱六極電磁致動器。
+
+\keywordzh{六極電磁致動器、磁通控制、R-Controller、系統鑑別、FPGA}
 
 \end{abstractzh}
 
@@ -11,9 +15,13 @@
 \begin{abstracten}
 \begin{spacing}{1.5}
 
-% 待撰寫：英文摘要
+The hexapole electromagnetic actuator generates three-dimensional magnetic gradient forces on magnetic microprobes in aqueous solutions through six symmetrically arranged pole tips, serving as a key technology platform for piconewton- to nanonewton-scale biomechanical measurements. However, the control framework design of this system involves multiple technical challenges, including hysteresis suppression, multi-channel dynamic cross-coupling elimination, over-actuated system optimization, and bandwidth improvement for non-minimum phase systems. Although prior research has demonstrated the system's exceptional manipulation capability, the control design process remains highly dependent on system-specific expertise and manual tuning experience, lacking an automated and systematic design methodology.
 
-\keyworden{Hexapole Electromagnetic Actuator, Magnetic Flux Control, System Identification, FPGA, Magnetic Microprobe}
+This thesis develops an automated control design methodology for hexapole electromagnetic actuators. The core contributions encompass four aspects: (1) an automated identification method for the $6\times6$ multi-input multi-output system, including automated frequency sweeping, steady-state detection, frequency response analysis, and transfer function fitting; (2) the R-Controller, an observer-based magnetic flux control law that unifies feedforward prefiltering, feedback control, and disturbance observation within a concise derivation framework, replacing numerous system-specific parameters with a few bandwidth design parameters to enhance design generalizability; (3) a parameterized simulation software module that automatically generates control laws based on identified system models and evaluates flux generation accuracy and dynamic response; and (4) real-time implementation on an FPGA with experimental verification.
+
+The proposed design methodology is built upon the core principles of automation, simplification, generalization, and parameterization, enabling a reproducible and portable control design process that generalizes to any symmetric hexapole electromagnetic actuator.
+
+\keyworden{Hexapole Electromagnetic Actuator, Magnetic Flux Control, Observer-Based Controller, System Identification, FPGA}
 
 \end{spacing}
 \end{abstracten}
