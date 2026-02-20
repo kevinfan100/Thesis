@@ -1,0 +1,139 @@
+1.1    Background and Motivation
+
+       In the field of cell mechanics and mechanobiology, the application of scanning
+
+probe microscopy (SPM) to scan biological samples and to manipulate biological
+
+processes has become an important technique [1]. Atomic force microscopy (AFM) is
+
+known for its high spatial resolution and force sensing capabilities and can be used to
+
+scan the topography of biological samples, such as living cells. A typical AFM is a two-
+
+dimensional surface tool that is mainly used to obtain micromechanical properties of
+
+planar and surface topography [2]. For live-cell applications, a bead approximately one
+
+micrometer in diameter is attached at the tip of the cantilever to reduce the stress exerted
+
+on live cells, whereas the interaction force between the bead and the cell surface is at the
+
+nanonewton scale [73]. Due to the limited indentation speed, the number of indentation
+
+sites is usually small, thus the resolution of the acquired spatial distribution of the
+
+micromechanical properties of the cell surface is limited [73].
+
+       Optical trapping is another useful modern technique for the studies of biological
+
+systems under physiological conditions [3-5]. Since the drag coefficient of a microscopic
+
+particle (~     ) is significantly smaller than that of a micro-cantilever (>           ), an
+
+optically trapped probing system can have sub-piconewton force resolution. However,
+
+there are key barriers that hinder its application in the study of living biological systems.
+
+                                             1
+Since the system requires greater force to trap small objects, it has been verified that the
+
+heating problem caused by increasing laser power needs to be solved [6-8]. One feasible
+
+approach is to implement real-time Brownian motion control to reduce heating [9].
+
+Nevertheless, there is a doubt in the specificity of optical trapping in controlling the
+
+probe. The probe can be easily mixed with unwanted trapping of debris. Despite these
+
+problems, optical tweezers have gained popularity for their obvious advantage, i.e., a
+
+stable trap is readily established for a microscopic dielectric object [10,11].
+
+       Multipole electromagnetic actuators are widely used in a variety of applications,
+
+including magnetic levitation of multi-axis motion devices [12,13], propulsion of
+
+miniature swimming machines [14,15], and multi-axis scanning probe technology [16,17].
+
+They have recently been implemented as magnetic tweezers that utilize electromagnets to
+
+generate magnetic field to manipulate microprobes [18] and exert force on biological
+
+samples ranging from sub-piconewtons to tens of piconewtons [19]. Magnetic
+
+microprobes in magnetic fields are inherently unstable [36], so feedback control is
+
+essential to achieve stable magnetic trapping. Thus, in the absence of active control,
+
+magnetic particles are often anchored to molecules of interest to avoid instability. Most
+
+existing magnetic tweezers are viewed as simple force applicators/transducers that apply
+
+an external magnetic field to exert a force (       ) for quasi-static measurement of tensile
+
+strength of or binding forces between molecules [20-22, 37-39]. Although these setups
+
+are popular biophysical tools, i.e., manipulating individual macromolecules [40-43],
+
+probing cell membranes [44-46], and measuring intracellular properties [33, 47-50], their
+
+application is limited to simple experiments on isolated biological samples. Among
+
+                                                2
+various magnetic tweezers, some were 2-D systems with multiple poles [51, 52]. The
+
+development of a 2-D quadrupole magnetic tweezers was reported in [53, 54], wherein
+
+four tip-shaped electromagnetic poles were employed to control 2-D magnetic force to
+
+steer a microscopic magnetic particle.
+
+       A hexapole electromagnetic actuator along with a visual servo control system was
+
+developed to achieve 3-D magnetic actuation and stable trapping of a single microscopic
+
+magnetic bead in aqueous solutions [43]. Recently, a newer hexapole actuator has been
+
+developed, in which six pointed poles, each made of iron-steel rod and driven by separate
+
+coils, and coils and poles are magnetically connected by a yoke to enhance the generation
+
+of magnetic flux [23,24,74]. Hexapole magnetic actuating systems are 6-input/3-output
+
+nonlinear actuators which are over-actuated systems.
+
+       Optimal current allocation [25, 32] associated with hexapole actuation has been
+
+devised to achieve the inverse modeling required for magnetic force generation. It solved
+
+four problems in magnetic force generation, namely a) redundancy, b) coupling, c)
+
+nonlinearity, and d) position-dependency. It was implemented in a Field Programmable
+
+Gate Array (FPGA) system to realize real-time current allocation, thereby enabling
+
+current-based control of the probing system. This illustrates the potential of using
+
+magnetic tweezer technology to provide scanning probe functionality. Although current-
+
+based control facilitates magnetic trapping and visual-servo control [23-25], magnetic
+
+remanence and hysteresis could lead to uncertainties in magnetic flux generation. These
+
+uncertainties increase as larger forced need to be generated. This leads to a greater force
+
+error and reduces the performance of the actuation and the visual servo control system.
+
+                                            3
+       Furthermore, the quasi-static relationship between the actuation current and the
+
+generated magnetic flux ignores the dynamics of magnetic flux generation, the history-
+
+dependent nonlinearity, i.e., hysteresis, and the eddy-current-induced dynamics in
+
+magnetic flux generation. These are important when the scanning probe functionality
+
+requires high-speed scanning and precise steering of the probing system.
+
+
+

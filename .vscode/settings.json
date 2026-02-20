@@ -1,33 +1,27 @@
 {
   "latex-workshop.latex.tools": [
     {
-      "name": "xelatex",
-      "command": "xelatex",
+      "name": "latexmk",
+      "command": "/Library/TeX/texbin/latexmk",
       "args": [
+        "-xelatex",
         "-synctex=1",
         "-interaction=nonstopmode",
-        "-shell-escape",
+        "-halt-on-error",
         "-file-line-error",
         "%DOC%"
       ]
-    },
-    {
-      "name": "bibtex",
-      "command": "bibtex",
-      "args": ["%DOCFILE%"]
     }
   ],
   "latex-workshop.latex.recipes": [
     {
-      "name": "xelatex -> bibtex -> xelatex x 2",
-      "tools": ["xelatex", "bibtex", "xelatex", "xelatex"]
-    },
-    {
-      "name": "xelatex (single)",
-      "tools": ["xelatex"]
+      "name": "latexmk (xelatex)",
+      "tools": ["latexmk"]
     }
   ],
-  "latex-workshop.latex.recipe.default": "xelatex -> bibtex -> xelatex x 2",
-  "latex-workshop.latex.autoBuild.run": "onSave",
+  "latex-workshop.latex.recipe.default": "latexmk (xelatex)",
+  "latex-workshop.latex.autoBuild.run": "never",
+  "latex-workshop.latex.outDir": "%DIR%",
+  "latex-workshop.message.log.show": false,
   "latex-workshop.view.pdf.viewer": "tab"
 }

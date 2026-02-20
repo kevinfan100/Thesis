@@ -1,0 +1,29 @@
+\chapter{Introduction}
+
+\section{Background and Motivation}
+
+Accurate force generation and measurement at the pico- to nano-Newton scale are essential for mechanobiology, intracellular probing, and micro-scale interaction studies in aqueous environments. To support these applications, a manipulation platform must provide not only high force precision but also high update rate, directional controllability, and stable operation in fluid.
+
+Atomic force microscopy (AFM), optical tweezers, and magnetic tweezers have each enabled important progress. AFM provides strong force sensing capability but is constrained by mechanical contact and limited scan flexibility for truly untethered operation. Optical tweezers provide high spatial resolution but may introduce photothermal effects and limited force specificity in complex biological environments. Magnetic actuation provides remote, non-contact, and field-specific manipulation of magnetic probes, making it a strong candidate for high-speed untethered operation in aqueous solution.
+
+This dissertation focuses on a Hall-sensor-based hexapole electromagnetic actuation system. The platform has six independently driven poles and six Hall sensors for real-time flux measurement. Its control architecture is organized into three layers: system identification, flux control, and force generation. This layered structure is not only an implementation choice; it is the analytical backbone that determines how modeling uncertainty propagates into final force performance.
+
+Prior studies have established a strong technical baseline: force modeling evolved from current-based to flux-based formulations, Hall sensor feedback improved robustness against hysteresis uncertainty, and high-speed untethered manipulation in aqueous solution has been demonstrated. However, existing literature mainly reports end performance, while the component-level design logic that produces such performance remains insufficiently quantified.
+
+At the system identification layer, a 6x6 MIMO model has been used in prior work, yet the identification methodology itself is not fully standardized in terms of fitting strategy, weighting selection, and cross-configuration consistency analysis. As a result, the traceable link between identification quality and downstream controller performance remains incomplete.
+
+At the flux control layer, PI and model-based controllers have both been used, but most comparisons are made at the final performance level. A component-level explanation of which control element resolves which physical issue (hysteresis, coupling, ringing-zero effects, disturbance rejection, and bandwidth shaping) is still limited.
+
+At the force generation layer, the inverse mapping from desired Cartesian force to six-channel flux reference is established in prior studies, but the quantitative effects of reference scheduling and harmonic distortion propagation through the nonlinear force model are still underexplored. Therefore, bandwidth bottlenecks across the complete chain from identification to force output are not yet fully decomposed.
+
+Based on these gaps, this dissertation adopts a control-oriented and evidence-driven framework centered on the sequence Identification $\rightarrow$ Flux Control $\rightarrow$ Force Generation, with Hall-sensor-based feedback as the measurement foundation. The goal is to produce a quantitatively verifiable design path for ultra-precise and high-speed untethered manipulation in aqueous solution.
+
+\section{Research Objective and Scope}
+
+The objective of this dissertation is to construct and validate a traceable design framework for Hall-sensor-based magnetic manipulation, with three technical objectives: (i) establish and evaluate the 6x6 MIMO system identification workflow, (ii) perform component-level analysis and design of flux control, and (iii) quantify force-generation behavior under different reference-generation strategies.
+
+The scope is limited to control-system design, implementation, and validation in the magnetic actuation chain. Biological interpretation of probe-sample interaction is outside the scope of this dissertation.
+
+\section{Dissertation Overview}
+
+Chapter 2 introduces the modeling foundation for magnetic force generation and sensing. Chapter 3 presents the 6x6 MIMO system identification methodology and model-quality analysis. Chapter 4 develops and evaluates flux control with component-level analysis. Chapter 5 analyzes force generation, including reference scheduling and nonlinear distortion effects. Chapter 6 reports real-time implementation and experimental validation. Chapter 7 extends the framework to integrated motion-control simulations and system-level discussion. Chapter 8 concludes the dissertation and outlines future work.

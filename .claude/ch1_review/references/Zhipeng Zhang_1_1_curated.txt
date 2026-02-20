@@ -1,0 +1,299 @@
+1.1 Background and Motivation
+
+     Cells are the smallest structural and functional units of all living organisms.
+
+Discovered more than 300 years ago, cells have been a very challenging yet interesting
+
+subject for researchers and till now we are still in the process of learning how cells work.
+
+Cells are extremely complex systems that can perform a variety of functions such as cell
+
+division, metabolism, and protein synthesis. As the functioning of cells is essentially
+
+controlled by individual biomolecules and their interactions, it has been required to study
+
+cells at nanometer scale whereas the studies have been limited by the availability of high
+
+resolution technologies. The spatial resolution of traditional microscopy technologies is
+
+limited by optical diffraction. With the advances in green fluorescent protein (GFP)
+
+technologies and detection technologies such as fluorescence resonance energy transfer
+
+(FRET) [1], it is now possible to observe the dynamics of biomolecules inside living cells.
+
+These techniques have provided important insights into molecular processes. However,
+
+they have the limitation that they only passively record the processes in cells.
+
+       Single molecule manipulation techniques, such as AFM cantilevers, optical
+
+tweezers, and magnetic tweezers, provide a new direction for biological research. These
+
+                                             1
+manipulators not only make observations in real time, but also apply forces to actively
+
+manipulate individual molecules. Although the single molecule manipulations are usually
+
+performed in vitro, these manipulators can be applied to investigate cells in vivo at
+
+nanometer scale, and have the potential to provide fundamentally new information for a
+
+better understanding of cell function in their physiological condition. The acquired
+
+knowledge will eventually contribute to not only the understanding of the physiology and
+
+pathology, but also the development of pharmacy and discovery of new medicine. As a
+
+result, the instrument capable of actuating, measuring, and controlling biological samples
+
+at nanometer scale will significantly facilitate our study in biological science.
+
+
+
+1.1.1 Actuation
+
+       The single molecule manipulators developed so far can be classified into two
+
+categories [2]: mechanical force transducers and external field manipulators. Examples in
+
+the first category include atomic force microscopy (AFM) cantilevers [3,4], microneedles
+
+[5-7], etc. They utilize a bendable cantilever to generate forces to samples, and these
+
+manipulators have been successfully used in many applications. However, this method
+
+suffers from the invasiveness of the mechanical cantilever, especially when probing
+
+inside cells, as well as the inherent limitation in the degrees of freedom that the
+
+mechanical force can be applied.
+
+       Manipulators in the second category utilize field gradient to generate forces on
+
+microscopic probes. These apparatuses are usually called “tweezers”. If molecules are
+
+attached to the microscopic probes, biologically relevant forces can be applied to the
+
+molecules through the probes. The probes can be introduced into a living cell without cell
+
+
+
+                                              2
+damage, hence are more suitable for in vivo manipulations. Furthermore, multi-axis
+
+manipulation can be realized by varying the field gradient.
+
+       Optical tweezers have received tremendous interest since it was first reported in
+
+1986 [ 8 ]. It uses a focused laser beam to provide an optical force to microscopic
+
+dielectric objects. Optical forces on the order of piconewton (pN) with near infrared (NIR)
+
+laser beam were soon demonstrated for noninvasive trapping and manipulation of a single
+
+living cell [9]. Optical tweezers have since proven to be a useful tool in many research
+
+disciplines [10,11]. However, there are key barriers that inhibit its application to the study
+
+of biological systems. The focus of the laser beam where the trapping happens has
+
+tremendous high intensity power of light. A small portion of laser power absorbed by the
+
+biological samples could significantly increase the local temperature [12,13], resulting in
+
+photodamage to the samples. Moreover, as the optical force depends on the refractive
+
+index mismatch between the dielectric object and the medium, the specificity of optical
+
+tweezers is not satisfactory. Anything that resides inside the laser focus and that has a
+
+different index from the medium will experience the optical force. The external force will
+
+be a disturbance to the biological environment.
+
+       Dielectrophoretic (DEP) traps [14], also called electric tweezers, use non-uniform
+
+electric field to exert forces on dielectric particles. The direction of the force is
+
+determined by the frequency-dependent dielectric constants of the medium and the
+
+particle. Stable trapping has been realized in a certain frequency range with quadrupole
+
+[ 15 ] or octopole [ 16 ] electrode arrangement. DEP forces have been successfully
+
+employed in trapping biological samples [17,18], and sorting cells with different electric
+
+
+
+
+                                              3
+properties [19,20]. However, DEP traps, similar to optical tweezers, also suffer from the
+
+lack-of-specificity problem.
+
+       Magnetic tweezers, which employ magnetic field to actuate magnetic particles,
+
+are more suitable for manipulating biological samples. Magnetic field is intangible and
+
+safe to most biological materials, and has been successfully used in many biological
+
+applications such as magnetic resonance imaging (MRI) [21], magnetic drug targeting
+
+[22,23] and magnetofection [24]. The magnetic force can be applied specifically to the
+
+magnetic probes, and there is no heat generated in the process. Magnetic tweezers have
+
+been studied since 1949 [ 25 ]. Since then, magnetic forces have been utilized to
+
+investigate a wide range of biological samples. Most of these systems apply forces in a
+
+single direction, using only one coil-actuated pole [26-29] or two poles facing each other
+
+[30-32]. There are also examples of 2D manipulators implementing multiple poles [33-
+
+37], and a few [38-41] are able to generate forces in 3D space. Overall, magnetic force, in
+
+terms of specificity and biocompatibility, is the most suitable form of actuation for in
+
+vivo biological study. Magnetic tweezers therefore are investigated in this research.
+
+
+
+1.1.2 Measurement
+
+       High-resolution motion detection of the microscopic probes is an important
+
+component of the manipulators. As the molecules are usually attached to the probes, the
+
+motions of the probes could be related to the dynamics and responses of the biological
+
+samples. Hence, it is required for the measurement system to be able to track the
+
+microscopic probes in real time with nanometer/subnanometer resolution. The laser
+
+detection system, often found in optical tweezers’ setup [42,43], utilizes a quadrant
+
+
+
+                                             4
+photodiode (QPD) to record the interference pattern generated by the scattered light by
+
+the particle and the unscattered light, and is able to provide three-dimensional (3D)
+
+position information of the particle with subnanometer precision with MHz bandwidth.
+
+The measurement range, however, is limited by the size of the laser focus, around 1 μm
+
+in each axis. High-resolution motion devices thus are usually employed to keep the probe
+
+inside the laser focus, at the expense of the instrument’s complexity. Fluorescence
+
+microscopy [44-48] has also been used to locate and track particles in three dimensions.
+
+By employing 4D microscopy [45-47], three dimensional tracking can be realized by
+
+acquiring images at difference z positions and analyzing the image z-stacks. It is thus not
+
+surprising that methods based on 4D microscopy suffer from poor temporal resolution. In
+
+the case of total internal reflection fluorescence microscopy (TIRFM) [48], the particle
+
+image intensity is associated with its axial location, as the illuminating field undergoes
+
+exponential intensity decay with increasing distance from the coverslip surface.
+
+Analyzing one image is therefore adequate to estimate the axial position of the target
+
+particle. Both measurement speed and axial resolution of the methods based on TIRFM
+
+are improved when compared with those of the 4D microscopy methods. However, the
+
+axial measurement range is limited to be within 250nm above the surface of the coverslip
+
+due to the working principle of TIRFM.
+
+       Off-focus imaging methods [49-51], on the other hand, have the potential to
+
+achieve a much larger axial measurement range while maintaining subnanometer
+
+resolution by analyzing only one off-focus image. The measurement range is limited only
+
+by the microscope’s field of view in x and y axes, and the axial range is several to tens of
+
+micrometers depending on the numerical aperture (NA) of the objective lens. Moreover,
+
+
+
+                                             5
+the position of multiple beads can be measured simultaneously as long as they are in the
+
+same field of view. Speidel et al. [49] used the radius of the outer bright ring of a
+
+fluorescent particle in off-focus condition as a measure of z position. They found a linear
+
+relationship between the radius and z position at the above-focus range, and
+
+subnanometer resolution was achieved at less than 10Hz sampling rate. When a weak
+
+cylindrical lens is introduced in the optical path [50,51], off-focus images become
+
+elliptical. Then the z position of the particle could be determined from image shape and
+
+orientation. Instead of using only certain specific features, this research presents a
+
+systematic way to extract and use all the information of off-focus images to detect the z
+
+position. In addition, other than approximate theoretical models, object-specific
+
+calibration data and matching algorithm are used to locate the z location. The
+
+measurement precision and accuracy therefore are both greatly improved. This algorithm
+
+is first developed in bright field illumination and then extended to measure fluorescent
+
+beads. The proposed method only requires the particle to be spherical, which is true for
+
+many micrometer- and submicrometer-scale beads used in biological applications.
+
+
+
+1.1.3 Feedback control
+
+       One limitation of magnetic tweezers when compared with optical and electric
+
+tweezers is that magnetic tweezers do not have a stable trap of the magnetic particle.
+
+Therefore most of the applications of magnetic tweezers are performed in an open-loop
+
+configuration. In other words, magnetic forces are applied according to the pre-calibrated
+
+force model, and the induced motion of the magnetic particle is then recorded through
+
+various sensing techniques. Feedback control, however, can be employed to extend the
+
+
+
+                                            6
+operation   versatility    and   the   manipulation   accuracy   of   magnetic   tweezers.
+
+Kollmannsberger and Fabrry [52] established a force feedback to achieve precise force
+
+application using their single-pole magnetic apparatus. With a six-pole instrument, Gosse
+
+and Croquette [38] applied position feedback and realized a stable trapping of a 4.5µm
+
+magnetic particle.
+
+       Feedback control therefore is essential to magnetic tweezers. With the successful
+
+implementation of feedback control, magnetic tweezers can be controlled to regulate the
+
+motion and/or the force of the magnetic particle. According to application requirements,
+
+advanced control algorithms can be developed, and operation versatility of the instrument
+
+can be greatly enhanced.
+
+
+

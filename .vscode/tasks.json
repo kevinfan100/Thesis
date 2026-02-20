@@ -1,0 +1,40 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build: Worktree Thesis (thesis.tex)",
+      "type": "shell",
+      "command": "/Library/TeX/texbin/latexmk",
+      "args": [
+        "-xelatex",
+        "-interaction=nonstopmode",
+        "-halt-on-error",
+        "thesis.tex"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Build: English Template (main.tex)",
+      "type": "shell",
+      "command": "/Library/TeX/texbin/latexmk",
+      "args": [
+        "-xelatex",
+        "-interaction=nonstopmode",
+        "-halt-on-error",
+        "main.tex"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/NTHU_Thesis_template_in_English_with_Chines_title_pages_compiled_with_pdfLaTeX_2025"
+      },
+      "group": "build",
+      "problemMatcher": []
+    }
+  ]
+}
