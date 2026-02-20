@@ -1,42 +1,22 @@
 \chapter{緒論}
 \label{c:introduction}
 
-\section{研究背景與動機}
+\section{Background and Motivation}
 \label{sec:background}
-
-在生物力學與細胞生物學研究中，精確量測與施加皮牛頓（pN）至奈牛頓（nN）等級的微小力量，是探索分子交互作用與細胞力學特性的關鍵技術需求。目前主流的微尺度力量量測工具包括光學鉗夾（optical tweezers）\cite{ashkin1986observation}、原子力顯微鏡（AFM）\cite{binnig1986afm}、以及磁性鉗夾（magnetic tweezers）\cite{neuman2008singlemolecule}，各具適用場景與固有限制。其中，磁性鉗夾透過外加磁場梯度對磁性微粒施加遠端力量，具有無需物理接觸、無光損傷、且力量與位移量測互不干擾等優勢\cite{gosse2002magnetic, devlaminck2012magnetic}，然而傳統磁性鉗夾多採用簡單幾何配置，難以實現完整的三維力量控制。
-
-六極電磁致動器（hexapole electromagnetic actuator）由 Menq 研究團隊開發\cite{zhang2011design}，採用六個磁極尖端分布於上下兩個平面的對稱配置，構成一個過驅動系統（over-actuated system），可在三維空間中對磁性微探針施加任意方向的力量。此系統已成功實現水溶液中磁性微探針的超精密高速無繫繩操控\cite{meng2023ultraprecise}，以及皮牛頓等級的探針—樣品交互力量控制\cite{meng2024piconewton}。系統控制採三層架構：內迴圈磁通控制（100~kHz）、力生成控制（10~kHz）、與外迴圈運動控制（1.6~kHz），各層對應不同的控制目標與物理挑戰。
-
-在此三層架構中，各層面對不同的物理問題。內迴圈需處理磁極材料的磁滯效應（hysteresis）、六通道間的動態耦合（cross-coupling）、以及零階保持器（zero-order hold, ZOH）離散化所產生的 ringing zero（$z \approx -0.97$）。力生成層涉及過驅動系統的冗餘度分配、非線性力模型的逆運算、以及期望磁通排程方式對力精度的影響。外迴圈則需克服 Brownian motion 與壁效應（wall effect）對微米尺度粒子的干擾。前人的研究已系統性地解決了上述技術問題，控制架構逐代演進，實驗效能持續提升。然而，現有文獻聚焦於展示最佳化條件下的系統能力，對於各層控制設計中的設計選擇、替代方案比較、以及設計參數對效能的量化影響，分析相對有限。
-
-本論文的研究動機在於：針對系統鑑別、磁通控制、力生成等各層級，提供逐層深入的設計分析與量化比較。在每一層中辨識具體的物理問題、比較傳統 PI 與模型基（model-based）設計方案、並以 Bode 圖、穩態誤差、諧波失真等量化指標展示設計決策的影響。完整的信號鏈——從鑑別數據到 FPGA 控制器——在各階段皆經過驗證。
-
-%% ================================================================
-\section{六極電磁致動器系統}
 \label{sec:hexapole_overview}
+\label{sec:prior_work}
 
-本節概述六極電磁致動器的系統架構與三層控制概念，為後續章節的技術內容建立背景。
+\subsection*{English Draft}
 
-\subsection{系統硬體配置}
+Precise force application and measurement at the piconewton-to-nanonewton scale are essential for modern biomechanics and cell mechanics studies. Common platforms include optical tweezers \cite{ashkin1986observation}, atomic force microscopy (AFM) \cite{binnig1986afm}, and magnetic tweezers \cite{neuman2008singlemolecule}. Among them, magnetic actuation is attractive because it provides contactless force generation without photothermal loading and allows decoupled force-position sensing in aqueous environments \cite{gosse2002magnetic, devlaminck2012magnetic}.
 
-六極電磁致動器的核心結構由六個磁極尖端（pole tip）組成，分為上下兩層各三個，以對稱方式排列於倒置顯微鏡的物鏡上方 \cite{zhang2011design}。每個磁極由高磁導率軟磁材料製成，其尖端半徑約為 $40~\mu$m，極間距（pole gap）約為 594~$\mu$m。上下兩層的磁極尖端分別位於平行平面上，此配置避免了遮擋光學觀測路徑，使致動器可與倒置顯微鏡和高速攝影機系統整合，同時進行微珠的操控與位置觀測。
+The hexapole electromagnetic actuator developed by the Menq group provides six independently driven poles arranged in a symmetric geometry, enabling 3-D magnetic force generation with over-actuated redundancy \cite{zhang2011design}. This platform has evolved from current-based force modeling to Hall-sensor-based flux modeling and high-bandwidth control, culminating in ultra-precise untethered manipulation \cite{meng2023ultraprecise} and piconewton-scale interaction-force control \cite{meng2024piconewton}.
 
-各磁極透過磁軛（yoke）連結形成磁路，每個磁極配有獨立的線圈驅動。六個霍爾效應感測器（Hall effect sensor）分別安裝於各磁極表面，用於即時量測磁極處的磁通密度 \cite{long2022hallsensor}。感測器輸出的霍爾電壓 $v_{H,i}$ 與磁極尖端的磁通量之間存在穩定的比例關係，此特性使得透過霍爾感測器的回饋進行磁通閉迴圈控制成為可能，從根本上解決了磁極材料磁滯效應所造成的開迴圈建模誤差。
-
-操控目標為直徑約 $2.8~\mu$m 的超順磁性微珠（superparamagnetic microbead），懸浮於水溶液中。微珠在外加磁場梯度下受到磁梯度力（magnetic gradient force），六個磁極的獨立驅動提供了六個控制自由度，對應三維力量生成僅需三個自由度，因此構成一個過驅動系統。此冗餘度可透過最佳化方法加以利用，在滿足力量需求的同時最小化能量消耗。
-
-\subsection{三層控制架構}
-\label{subsec:three_layer}
-
-六極電磁致動器的控制系統採用三層式架構，如\cref{fig:three_layer_architecture}所示。各層對應不同的控制目標與取樣頻率：
-
+In this thesis, the control architecture is treated as a three-layer chain:
 \begin{enumerate}
-  \item \textbf{內迴圈——磁通控制}（100~kHz 取樣率）：以霍爾感測器的量測電壓 $\mathbf{v}_m \in \mathbb{R}^6$ 作為回饋，透過數位控制器調節驅動電壓 $\mathbf{u} \in \mathbb{R}^6$，使量測磁通追蹤期望值 $\mathbf{v}_d$。此層的核心任務是抑制磁滯效應、消除通道間動態耦合、並提供足夠的磁通控制頻寬。
-
-  \item \textbf{力生成控制}（10~kHz 取樣率）：將外迴圈給定的期望三維力 $\mathbf{f}_d \in \mathbb{R}^3$ 透過最佳磁通分配（optimal flux allocation）與力模型逆運算，轉換為六個通道的期望磁通電壓向量 $\mathbf{v}_d \in \mathbb{R}^6$。此層涉及過驅動系統的最佳化問題。
-
-  \item \textbf{外迴圈——運動控制}（1.6~kHz 取樣率）：根據視覺伺服系統提供的微珠三維位置回饋 $\mathbf{p} \in \mathbb{R}^3$，計算所需的控制力 $\mathbf{f}_d$，以實現軌跡追蹤或力量控制等應用層任務。
+  \item \textbf{System Identification}: reliable 6\(\times\)6 dynamic modeling from frequency-response data.
+  \item \textbf{Flux Control}: high-bandwidth inner-loop control under hysteresis, cross-coupling, and ringing-zero constraints.
+  \item \textbf{Force Generation}: mapping desired 3-D force to six-channel flux-voltage commands with quantifiable output accuracy.
 \end{enumerate}
 
 \begin{figure}[t]
@@ -47,146 +27,111 @@
     arrow/.style={->, >=stealth, thick},
     label/.style={font=\footnotesize}
   ]
-    % Outer loop
     \node[block, fill=blue!8] (outer) at (0, 4.5)
-      {外迴圈：運動控制\\(1.6~kHz)};
-    % Force generation
+      {Outer Loop: Motion Control\\(1.6~kHz)};
     \node[block, fill=green!8] (force) at (0, 2.5)
-      {力生成控制：最佳磁通分配\\(10~kHz)};
-    % Inner loop
+      {Force Generation Layer\\(10~kHz)};
     \node[block, fill=red!8] (inner) at (0, 0.5)
-      {內迴圈：磁通控制\\(100~kHz)};
-    % Plant
+      {Inner Loop: Flux Control\\(100~kHz)};
     \node[block, fill=gray!10] (plant) at (0, -1.5)
-      {六極電磁致動器\\+ 霍爾感測器};
+      {Hexapole Electromagnetic Actuator\\+ Hall Sensors};
 
-    % Forward arrows
     \draw[arrow] (outer) -- node[right, label] {$\mathbf{f}_d$} (force);
     \draw[arrow] (force) -- node[right, label] {$\mathbf{v}_d$} (inner);
     \draw[arrow] (inner) -- node[right, label] {$\mathbf{u}$} (plant);
 
-    % Feedback: v_m from plant to inner loop
     \draw[arrow] (plant.east) -- ++(1.2, 0) |- (inner.east)
       node[pos=0.25, right, label] {$\mathbf{v}_m$};
-
-    % Feedback: p from plant to outer loop
     \draw[arrow] (plant.west) -- ++(-1.2, 0) |- (outer.west)
       node[pos=0.25, left, label] {$\mathbf{p}$};
   \end{tikzpicture}
-  \caption{六極電磁致動器三層控制架構示意圖。$\mathbf{f}_d$：期望力向量；$\mathbf{v}_d$：期望磁通電壓向量；$\mathbf{u}$：驅動電壓向量；$\mathbf{v}_m$：霍爾感測器量測電壓向量；$\mathbf{p}$：微珠三維位置。}
+  \caption{Three-layer control architecture. $\mathbf{f}_d$: desired force; $\mathbf{v}_d$: desired flux-voltage command; $\mathbf{u}$: actuator input; $\mathbf{v}_m$: Hall-sensor measurement; $\mathbf{p}$: 3-D probe position.}
   \label{fig:three_layer_architecture}
 \end{figure}
 
-在此三層架構中，各層控制器的設計品質層層傳遞，最終決定整個系統的操控效能。因此，深入理解各層的設計選擇及其對效能的量化影響，是充分發揮系統潛力的關鍵。
-
-%% ================================================================
-\section{前人工作與研究缺口}
-\label{sec:prior_work}
-
-六極電磁致動器的研究始於 2011 年，歷經十餘年的發展，在致動器設計、力模型建構、感測器整合、以及控制系統設計等方面取得了顯著進展。本節回顧前人的主要貢獻，並指出現有研究在各層設計分析上的不足之處。
-
-\subsection{系統建模與鑑別}
 \label{subsec:prior_modeling}
-
-Zhang 與 Menq \cite{zhang2011design} 首先提出六極電磁致動器的設計方案，建立了以磁荷模型（magnetic charge model）為基礎的集總參數力模型（lumped-parameter force model）：
-\begin{equation}
-  \label{eq:force_model_current}
-  \hat{\mathbf{F}} = \hat{\mathbf{I}}^T \mathbf{N}(\hat{\mathbf{p}}) \hat{\mathbf{I}}
-\end{equation}
-其中 $\hat{\mathbf{I}} \in \mathbb{R}^6$ 為正規化電流向量，$\mathbf{N}(\hat{\mathbf{p}}) \in \mathbb{R}^{6 \times 6 \times 3}$ 為與正規化位置 $\hat{\mathbf{p}}$ 相關的力矩陣。此電流基（current-based）力模型將六極系統的力生成簡化為二次型表示式，為後續的控制設計奠定了理論基礎。然而，此模型未考慮磁極材料的磁滯效應，力預測精度受到建模誤差的限制。Long 等人 \cite{long2022hallsensor} 隨後引入霍爾效應感測器，建立了磁通基（flux-based）力模型：
-\begin{equation}
-  \label{eq:force_model_flux}
-  \mathbf{F}(\mathbf{p}, \boldsymbol{\Phi}) = g_\Phi\, \boldsymbol{\Phi}^T \mathbf{L}(\hat{\mathbf{p}}) \boldsymbol{\Phi}
-\end{equation}
-其中 $\boldsymbol{\Phi} \in \mathbb{R}^6$ 為磁通量向量，$g_\Phi$ 為力增益係數，$\mathbf{L} \in \mathbb{R}^{6 \times 6 \times 3}$ 為正規化力矩陣。磁通基模型直接使用感測器量測值取代電流作為力模型輸入，從根本上消除了磁滯效應造成的建模誤差。實驗結果顯示，力預測精度較電流基模型提升 50--65\%。
-
-Meng 與 Menq \cite{meng2023ultraprecise, meng2024piconewton} 透過頻率掃描實驗，以單極激勵配合 FFT 分析的方式，鑑別出二階六輸入六輸出（$6 \times 6$ MIMO）離散動態模型。模型包含通道增益矩陣 $\mathbf{B} \in \mathbb{R}^{6 \times 6}$（反映通道間的靜態耦合）以及 ZOH 離散化所產生的 ringing zero（$z \approx -0.97$）。此鑑別結果為所有後續控制設計的基礎，模型精度直接影響控制器效能。
-
-現有文獻將 36 組頻率響應統一擬合為共享動態參數的模型，但鑑別方法論本身未有系統化的描述與分析。擬合策略的選擇——加權函數的設計、頻率範圍的取捨——如何影響模型精度？不同實驗配置下的鑑別結果是否一致？模型品質如何傳遞至下游控制器效能？這些問題在文獻中尚未被探討。
-
-\subsection{內迴圈磁通控制}
 \label{subsec:prior_flux_control}
-
-磁通控制的核心目標是抑制磁極材料的磁滯效應、消除通道間動態耦合、並提升磁通控制頻寬。在無回饋控制的條件下，開迴圈磁通生成面臨三個限制：磁滯效應造成磁通響應的偏移與非線性；六個磁極間存在物理耦合導致的通道間交互影響；以及離散主極所決定的開迴圈頻寬僅約 200~Hz，不足以支撐高速操控需求。
-
-Long 等人 \cite{long2022hallsensor} 首次引入霍爾感測器內迴圈控制——以比例-積分（PI）控制器在 200~kHz 取樣率下對各磁極進行獨立控制，建立了磁通閉迴圈的基本架構，頻寬約 500~Hz。Meng 與 Menq \cite{meng2023ultraprecise} 進一步提出由前饋（feedforward）、回饋（feedback）與擾動補償（disturbance compensation）三個組件構成的模型基控制器，取代簡單的 PI 控制器。在 100~kHz 取樣率下，使用近似離散模型以迴避 ringing zero 問題，頻寬提升至 1~kHz。基於此內迴圈，力生成層結合最佳磁通分配，外迴圈實現微珠在水溶液中的高速掃描（$40~\mu\text{m} \times 16~\mu\text{m}$ in 2 seconds），追蹤標準差約 32~nm，已接近 Brownian motion 決定的物理極限。隨後，Meng 與 Menq \cite{meng2024piconewton} 改用精確的 ZOH 離散化模型，引入受零相位誤差追蹤控制（ZPETC）\cite{tomizuka1987zpetc, xia1995precision} 啟發的預濾波器設計，正面處理 ringing zero，將磁通控制頻寬從 1~kHz 提升至超過 4~kHz。\cref{tab:prior_work_evolution} 彙整了內迴圈控制架構的演進。
-
-\begin{table}[t]
-  \centering
-  \caption{六極電磁致動器內迴圈控制架構演進}
-  \label{tab:prior_work_evolution}
-  \begin{tabular}{lllll}
-    \toprule
-    \textbf{文獻} & \textbf{內迴圈控制器} & \textbf{取樣率} & \textbf{頻寬} & \textbf{備註} \\
-    \midrule
-    \cite{long2022hallsensor} (2022) & PI（獨立 SISO） & 200~kHz & $\sim$500~Hz & 首次引入 \\
-    \cite{meng2023ultraprecise} (2023) & 三組件（近似模型） & 100~kHz & 1~kHz & 迴避 ringing zero \\
-    \cite{meng2024piconewton} (2024) & 三組件 + ZPETC & 100~kHz & $>$4~kHz & 正面處理 ringing zero \\
-    \bottomrule
-  \end{tabular}
-\end{table}
-
-在 \cite{meng2024piconewton} 的控制架構中，控制律可統一表達為：
-\begin{equation}
-  \label{eq:meng_control_law}
-  \mathbf{u}[k] = \mathbf{B}^{-1}\left\{\mathbf{v}_{ff}[k] + \delta\mathbf{v}_{fb}[k] - \hat{\mathbf{w}}[k]\right\}
-\end{equation}
-其中 $\mathbf{v}_{ff}$ 為前饋預濾波項，$\delta\mathbf{v}_{fb}$ 為回饋修正項，$\hat{\mathbf{w}}$ 為擾動估測值，$\mathbf{B}^{-1}$ 用於實現六通道解耦。實驗結果顯示，閉迴圈的追蹤誤差標準差與基於設計的理論預測高度吻合。在外迴圈方面，基於此磁通控制器的皮牛頓級力控制，在活細胞壓痕實驗中達到力控制誤差標準差約 0.1~pN，小於熱力噪聲的 10\%。
-
-前人文獻呈現的是最終設計的整體效能，但控制器的三個組件——擾動觀測器、回饋控制、前饋預濾波——各自解決什麼物理問題、個別貢獻多少效能，在文獻中並未獨立量化。PI 與模型基控制器的比較停留在整體效能層級，未展示各組件級的差異。三個頻寬設計參數（回饋頻寬 $f_{B,c}$、估測器頻寬 $f_{B,e}$、前饋頻寬 $f_{B,f}$）各自如何影響閉迴圈響應，未有系統性的參數掃描分析。此外，控制律推導涉及大量中間方程式，不同文獻的推導路徑有所調整，是否存在更統一的推導框架，亦值得探討。
-
-\subsection{力生成與系統整合}
 \label{subsec:prior_force}
-
-力生成層的功能是將外迴圈的三維期望力 $\mathbf{f}_d \in \mathbb{R}^3$ 轉換為六通道期望磁通電壓 $\mathbf{v}_d \in \mathbb{R}^6$。此過程涉及最佳磁通分配\cite{long2021optimal, long2022hallsensor}——以 Lagrange 乘子法將過驅動系統的冗餘度轉化為最佳化優勢——以及逆模型運算。Meng 與 Menq \cite{meng2023ultraprecise, meng2024piconewton} 已將力生成整合至三層架構，實現解耦的三軸力產生器，並在超精密操控與皮牛頓級力控制中驗證其有效性。
-
-在力生成的控制鏈中，期望磁通電壓 $\mathbf{v}_d$ 的排程方式——零階保持（ZOH 階梯保持）、線性內插、或 S-curve 平滑——對力生成精度的影響，在文獻中未被比較。$\mathbf{v}_d$ 經由二次型力模型 $\mathbf{F} = g_\Phi \boldsymbol{\Phi}^T \mathbf{L} \boldsymbol{\Phi}$ 時，輸入的諧波畸變（total harmonic distortion, THD）如何傳遞為力的精度誤差，亦未有定量分析。此外，從鑑別模型到力輸出的完整管線中，各級——磁通控制頻寬、分配運算速率、力模型非線性——的頻寬瓶頸未逐一辨識。
-
-\subsection{研究缺口總結}
 \label{subsec:research_gap}
 
-綜上，前人研究建立了六極電磁致動器作為皮牛頓級力學量測平台的技術基礎，控制架構逐代演進、實驗效能持續提升。然而，文獻側重呈現最佳化條件下的系統能力，對於達成該效能的設計選擇缺乏系統性的比較分析。
+The prior baseline is clear: (i) hexapole design and current-based force model \cite{zhang2011design}; (ii) optimal current allocation for over-actuated force production \cite{long2021optimal}; (iii) Hall-sensor-based force model and inverse model \cite{long2022hallsensor}; (iv) high-speed untethered manipulation with layered control \cite{meng2023ultraprecise}; and (v) high-bandwidth flux control with piconewton interaction-force regulation \cite{meng2024piconewton}. However, the literature mainly reports final performance, while layer-specific design choices and their quantitative impact are less systematically compared.
 
-具體而言，三個層級存在以下研究缺口：（一）系統鑑別層——$6 \times 6$ MIMO 鑑別方法論與擬合參數敏感度未被分析，36 組頻率響應的統一擬合策略缺乏系統性描述；（二）磁通控制層——控制器各組件的個別貢獻未被獨立量化，PI 與模型基方案的比較僅在整體層級，三個頻寬設計參數的個別效應未被分析；（三）力生成層——期望磁通電壓的排程方法與非線性效應對力精度和頻寬的影響未被研究。本論文針對上述三個層級，提供逐層細緻的設計分析與量化比較。
-
-%% ================================================================
-\section{研究目標與貢獻}
-\label{sec:objectives}
-
-本論文對六極電磁致動器的控制系統，從系統鑑別、磁通控制到力生成，進行逐層深入分析。在每一層級辨識具體的物理挑戰，比較傳統 PI 與模型基方案，並以量化指標展示設計決策的影響。完整信號鏈——從鑑別數據、控制設計、FPGA 實現到實驗驗證——在各階段均經過驗證。
-
-具體而言，本論文的貢獻包含以下四個方面：
-
+Specifically, three technical gaps motivate this thesis:
 \begin{enumerate}
-  \item \textbf{系統鑑別分析（\cref{c:identification}）}：建立六極致動器 $6 \times 6$ MIMO 系統的完整鑑別方法。在 11 組不同實驗配置下進行鑑別，分析擬合加權函數對模型精度的影響。採用 super-period FFT 技術消除頻譜洩漏，提取耦合矩陣 $\mathbf{B}$ 並分析其物理意義。建立自動化的五步驟鑑別流程，涵蓋數據讀取、穩態偵測、FFT 分析、轉移函數擬合與結果視覺化。
-
-  \item \textbf{磁通控制層分析（\cref{c:flux_control}）}：提出 R-Controller 觀測器型磁通控制律，與前人三組件控制器功能等效，但以統一的推導框架建立。對控制器三個組件進行個別分析：擾動觀測器處理磁滯與模型誤差；回饋控制強制一階閉迴圈響應；ZPETC 前饋處理 ZOH 離散化的 ringing zero。在組件層級進行 PI 與 R-Controller 的量化比較，並分析三個頻寬設計參數（$f_{B,c}$、$f_{B,e}$、$f_{B,f}$）各自對閉迴圈響應的影響。
-
-  \item \textbf{力生成層分析（\cref{c:force_generation}）}：分析期望磁通電壓 $\mathbf{v}_d$ 的排程方法（ZOH、線性內插、S-curve）對力生成精度的影響。定量分析 $\mathbf{v}_d$ 諧波畸變經二次型力模型傳遞後的力精度誤差。辨識力生成管線中各級的頻寬瓶頸，建立頻寬限制分析框架。開發參數化模擬工具，可依據鑑別模型評估不同設計參數組合的效能。
-
-  \item \textbf{FPGA 實現與實驗驗證（\cref{c:implementation}）}：完成 R-Controller 在 FPGA（Arria V）上的 100~kHz 即時實現。實驗量測的閉迴圈頻率響應與理論設計預測進行對照。在相同硬體平台上實現 PI 控制器與 R-Controller 的實驗比較。
+  \item \textbf{Identification gap}: limited systematic discussion on fitting strategy sensitivity, model quality metrics, and cross-configuration consistency in 6\(\times\)6 identification.
+  \item \textbf{Flux-control gap}: limited component-level comparison between PI and model-based control, especially for disturbance observer, feedback law, and prefilter roles.
+  \item \textbf{Force-generation gap}: limited quantitative analysis of how command scheduling and nonlinear transfer affect force-accuracy and bandwidth bottlenecks.
 \end{enumerate}
 
-透過逐層分析，本論文同時衍生出若干實用的工程效益：鑑別流程的\textbf{自動化}使 36 組頻率響應的擬合可在數秒內完成；R-Controller 的統一推導框架\textbf{簡化}了控制律的建立過程；以頻寬為核心的設計參數化方式使設計經驗可\textbf{泛化}至其他同類致動器；\textbf{參數化}模擬工具為設計參數的選擇提供了定量評估依據。這些面向自然浮現於分析之中，使設計流程具備可重現性與可移植性。
+\subsection*{中文對照草稿}
+
+在生物力學與細胞力學研究中，皮牛頓到奈牛頓等級的精確施力與量測是關鍵能力。主流平台包含 optical tweezers \cite{ashkin1986observation}、AFM \cite{binnig1986afm} 與 magnetic tweezers \cite{neuman2008singlemolecule}。其中，磁性致動在水溶液中具有非接觸、低熱負載與力位移解耦等優勢 \cite{gosse2002magnetic, devlaminck2012magnetic}。
+
+Menq 團隊提出的 hexapole electromagnetic actuator 以六個對稱磁極形成 over-actuated 架構，可進行三維力輸出 \cite{zhang2011design}。該平台從 current-based 力模型逐步發展至 Hall-sensor-based flux modeling 與高頻寬控制，最終達成 ultra-precise untethered manipulation \cite{meng2023ultraprecise} 與 piconewton interaction-force control \cite{meng2024piconewton}。
+
+本論文將控制鏈明確定義為三層：System Identification、Flux Control、Force Generation。核心目標不是僅展示最終效能，而是量化各層設計決策對整體性能的影響，建立可比較、可重現的分析框架。
+
+前人已建立完整技術基線，但文獻多聚焦最終結果，對於「各層方法為何有效」與「不同方法差異來源」的量化比較相對不足。本論文對應的三個缺口為：6\(\times\)6 鑑別方法的敏感度與一致性分析、PI 與 model-based flux control 的組件級比較、以及 force generation 中 command scheduling 與非線性傳遞對精度與頻寬的影響。
 
 %% ================================================================
-\section{論文架構}
+\section{Research Objective and Scope}
+\label{sec:objectives}
+
+\subsection*{English Draft}
+
+The primary objective of this thesis is to establish a decision-complete control-analysis framework for a Hall-sensor-based hexapole actuator, with quantitative traceability from identification to force output.
+
+The thesis addresses the following research questions:
+\begin{enumerate}
+  \item \textbf{RQ1 (Identification)}: How can a reliable 6\(\times\)6 model be identified and validated across different experimental configurations?
+  \item \textbf{RQ2 (Flux Control)}: How do PI and model-based controllers differ at the component level, and which physical issues are addressed by each control component?
+  \item \textbf{RQ3 (Force Generation)}: How do command-scheduling choices and nonlinear transfer characteristics propagate into force-accuracy and bandwidth limits?
+\end{enumerate}
+
+To answer these questions, this thesis provides four contributions:
+\begin{enumerate}
+  \item A reproducible 6\(\times\)6 identification workflow with quality checks and cross-configuration comparison.
+  \item A component-level analysis of model-based flux control (disturbance observer, feedback law, prefilter) with PI baseline comparison.
+  \item A force-generation analysis that quantifies scheduling-induced distortion and bandwidth bottlenecks.
+  \item FPGA implementation and experiment-oriented verification for the inner-loop and force-generation chain.
+\end{enumerate}
+
+This thesis is intentionally scoped to the control chain from identification to force generation. Outer-loop motion-control extensions are discussed as downstream context rather than the primary contribution target of this chapter.
+
+\subsection*{中文對照草稿}
+
+本論文的主要目標是建立一套 Hall-sensor-based hexapole 平台的控制分析框架，使結果可從 identification 一路追溯到 force output，且具備量化可驗證性。
+
+本論文聚焦三個研究問題：
+\begin{enumerate}
+  \item \textbf{RQ1（Identification）}：如何在不同實驗配置下建立並驗證可靠的 6\(\times\)6 模型？
+  \item \textbf{RQ2（Flux Control）}：PI 與 model-based 控制器在組件層級的差異是什麼？各組件分別解決哪些物理問題？
+  \item \textbf{RQ3（Force Generation）}：command scheduling 與非線性傳遞如何造成 force-accuracy 與 bandwidth 的限制？
+\end{enumerate}
+
+對應上述問題，本論文提出四項貢獻：可重現的 6\(\times\)6 鑑別流程、PI 與 model-based 的組件級比較、force generation 誤差與瓶頸分析、以及 FPGA 實作驗證。章節範圍刻意聚焦在 ID 到 force generation 的主鏈；outer-loop motion control 於後續章節作延伸討論。
+
+%% ================================================================
+\section{Dissertation Overview}
 \label{sec:outline}
 
-本論文共分為八章，各章內容簡述如下：
+\subsection*{English Draft}
 
-\cref{c:introduction}為緒論，說明研究背景、系統概述、前人工作回顧、以及研究目標與貢獻。
+The dissertation is organized to directly map chapters to the research questions:
+\begin{enumerate}
+  \item \textbf{Chapter 2} establishes the modeling foundations required for identification and control analysis.
+  \item \textbf{Chapter 3} addresses RQ1 through the 6\(\times\)6 identification workflow and model-quality evaluation.
+  \item \textbf{Chapter 4} addresses RQ2 through PI vs model-based flux-control analysis at both system and component levels.
+  \item \textbf{Chapter 5} addresses RQ3 through force-generation scheduling analysis and bandwidth bottleneck decomposition.
+  \item \textbf{Chapter 6} presents implementation details and experiment-aligned verification of the control chain.
+  \item \textbf{Chapter 7} discusses motion-control simulation and downstream implications.
+  \item \textbf{Chapter 8} summarizes validated findings and outlines future work.
+\end{enumerate}
 
-\cref{c:modeling}建立六極電磁致動器的系統數學模型，涵蓋磁梯度力模型、過驅動系統的最佳磁通分配、霍爾感測器量測模型、以及粒子在水溶液中的動力學方程式。
+This chapter-level mapping is designed so that each major claim in Chapter 1 has a corresponding quantitative verification path in later chapters.
 
-\cref{c:identification}提出 $6 \times 6$ MIMO 系統的鑑別方法，分析擬合策略對模型精度的影響，提取耦合矩陣並探討其物理意義與系統特性。
+\subsection*{中文對照草稿}
 
-\cref{c:flux_control}為本論文的核心章節，推導 R-Controller 觀測器型磁通控制律，對控制器各組件進行個別分析，在組件層級與 PI 控制器進行量化比較，並建立以頻寬為核心的參數設計指引。
+本論文的章節安排直接對應研究問題：Chapter 2 建立建模基礎；Chapter 3 回答 RQ1（6\(\times\)6 鑑別與模型品質）；Chapter 4 回答 RQ2（PI 與 model-based flux control 比較）；Chapter 5 回答 RQ3（force generation 排程與頻寬瓶頸）；Chapter 6 提供 FPGA 與實驗驗證；Chapter 7 討論運動控制延伸；Chapter 8 總結與展望。
 
-\cref{c:force_generation}分析力生成控制層，包含期望磁通排程方法比較、非線性效應對力精度的影響、以及各級頻寬限制因素的辨識。
-
-\cref{c:implementation}描述控制律在 FPGA 上的即時實現，包含硬體架構設計、管線化運算流程、多速率同步機制、以及內迴圈磁通控制與力控制的實驗驗證結果。
-
-\cref{c:motion_control}建立完整的系統模擬架構，整合內外雙迴圈控制與粒子動力學模型，進行軌跡追蹤模擬與物理效應分析。
-
-\cref{c:conclusion}總結本論文的研究成果與貢獻，並提出未來工作方向。
+因此，Chapter 1 的每一項主張都對應到後續章節的量化驗證路徑，避免只停留在概念敘述。
