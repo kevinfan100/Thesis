@@ -25,6 +25,7 @@ svg-inkscape/
 *.swp
 *.bak
 *~
+*.code-workspace
 
 # macOS
 .DS_Store
