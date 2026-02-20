@@ -1,11 +1,11 @@
 \begin{abstractzh}
 \setcounter{page}{1}
 
-六極電磁致動器透過六個對稱配置的磁極尖端，可在三維空間中對水溶液中的磁性微探針施加任意方向的磁梯度力，是實現皮牛頓至奈牛頓等級生物力學量測的關鍵技術平台。然而，此系統的控制框架設計涉及磁滯效應抑制、多通道動態耦合消除、過驅動系統最佳化、以及非最小相位系統的頻寬突破等多項技術挑戰。前人的研究雖已驗證系統的卓越操控能力，但控制設計流程仍高度依賴系統專屬知識與人工調校經驗，缺乏自動化、系統化的設計方法論。
+六極電磁致動器透過六個對稱配置的磁極尖端，在三維空間中對水溶液中的磁性微探針施加磁梯度力，已成功實現超精密高速無繫繩操控與皮牛頓等級的力量控制。系統控制採三層架構——內迴圈磁通控制、力生成控制與外迴圈運動控制——各層面對磁滯效應、通道耦合、非最小相位零點、過驅動分配、以及非線性力模型等不同物理挑戰。前人研究已系統性地解決上述技術問題並達成優異實驗成果，但對各層控制設計中的設計選擇與量化影響分析相對有限。
 
-本論文旨在發展六極電磁致動器的自動化控制設計方法論，核心貢獻包含四個面向：（一）建立 $6\times6$ 多輸入多輸出系統的自動化鑑別方法，涵蓋自動化頻率掃描、穩態偵測、頻率響應分析與轉移函數擬合；（二）提出 R-Controller 觀測器型磁通控制律，將前饋預濾波、回饋控制與擾動觀測統一於簡潔的推導框架中，以少數頻寬設計參數取代大量系統特定參數，提升設計的泛化能力；（三）開發參數化模擬軟體模組，可依據鑑別所得的系統模型自動生成控制律並評估磁通產生精度與動態響應；（四）完成控制律在 FPGA 上的即時實現與實驗驗證。
+本論文針對系統鑑別、磁通控制與力生成三個層級，進行逐層深入的設計分析與量化比較。在系統鑑別層，建立 $6\times6$ 多輸入多輸出系統的完整鑑別方法，在 11 組實驗配置下分析擬合策略對模型精度的影響。在磁通控制層，提出 R-Controller 觀測器型控制律，以統一推導框架建立，並對擾動觀測器、回饋控制與前饋預濾波三個組件進行個別分析，在組件層級量化比例-積分控制器與模型基方案的效能差異。在力生成層，分析期望磁通電壓排程方法對力精度的影響，並辨識各級頻寬瓶頸。R-Controller 在 FPGA（Arria V）上以 100~kHz 即時實現，實驗量測的頻率響應與理論預測進行對照。
 
-所提出的設計方法論以自動化、簡化、泛化與參數化為核心理念，使控制系統設計流程具備可重現性與可移植性，可泛化應用於任意對稱六極電磁致動器。
+系統性的逐層分析同時衍生出實用的工程效益：自動化鑑別流程、簡化的控制律推導、泛化的參數設計方式、以及參數化模擬工具，使設計流程具備可重現性與可移植性。
 
 \keywordzh{六極電磁致動器、磁通控制、R-Controller、系統鑑別、FPGA}
 
@@ -15,11 +15,11 @@
 \begin{abstracten}
 \begin{spacing}{1.5}
 
-The hexapole electromagnetic actuator generates three-dimensional magnetic gradient forces on magnetic microprobes in aqueous solutions through six symmetrically arranged pole tips, serving as a key technology platform for piconewton- to nanonewton-scale biomechanical measurements. However, the control framework design of this system involves multiple technical challenges, including hysteresis suppression, multi-channel dynamic cross-coupling elimination, over-actuated system optimization, and bandwidth improvement for non-minimum phase systems. Although prior research has demonstrated the system's exceptional manipulation capability, the control design process remains highly dependent on system-specific expertise and manual tuning experience, lacking an automated and systematic design methodology.
+The hexapole electromagnetic actuator generates three-dimensional magnetic gradient forces on magnetic microprobes in aqueous solutions through six symmetrically arranged pole tips, enabling ultra-precise high-speed untethered manipulation and piconewton-scale force control. The system employs a three-layer control architecture---inner-loop flux control, force generation control, and outer-loop motion control---where each layer faces distinct physical challenges including hysteresis, channel coupling, non-minimum phase zeros, over-actuated allocation, and nonlinear force models. Prior research has systematically addressed these technical challenges and achieved outstanding experimental performance, yet the analysis of design choices and their quantitative impact within each control layer remains limited.
 
-This thesis develops an automated control design methodology for hexapole electromagnetic actuators. The core contributions encompass four aspects: (1) an automated identification method for the $6\times6$ multi-input multi-output system, including automated frequency sweeping, steady-state detection, frequency response analysis, and transfer function fitting; (2) the R-Controller, an observer-based magnetic flux control law that unifies feedforward prefiltering, feedback control, and disturbance observation within a concise derivation framework, replacing numerous system-specific parameters with a few bandwidth design parameters to enhance design generalizability; (3) a parameterized simulation software module that automatically generates control laws based on identified system models and evaluates flux generation accuracy and dynamic response; and (4) real-time implementation on an FPGA with experimental verification.
+This thesis conducts a layer-by-layer design analysis with quantitative comparisons across three levels: system identification, flux control, and force generation. At the system identification level, a complete $6\times6$ multi-input multi-output identification method is established, and the influence of fitting strategies on model accuracy is analyzed across 11 experimental configurations. At the flux control level, the R-Controller---an observer-based control law derived within a unified framework---is proposed, with individual analysis of the disturbance observer, feedback controller, and feedforward prefilter components, quantifying the performance difference between proportional-integral controllers and model-based approaches at the component level. At the force generation level, the impact of desired flux voltage scheduling methods on force accuracy is analyzed, and bandwidth bottlenecks at each stage are identified. The R-Controller is implemented in real time at 100~kHz on an FPGA (Arria V), with experimentally measured frequency responses compared against theoretical design predictions.
 
-The proposed design methodology is built upon the core principles of automation, simplification, generalization, and parameterization, enabling a reproducible and portable control design process that generalizes to any symmetric hexapole electromagnetic actuator.
+The systematic layer-by-layer analysis simultaneously yields practical engineering benefits: an automated identification pipeline, a simplified control law derivation, generalized bandwidth-based design parameterization, and a parameterized simulation tool, making the design process reproducible and portable.
 
 \keyworden{Hexapole Electromagnetic Actuator, Magnetic Flux Control, Observer-Based Controller, System Identification, FPGA}
 
