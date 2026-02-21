@@ -39,23 +39,13 @@
 %
 \usepackage{anyfontsize}
 \usepackage{fontspec} %加這個就可以設定字體
-\setmainfont[
-  Path = ./fonts/english/,
-  UprightFont = Times New Roman.ttf,
-  BoldFont = Times New Roman-Bold.ttf,
-  ItalicFont = Times New Roman-Italic.ttf,
-  BoldItalicFont = Times New Roman-BoldItalic.ttf
-]{Times New Roman.ttf} % Set font for Latin script (English)
-\IfFontExistsTF{Arial}{\setsansfont{Arial}}{}  % optional sans fallback
-\IfFontExistsTF{Courier New}{\setmonofont[Color={0019D4}]{Courier New}}{} % optional mono fallback
+\setmainfont{Times New Roman} % Set font for Latin script (English)
+\setsansfont{Arial}  %The elements that require a sans font
+\setmonofont[Color={0019D4}]{Courier New} %Everything to be formatted with a monospaced (typewriter-like)
 
 
-% Set font for Traditional Chinese and alternative  % AR PL KaitiM GB for 文鼎 PL 中楷
-\setCJKmainfont[
-  Path = ./fonts/chinese/,
-  UprightFont = Kaiti.ttf,
-  BoldFont = Kaiti-Bold.ttf
-]{Kaiti.ttf}
+% Set font for Traditional Chinese — 使用 kaiu.ttf（標楷體）
+\setCJKmainfont[AutoFakeBold=3,AutoFakeSlant=.4]{kaiu.ttf}
 
 % Set language to Traditional Chinese explicitly
  % ctexset configurationra
@@ -172,6 +162,19 @@
 
 \usepackage{enumitem} % Ensure proper handling of enumerate environments
 
+% 校徽浮水印
+\usepackage{wallpaper}
+
+% cleveref 中文交叉引用格式（須在 hyperref 之後載入）
+\usepackage{cleveref}
+\crefformat{figure}{圖~#2#1#3~}
+\crefformat{table}{表~#2#1#3~}
+\crefformat{equation}{~(#2#1#3)~式}
+\crefformat{chapter}{第#2\chinese{#1}#3章}
+\crefformat{section}{~#2#1#3~節}
+\crefformat{subsection}{~#2#1#3~小節}
+\crefformat{appendix}{附錄~#2#1#3~}
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -219,3 +222,4 @@
 % \appendix{NUM}{TITLE}
 %
 \usepackage[titletoc,toc,title]{appendix}
+

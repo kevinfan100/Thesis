@@ -140,7 +140,7 @@
 \captionsetup[table]{labelsep=space}
 
 % 行距設定
-\linespread{2.0}
+\linespread{1.5}
 
 % Your information goes here
 \input{nthuvars}
@@ -152,15 +152,26 @@
 \newgeometry{top=1in,left=1in,bottom=1in,right=1in}
 \makecover
 \restoregeometry
-% \makecopyright
 
+% --- 封面後空白頁 ---
+\newpage
+\thispagestyle{empty}
+\null
+\newpage
 
-% 電子檔著作權授權書
-% 紙本論文著作權授權書
-% 電子檔案上網授權書
-% 延後公開申請書
-% 指導教授推薦書
-% 考試委員審定書
+% --- 書名頁（內容同封面）---
+\newgeometry{top=1in,left=1in,bottom=1in,right=1in}
+\makecover
+\restoregeometry
+
+% --- 學位論文授權書（口試後由系統產生，届時取消註解並填入正確檔名）---
+% \includepdf[pages=1]{front/authorization.pdf}
+
+% --- 指導教授推薦書（口試後取得，届時取消註解並填入正確檔名）---
+% \includepdf[pages=1]{front/advisor_approval.pdf}
+
+% --- 考試委員審定書（口試後取得，届時取消註解並填入正確檔名）---
+% \includepdf[pages=1]{front/thesis_review.pdf}
 
 \makeatletter\@twosidefalse\@mparswitchfalse\makeatother
 
