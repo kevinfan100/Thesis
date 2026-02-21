@@ -55,6 +55,7 @@ Thesis/
 # 1.1 對照文字：只保留 curated 版本
 .claude/ch1_review/references/*.txt
 !.claude/ch1_review/references/*_1_1_curated.txt
+.claude/ch1_review/paper_refs/
 
 # 英文模板編譯輸出
 NTHU_Thesis_template_in_English_with_Chines_title_pages_compiled_with_pdfLaTeX_2025/main.pdf
