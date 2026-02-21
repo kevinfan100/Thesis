@@ -27,10 +27,10 @@
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{book}}
 \ProcessOptions\relax
 % \LoadClass[a4paper,12pt]{book}
-\LoadClass[14pt,a4paper]{extbook}
+\LoadClass[12pt,a4paper]{book}
 
 % Required packages
-\RequirePackage[top=1in,left=3.17cm,bottom=1in,right=1in]{geometry}
+\RequirePackage[top=3cm,left=3cm,bottom=2.5cm,right=3cm]{geometry}
 \RequirePackage{xeCJK}
 \RequirePackage{setspace}
 

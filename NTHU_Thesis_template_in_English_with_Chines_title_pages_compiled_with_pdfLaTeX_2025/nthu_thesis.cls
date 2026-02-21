@@ -44,8 +44,8 @@
 \setmonofont[Color={0019D4}]{Courier New} %Everything to be formatted with a monospaced (typewriter-like)
 
 
-% Set font for Traditional Chinese and alternative  % AR PL KaitiM GB for 文鼎 PL 中楷
-\setCJKmainfont{TW-Kai}
+% Set font for Traditional Chinese — 使用 kaiu.ttf（標楷體）
+\setCJKmainfont[AutoFakeBold=3,AutoFakeSlant=.4]{kaiu.ttf}
 
 % Set language to Traditional Chinese explicitly
  % ctexset configurationra
@@ -107,7 +107,7 @@
 \xeCJKsetup{CJKglue=\hskip 0.2em plus 0.1em minus 0.1em} % set spacing between chinese characters and latin
 
 
-\usepackage[ieee]{biblatex}  %  參考文獻 這裡用 IEEE bibliography style here, can be change to plain (science), alpha, and abbrv, apa，ieeetr
+\usepackage[style=ieee]{biblatex}  %  參考文獻 這裡用 IEEE bibliography style here, can be change to plain (science), alpha, and abbrv, apa，ieeetr
 \addbibresource{back/references.bib}
 \usepackage[english]{babel}   %needed for above line
 
@@ -161,6 +161,19 @@
 \usepackage[absolute,overlay]{textpos}
 
 \usepackage{enumitem} % Ensure proper handling of enumerate environments
+
+% 校徽浮水印
+\usepackage{wallpaper}
+
+% cleveref 中文交叉引用格式（須在 hyperref 之後載入）
+\usepackage{cleveref}
+\crefformat{figure}{圖~#2#1#3~}
+\crefformat{table}{表~#2#1#3~}
+\crefformat{equation}{~(#2#1#3)~式}
+\crefformat{chapter}{第#2\chinese{#1}#3章}
+\crefformat{section}{~#2#1#3~節}
+\crefformat{subsection}{~#2#1#3~小節}
+\crefformat{appendix}{附錄~#2#1#3~}
 
 
 
