@@ -52,9 +52,8 @@ Thesis/
 # ===== 工作區暫存/恢復快照 =====
 .claude/recovery_snapshots/
 
-# 1.1 對照文字：只保留 curated 版本
-.claude/ch1_review/references/*.txt
-!.claude/ch1_review/references/*_1_1_curated.txt
+# Ch1 review working files
+.claude/ch1_review/references/
 .claude/ch1_review/paper_refs/
 
 # 英文模板編譯輸出

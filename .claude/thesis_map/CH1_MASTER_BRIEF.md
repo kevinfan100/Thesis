@@ -1,103 +1,189 @@
-# CH1 Master Brief
+# Thesis Argument Canon (Single Source of Truth)
 
-This is the single reading entry for Chapter 1 planning and execution.
+Last updated: 2026-02-22  
+Owner: Kevin + Codex
 
-## 1. Thesis Positioning
+## 0. Purpose and Priority
 
-This thesis uses a Hall-sensor-based hexapole electromagnetic actuator and focuses on a control-centric chain:
+This is the highest-priority thesis-argument file for this project.
 
-`System Identification -> Flux Control -> Force Generation`
-
-The goal is not only to report final performance, but to provide a quantitative and reproducible analysis framework that explains why each layer-level design choice is effective.
-
-## 2. Prior Baseline (Condensed)
-
-| Year | Baseline result | Reference |
-|---|---|---|
-| 2011 | Hexapole design + current-based force model | \cite{zhang2011design} |
-| 2021 | Optimal current allocation for over-actuated force production | \cite{long2021optimal} |
-| 2022 | Hall-sensor-based force model and inverse model | \cite{long2022hallsensor} |
-| 2023 | Ultra-precise high-speed untethered manipulation | \cite{meng2023ultraprecise} |
-| 2024 | High-bandwidth flux control and piconewton force control | \cite{meng2024piconewton} |
-
-## 3. Research Gaps (Three locked gaps)
-
-1. Identification gap: limited systematic discussion of fitting sensitivity, model-quality metrics, and cross-configuration consistency in 6x6 identification.
-2. Flux-control gap: limited component-level comparison between PI and model-based control (disturbance observer, feedback law, prefilter).
-3. Force-generation gap: limited quantitative analysis of how command scheduling and nonlinear transfer propagate into force-accuracy and bandwidth limits.
-
-## 4. Objective and Scope
-
-Primary objective: build a decision-complete analysis path from identification to force output, with quantitative traceability.
-
-Scope includes:
-- 6x6 system identification workflow and quality evaluation.
-- Inner-loop flux-control comparison (PI vs model-based).
-- Force-generation accuracy and bandwidth bottleneck analysis.
-- FPGA-oriented implementation consistency.
-
-Out of primary scope:
-- Outer-loop motion control as the central contribution of Ch.1 (kept as downstream context).
-
-## 5. Contribution Statements (with metrics hooks)
-
-1. Reproducible 6x6 identification workflow with quality checks and cross-configuration comparison.
-   Metrics hook: fitting residual, phase residual, repeatability.
-2. Component-level flux-control analysis with PI baseline.
-   Metrics hook: closed-loop bandwidth, cross-coupling suppression, tracking error.
-3. Force-generation scheduling and nonlinear transfer analysis.
-   Metrics hook: force amplitude error, THD-related distortion, effective bandwidth.
-4. FPGA implementation alignment with design predictions.
-   Metrics hook: sim-to-hardware response consistency.
-
-## 6. Ch.1 Three-Section Logic
-
-1.1 Background and Motivation:
-- Context -> platform relevance -> prior baseline -> gap definition.
-
-1.2 Research Objective and Scope:
-- RQs -> methods -> metrics -> boundaries.
-
-1.3 Dissertation Overview:
-- chapter-to-question and chapter-to-evidence mapping.
-
-## 7. Chapter-to-Evidence Mapping
-
-- Ch.2: modeling foundation.
-- Ch.3: RQ1 (identification workflow + model quality).
-- Ch.4: RQ2 (PI vs model-based flux control).
-- Ch.5: RQ3 (force-generation scheduling + bottlenecks).
-- Ch.6: implementation and experiment-aligned verification.
-- Ch.7: motion-control extension context.
-- Ch.8: conclusions and validated claims.
-
-## 8. Terminology Standard (English-first)
-
-Use English terms as primary forms, with Chinese support at first mention.
-
-| Primary English term | Chinese support | Acronym | Avoid |
-|---|---|---|---|
-| System Identification | 系統鑑別 | ID | system modeling (when you mean ID process) |
-| Flux Control | 磁通控制 | - | magnetic control (too broad) |
-| Force Generation | 力生成 | - | force control (unless specifically outer-loop) |
-| Over-actuated | 過驅動 | - | redundant only (without actuator context) |
-| Cross-coupling | 通道耦合 | - | coupling effect (too vague) |
-| Ringing zero | 振盪零點 | - | unstable zero (not always precise here) |
-| Disturbance Observer | 擾動觀測器 | DOB | disturbance estimator (unless estimator is explicitly defined) |
-| Bandwidth | 頻寬 | BW | speed (as metric replacement) |
-
-Writing rules:
-1. First mention: `English term（中文）`.
-2. Later mentions: English as primary, Chinese only when clarification is needed.
-3. Avoid unquantified strong claims such as "significant" or "optimal" unless metrics are provided.
-
-## 9. Next Step
-
-1. Finalize Ch.1 section-by-section using this master brief.
-2. Only after Ch.1 claims are locked, derive Abstract by compression.
-3. Do not introduce new claims in Abstract.
+Rules:
+1. If any chapter draft conflicts with this file, this file wins.
+2. New ideas must be merged into this file before large text rewrites.
+3. Chapter writing must follow the claim-evidence structure defined here.
 
 ---
 
-Archived detailed planning files are kept in:
-`/.claude/thesis_map/archived/`
+## 1. Locked Thesis Tone (定調)
+
+Core tone:
+1. Prior work already demonstrated strong end-performance.
+2. This thesis does not re-argue feasibility by repeating performance showcase.
+3. This thesis makes design objectives and decision logic explicit, then verifies them through traceable evidence.
+
+In one sentence:
+`The thesis contribution is not "more performance numbers," but "an explicit, goal-oriented, and verifiable design logic from observed phenomena to control outcomes."`
+
+---
+
+## 2. Core Problem Statement
+
+The key gap is a missing attribution chain between:
+1. What is physically observed in the actuator.
+2. What model representation is extracted.
+3. Why a specific control design is selected.
+4. What measurable outcome is improved.
+5. What physical meaning that improvement implies for operation.
+
+This missing chain prevents objective-level reasoning and reproducible design decisions, and is exactly where this thesis positions its value.
+
+---
+
+## 3. Contribution Hierarchy (Locked)
+
+## 3.1 Primary Contribution A (Main)
+
+Construct a control-oriented identification logic from open-loop calibration:
+1. Observe coupling, hysteresis/bias, and frequency-response nonlinearity from open-loop experiments.
+2. Build 36 FRF sets via fundamental-component extraction (FFT-based pipeline).
+3. Convert representation to a controller-usable form: shared 2nd-order dynamics + channel-dependent DC gains (`\mathbf{B}`).
+4. Use weighted fitting to prioritize low-frequency model fidelity for control-relevant behavior.
+
+Value:
+1. Turns identification from "fit result reporting" into "design-relevant model extraction."
+2. Provides physically meaningful model structure for downstream control reasoning.
+
+## 3.2 Primary Contribution B (Main)
+
+Build a cross-layer causal chain:
+`Identification -> Flux Control -> Force Generation`
+
+Value:
+1. Every major design choice has measurable downstream impact.
+2. End-performance can be explained by component-level and layer-level evidence.
+
+## 3.3 Primary Contribution C (Main)
+
+Define evaluation logic based on control relevance, not only global fitting score.
+
+Value:
+1. "Good identification" is judged by usefulness for control prediction and design decisions.
+2. The thesis can explain why model mismatch matters (or does not matter) for specific control objectives.
+
+## 3.4 Secondary Contribution D (Supporting, not main axis)
+
+Engineering and workflow consolidation (automation/integration/tooling/HMI/FPGA pipeline).
+
+Value:
+1. Improves reproducibility and operational efficiency.
+2. Supports the main scientific contribution, but is not the primary novelty claim.
+
+---
+
+## 4. Boundary and Claim Strength
+
+Claim boundary:
+1. Main claims are supported at tested operating conditions and available evidence range.
+2. Avoid early universal/generalized claims across all possible configurations.
+
+Allowed claim style:
+1. `evidence supports`
+2. `consistent with`
+3. `at the tested operating point`
+
+Avoid:
+1. `universal`
+2. `always`
+3. `fully general`
+
+---
+
+## 5. Ch.1 Writing Responsibilities (Locked)
+
+## 5.1 Ch1.1 Background and Motivation
+
+Must do:
+1. Problem context and system relevance.
+2. Prior baseline and current gap.
+3. Why the missing attribution chain matters.
+4. Why ID is a natural starting point for this thesis logic.
+
+Should not overdo:
+1. Full technical details of your implementation pipeline.
+2. Full contribution bullet-proofing (belongs to Ch1.2).
+3. Detailed method internals and derivations (belong to later chapters).
+
+## 5.2 Ch1.2 Research Objective and Scope
+
+Must do:
+1. Explicitly define research objectives and research questions.
+2. State primary vs secondary contributions.
+3. Define scope, metrics direction, and claim boundary.
+4. Clarify what is not the central contribution.
+
+## 5.3 Ch1.3 Dissertation Overview
+
+Must do:
+1. Chapter-to-question mapping.
+2. Chapter-to-evidence mapping.
+3. Make verification path visible before readers enter methods chapters.
+
+---
+
+## 6. Identification Narrative Blueprint (for Ch1.1 + Ch3 consistency)
+
+Recommended sequence:
+1. Open-loop calibration reveals physical phenomena.
+2. Fundamental-component FRF extraction yields comparable data.
+3. 36-channel behavior is represented in a controller-usable reduced structure.
+4. Low-frequency-priority weighted fitting aligns with control objectives.
+5. Identification output is interpreted by downstream design relevance.
+
+Important integration rule:
+1. In Ch1.1, mention digital-control issues naturally but do not force hard-layer boundaries in wording.
+2. Detailed discretization treatment appears naturally when flux-control logic is introduced.
+
+---
+
+## 7. Traceability Checklist (Use for every key claim)
+
+Each key claim must answer all five:
+1. Observable fact: what was measured or observed?
+2. Modeling meaning: what does it represent physically/systemically?
+3. Design decision: what action was taken because of that meaning?
+4. Evidence/metric: how is impact verified?
+5. Limitation: under what condition is this statement valid?
+
+If one item is missing, claim is incomplete.
+
+---
+
+## 8. Terminology and Notation (Locked)
+
+Keep consistent:
+1. `Optimal Current Allocation`
+2. `Optimal Flux Allocation`
+3. `\mathbf{u}, \mathbf{v}_m, \mathbf{v}_d, \mathbf{f}_d, \mathbf{B}, \boldsymbol{\Phi}`
+
+Style:
+1. English term first; Chinese as support.
+2. One concept, one wording.
+3. No inflated claim words without metrics.
+
+---
+
+## 9. Immediate Next Writing Plan
+
+1. Freeze this canon as the reference before further chapter edits.
+2. Finish Ch1.1 with background/gap logic first (avoid overloading contributions here).
+3. Move detailed contribution framing to Ch1.2.
+4. After Ch1 is stable, derive Abstract by compression only (no new claims).
+
+---
+
+## 10. Change Log
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-02-21 | Rebuilt as thesis argument canon; locked contribution hierarchy and Ch1 responsibilities | Prevent thesis drift and maintain one stable argument baseline |
+| 2026-02-22 | Shifted wording to explicit objective/goal framing in Ch1.1 argument baseline | Align motivation with "design intent, tradeoff explanation, and reproducible decisions" |
