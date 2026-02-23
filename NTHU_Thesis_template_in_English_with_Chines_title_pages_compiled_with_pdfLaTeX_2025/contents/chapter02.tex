@@ -1,45 +1,41 @@
 % !TeX root = ../main.tex
 
-\chapter{System Overview and Analysis Framework}
+\chapter{System Overview and Unified Development Framework}
 
-\section{Hexapole Electromagnetic Platform}
+\section{Hexapole Actuation Platform}
 
-The platform considered in this dissertation is a Hall-sensor-based hexapole electromagnetic actuator for precision manipulation in aqueous solution. The actuator uses six independently driven poles to generate the magnetic field and magnetic-field gradient in a three-dimensional workspace. Because the force objective is three-dimensional while actuation is six-dimensional, the system is over-actuated and requires explicit allocation logic for practical control design.
+This dissertation considers a Hall-sensor-based hexapole electromagnetic actuator for precision manipulation in aqueous solution. The platform uses six independently driven poles to generate magnetic flux and magnetic-field gradients in a three-dimensional workspace. Because force objectives are three-dimensional while actuation is six-dimensional, the system is over-actuated and requires explicit allocation and control logic.
 
-From an engineering perspective, the platform combines high-force authority, non-contact operation, and compatibility with microscope-based experiments. These properties make it suitable for high-speed untethered manipulation, provided that magnetic-flux generation and multi-axis interaction are properly controlled.
+From an engineering perspective, the platform combines non-contact operation, strong force authority, and microscope compatibility. These properties make it suitable for high-speed untethered manipulation when flux generation and multi-axis interaction are properly handled.
 
-\section{Sensing and Force-Production Chain}
+\section{End-to-End Control Chain}
 
-The physical chain starts from actuation commands, proceeds through magnetic-flux generation at pole tips, and ends at force production on the magnetic probe. Hall-sensor measurements provide real-time information for closed-loop flux regulation, while force output is obtained through the flux-based force-production path.
+The physical and computational chain considered in this work starts from actuation commands, proceeds through magnetic-flux generation, and ends at force output on the probe. Hall-sensor measurements provide the core feedback channel for closed-loop flux regulation, and the force-generation stage maps control outputs to task-level force behavior.
 
-For dissertation-level analysis, this chain is treated as a causal pipeline rather than independent modules. Upstream uncertainty in flux generation directly influences downstream force quality. Therefore, system identification, inner-loop flux control, and force-generation analysis are developed as connected threads.
+For dissertation-level reasoning, this chain is treated as one connected pipeline rather than isolated blocks. Upstream uncertainty and design decisions can propagate to downstream force quality, so each stage must be interpreted in relation to the full chain.
 
-\section{Layered Control Architecture}
+\section{Development-Process Structuring Blueprint (Pillar A)}
 
-The control architecture is organized into three layers:
+The first equal-weight pillar is process structuring. Chapter 2 defines a reusable blueprint for developing hexapole-form tweezers:
 
-\textbf{Layer 1: System identification.}
-Open-loop calibration data are used to capture channel coupling, remanence/hysteresis-related effects, and dynamic behavior relevant to control design.
+1. establish platform and measurement context;
+2. extract control-use model information from calibration data;
+3. design and validate flux-control structure;
+4. evaluate force-generation quality under design choices;
+5. close the chain with cross-layer interpretation.
 
-\textbf{Layer 2: Flux control.}
-The inner loop regulates magnetic flux generation and addresses multi-axis interaction, disturbance effects, and bandwidth requirements for precision actuation.
+This blueprint makes stage boundaries explicit and keeps design decisions traceable from observation to final force behavior.
 
-\textbf{Layer 3: Force generation.}
-Desired force behavior is rendered through allocation and scheduling decisions, and evaluated by main-axis quality and cross-axis interaction.
+\section{Workflow Automation Interfaces (Pillar B)}
 
-This layered architecture defines the technical backbone of this thesis and provides a direct map to Chapters 3 through 5.
+The second equal-weight pillar is workflow automation. Chapter 2 defines where automation is integrated into the blueprint:
 
-\section{Shared Analysis and Validation Strategy}
+1. identification-stage repeatable processing and fitting flow;
+2. control-stage simulation-and-tuning loop after identification;
+3. stage-to-stage data handoff for force-generation validation.
 
-To keep interpretation consistent across chapters, this dissertation uses a shared analysis strategy:
+These interfaces are defined to reduce development burden and improve reproducibility when deploying the framework on additional hexapole-form platforms.
 
-1. Start from observable physical behavior.
-2. Convert observations into design-relevant model information.
-3. Evaluate design choices by both simulation and experiment in the same thread.
-4. Interpret outcomes by physical meaning and cross-layer impact.
+\section{Chapter Interface to Chapters 3--5}
 
-This strategy is used to ensure that each reported performance change can be traced back to a specific design decision.
-
-\section{Scope of Chapter 2}
-
-Chapter 2 establishes the common language and system context for the rest of the dissertation. Detailed identification procedures are presented in Chapter 3, flux-control design and comparison in Chapter 4, and force-generation analysis with integrated validation in Chapter 5.
+Chapter 2 provides the common language and unified framework for the remaining technical chapters. Chapter 3 develops the identification thread, Chapter 4 develops the flux-control thread, and Chapter 5 develops the force-generation thread and closes the cross-layer evidence chain.
