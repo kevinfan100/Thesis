@@ -1,6 +1,6 @@
 # Thesis Argument Canon (Single Source of Truth)
 
-Last updated: 2026-02-23 (late)  
+Last updated: 2026-02-23 (late-3)  
 Owner: Kevin + Codex
 
 ## 0. Purpose and Priority
@@ -19,10 +19,10 @@ Rules:
 Core tone:
 1. Prior work already demonstrated strong end-performance.
 2. This thesis does not re-argue feasibility by repeating performance showcase.
-3. This thesis makes design tradeoffs explicit and reproduces decision logic, then verifies them through traceable evidence.
+3. This thesis gives equal-weight emphasis to development-process structuring and workflow automation, then verifies both through traceable evidence.
 
 In one sentence:
-`The thesis contribution is not "more performance numbers," but "clear explanation of design tradeoffs and reproducible decision logic from observed phenomena to control outcomes."`
+`The thesis contribution is not "more performance numbers," but "a reusable development process and an automation-enabled workflow for hexapole-form tweezers, validated through a traceable ID->Flux->Force evidence chain."`
 
 ---
 
@@ -41,60 +41,59 @@ This missing chain prevents objective-level reasoning and reproducible design de
 
 ## 3. Contribution Hierarchy (Locked)
 
-## 3.1 Primary Contribution A (Main)
+## 3.1 Primary Contribution A (Main, Equal Weight)
 
-Construct a control-oriented identification logic from open-loop calibration:
-1. Observe coupling, hysteresis/bias, and frequency-response nonlinearity from open-loop experiments.
-2. Build 36 FRF sets via fundamental-component extraction (FFT-based pipeline).
-3. Convert representation to a controller-usable form: shared 2nd-order dynamics + channel-dependent DC gains (`\mathbf{B}`).
-4. Use weighted fitting to prioritize low-frequency model fidelity for control-relevant behavior.
-
-Value:
-1. Turns identification from "fit result reporting" into "design-relevant model extraction."
-2. Provides physically meaningful model structure for downstream control reasoning.
-
-## 3.2 Primary Contribution B (Main)
-
-Build a cross-layer causal chain:
-`Identification -> Flux Control -> Force Generation`
+Development-process structuring as a reusable blueprint:
+1. Decompose the full development path into explicit stages from open-loop calibration to force-output validation.
+2. Preserve physical interpretation at each stage so design decisions are explainable.
+3. Keep the chain explicit as:
+   `Identification -> Flux Control -> Force Generation`.
 
 Value:
-1. Every major design choice has measurable downstream impact.
-2. End-performance can be explained by component-level and layer-level evidence.
+1. Reduces development ambiguity for new hexapole-form tweezer platforms.
+2. Converts tacit implementation experience into an explicit engineering path.
 
-## 3.3 Primary Contribution C (Main)
+## 3.2 Primary Contribution B (Main, Equal Weight)
 
-Define evaluation logic based on control relevance, not only global fitting score.
-
-Value:
-1. "Good identification" is judged by usefulness for control prediction and design decisions.
-2. The thesis can explain why model mismatch matters (or does not matter) for specific control objectives.
-
-## 3.4 Secondary Contribution D (Supporting, not main axis)
-
-Engineering and workflow consolidation (automation/integration/tooling/HMI/FPGA pipeline).
+Workflow automation as a practical enabler:
+1. Automate repeatable identification operations in a fixed pipeline.
+2. Provide a simulation-and-tuning environment for flux control once identification is completed.
+3. Connect automated outputs to downstream force-generation validation.
 
 Value:
-1. Improves reproducibility and operational efficiency.
-2. Supports the main scientific contribution, but is not the primary novelty claim.
+1. Lowers development difficulty and entry barrier.
+2. Improves reproducibility and iteration speed across platforms.
+
+## 3.3 Technical Realization Thread (Mainline)
+
+Use ID/Flux/Force as the technical realization of the two primary contributions:
+1. ID stage: extract design-relevant model information from calibration data.
+2. Flux stage: analyze control design tradeoffs and decoupling behavior.
+3. Force stage: evaluate downstream quality under allocation/scheduling choices.
+
+Value:
+1. Ensures that process structuring and automation are grounded in verifiable control evidence.
+2. Maintains one continuous causal chain for chapter-level validation.
 
 ---
 
 ## 4. Boundary and Claim Strength
 
 Claim boundary:
-1. Main claims are supported at tested operating conditions and available evidence range.
-2. Avoid early universal/generalized claims across all possible configurations.
+1. Main claims target hexapole-form tweezers and are not limited to one specific machine implementation.
+2. Claims are supported by tested operating conditions and available evidence range.
+3. Generalization is asserted at framework/workflow level; implementation details may vary by hardware.
 
 Allowed claim style:
 1. `evidence supports`
 2. `consistent with`
 3. `at the tested operating point`
+4. `generalizable to hexapole-form tweezers with compatible architecture`
 
 Avoid:
-1. `universal`
+1. `universal across all actuation systems`
 2. `always`
-3. `fully general`
+3. `fully general without architectural conditions`
 
 ---
 
@@ -116,10 +115,11 @@ Should not overdo:
 ## 5.2 Ch1.2 Research Objective and Scope
 
 Must do:
-1. Explicitly define research objectives and research questions.
-2. State primary vs secondary contributions.
-3. Define scope, metrics direction, and claim boundary.
-4. Clarify what is not the central contribution.
+1. Explicitly define one overall objective with two equal-weight primary pillars:
+   process structuring + workflow automation.
+2. Keep three technical aims (ID/Flux/Force) as implementation of the two pillars.
+3. State simulation and experiment as same-thread evidence in each aim.
+4. Define scope, claim boundary, and what is out of scope.
 
 ## 5.3 Ch1.3 Dissertation Overview
 
@@ -191,6 +191,7 @@ Style:
 | 2026-02-23 | Added Flux Control round-1 inventory and Force Generation discussion status | Build full cross-layer discussion map before unified Ch1 rewrite |
 | 2026-02-23 (late) | Locked user decisions for Flux discussion scope and deferred validations | Keep Ch1 planning stable before simulation/experiment completion |
 | 2026-02-23 (late-2) | Updated Ch1 wording policy: avoid explicit pending-bandwidth statement and treat B-decoupling comparison as validated evidence | Align chapter tone with latest user decision |
+| 2026-02-23 (late-3) | Switched Ch1 strategy to two equal-weight pillars (process structuring + workflow automation) with strong framework-level generalization | Align thesis motivation with latest locked user direction |
 
 ---
 
