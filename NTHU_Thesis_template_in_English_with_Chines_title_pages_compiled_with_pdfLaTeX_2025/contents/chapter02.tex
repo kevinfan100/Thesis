@@ -1,59 +1,45 @@
 % !TeX root = ../main.tex
 
-\chapter{材料與方法}
-本章需詳述研究設計與執行細節，確保他人能驗證或重現，提供研究的可信度與科學基礎。
+\chapter{System Overview and Analysis Framework}
 
-\section{內容要素:}
-研究構想與原理:
-闡述方法的理論基礎，如物理原理或數學模型。
-實驗設計:
-\begin{itemize}
-    \item 描述硬體、軟體、材料來源、樣品製備、測量流程等細節。
-   \item 數據分析：說明數據處理與分析方法，如統計工具或演算法。
-   \item 方法合理性與新穎性：解釋方法選擇的理由及其創新之處。
-   \item 視覺輔助：使用示意圖、流程圖或表格清晰呈現方法。
+\section{Hexapole Electromagnetic Platform}
 
-\end{itemize}
+The platform considered in this dissertation is a Hall-sensor-based hexapole electromagnetic actuator for precision manipulation in aqueous solution. The actuator uses six independently driven poles to generate the magnetic field and magnetic-field gradient in a three-dimensional workspace. Because the force objective is three-dimensional while actuation is six-dimensional, the system is over-actuated and requires explicit allocation logic for practical control design.
 
-\section{撰寫建議：}
-\begin{itemize}
-    \item 內容具體且可重現，避免模糊描述。
-    \item 若方法改進自文獻，需明確說明改進點並引用來源。
-    \item 針對複雜方法，可分小節撰寫，確保邏輯清晰。
-    \item 對於理論或質性研究，可詳細描述理論框架、資料來源或分析流程。
-\end{itemize}
+From an engineering perspective, the platform combines high-force authority, non-contact operation, and compatibility with microscope-based experiments. These properties make it suitable for high-speed untethered manipulation, provided that magnetic-flux generation and multi-axis interaction are properly controlled.
 
+\section{Sensing and Force-Production Chain}
 
-\section{插入圖片表格的方法}
-\subsection{使用 graphicx 套件插入圖片}
+The physical chain starts from actuation commands, proceeds through magnetic-flux generation at pole tips, and ends at force production on the magnetic probe. Hall-sensor measurements provide real-time information for closed-loop flux regulation, while force output is obtained through the flux-based force-production path.
 
-一般使用插圖的方式與格式，請參考overleaf 等說明。這裡舉一例，如圖~\ref{React}，要輸入圖文說明，並注意與修改大小等，平衡美觀與清晰問題。為了讓圖目次不會將全部圖說都塞進去，中括弧中[~]只寫圖的簡短標籤，大括弧{~}中才是全部的圖說明。
- 
-圖~\ref{React} 畫出表面上的碘覆蓋量 $\theta$ 隨~$I_2$ 曝氣量的變化。覆蓋量是由掃描穿隧效應顯微鏡取的的影像計算獲得的。.....
+For dissertation-level analysis, this chain is treated as a causal pipeline rather than independent modules. Upstream uncertainty in flux generation directly influences downstream force quality. Therefore, system identification, inner-loop flux control, and force-generation analysis are developed as connected threads.
 
-\begin{figure}[h]
-\centering
-\includegraphics[width=.6\textwidth]{figures/ReactProbability.png}
-\caption[Relative probabilities for various new adsorption configurations]{Relative probabilities for various new adsorption configurations as the iodine coverage on Si(100) increases from 0.10 to 0.14 ML. Type-I, type-II and type-M are new adsorption sites fully surrounded by dangling bonds. In double adsorptions, a new adsorption takes place next to an existing type-I or type-II adsorption site as the schematic models display.}
-\label{React}
-\end{figure}
+\section{Layered Control Architecture}
 
+The control architecture is organized into three layers:
 
-插入表格示範如表~\ref{tab:my_label}，複雜的型態，請自行參閱~LaTeX~語法。 
+\textbf{Layer 1: System identification.}
+Open-loop calibration data are used to capture channel coupling, remanence/hysteresis-related effects, and dynamic behavior relevant to control design.
 
+\textbf{Layer 2: Flux control.}
+The inner loop regulates magnetic flux generation and addresses multi-axis interaction, disturbance effects, and bandwidth requirements for precision actuation.
 
-\begin{table}
-    \centering
-    %\begin{tabular}{ |p{2cm}||p{1.5cm}|p{1.5cm}|  }
-    \begin{tabular}{ |c|c|c| } 
-        \hline
-        Structure  & 1 & 2\\
-         \hline
-         E& 2.0 & 3.8\\
-          \hline
-         H &  6.5 & 8.4 \\
-    \hline
-\end{tabular}
-    \caption [Short version for LoF: Atomic arrangements and interaction energies]{Atomic arrangements and interaction energies for mixed adsorbates A and B in a $4\times4$ unit cell on Si(100). The energy for ($2\times1-p$),  E8, AB, is the mean of the two energies for A- and B-terminated ($2\times1$) structure, respectively. }
-    \label{tab:my_label}
-\end{table}
+\textbf{Layer 3: Force generation.}
+Desired force behavior is rendered through allocation and scheduling decisions, and evaluated by main-axis quality and cross-axis interaction.
+
+This layered architecture defines the technical backbone of this thesis and provides a direct map to Chapters 3 through 5.
+
+\section{Shared Analysis and Validation Strategy}
+
+To keep interpretation consistent across chapters, this dissertation uses a shared analysis strategy:
+
+1. Start from observable physical behavior.
+2. Convert observations into design-relevant model information.
+3. Evaluate design choices by both simulation and experiment in the same thread.
+4. Interpret outcomes by physical meaning and cross-layer impact.
+
+This strategy is used to ensure that each reported performance change can be traced back to a specific design decision.
+
+\section{Scope of Chapter 2}
+
+Chapter 2 establishes the common language and system context for the rest of the dissertation. Detailed identification procedures are presented in Chapter 3, flux-control design and comparison in Chapter 4, and force-generation analysis with integrated validation in Chapter 5.

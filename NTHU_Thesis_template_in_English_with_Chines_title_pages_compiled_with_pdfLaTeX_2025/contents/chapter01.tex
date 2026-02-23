@@ -2,39 +2,47 @@
 
 \section{Background and Motivation}
 
-Accurate force generation and measurement at pico- to nano-Newton levels are essential for probing living cells and observing biological processes in aqueous solution. For this class of application, precision alone is not sufficient. The system must also preserve dynamic stability at high speed, suppress cross-axis interaction, and provide repeatable control behavior under practical operating conditions.
+Accurate force generation and measurement at pico- to nano-Newton levels are essential for probing living cells and monitoring active biological processes in aqueous solution. For this class of application, force precision alone is not sufficient. A practical system must also maintain stable high-speed operation, suppress channel interaction, and provide repeatable closed-loop behavior.
 
-Among modern probing platforms, magnetic actuation is attractive because it enables remote and non-contact force generation with minimal optical burden. A Hall-sensor-based hexapole electromagnetic actuator further extends this capability to three-dimensional force control in an over-actuated configuration. Prior studies have already demonstrated key milestones, including the transition from current-based allocation to flux-based allocation, high-bandwidth flux regulation, and pico-Newton-level force control.
+Scanning-probe-based technologies have enabled major progress in mechanobiology. Atomic force microscopy provides high-resolution force sensing and topography measurement, but practical throughput can become limited when dense three-dimensional probing is required over samples with large topographic variation.
 
-The remaining need is not another feasibility demonstration. The need is to clarify why the achieved performance is physically and systematically reasonable. In other words, the central motivation of this dissertation is to make the design rationale explicit: what tradeoffs are made, what problem each design step addresses, and how each step is verified.
+Optical trapping is another powerful approach for micro-scale manipulation in fluidic environments. However, its practical deployment may face constraints in probe specificity, operational robustness, and sustained force authority under experimental conditions relevant to long-duration biological studies.
 
-This motivation starts from open-loop calibration of magnetic flux generation in the hexapole actuator. The measured responses indicate channel coupling, uncertainties caused by magnetic remanence and hysteresis, and frequency-dependent behavior in both gain and phase. These uncertainties become more pronounced when larger forces are required, which directly affects force-generation accuracy. Therefore, the investigation is organized as a linked chain from system identification to flux control and force generation, rather than as separate tasks.
+Magnetic actuation is attractive in this context because it enables remote, non-contact force generation with low optical burden. A Hall-sensor-based hexapole electromagnetic actuator extends this capability to three-dimensional force production in an over-actuated architecture. Prior studies have already established strong technical baselines, including current-based and flux-based allocation frameworks, high-bandwidth flux regulation, and pico-Newton-level force control.
 
-Guided by these observations, this dissertation builds a traceable control chain from physical phenomena to model construction, from model construction to controller design, and from controller design to force-generation quality. The intended outcome is not only high performance, but also a reproducible decision path that explains why the performance is achieved and how it can be extended with confidence for ultra-precise high-speed untethered manipulation in aqueous solution.
+The remaining need is therefore not another demonstration that high performance is possible. The key need is to explain why the achieved performance is physically and systematically justified. In this dissertation, the central motivation is to make the design rationale explicit: what tradeoffs are made, what physical issue each step addresses, and how each effect is verified.
+
+This motivation starts from open-loop calibration of magnetic flux generation in the hexapole actuator. The measured responses indicate channel coupling, uncertainties caused by magnetic remanence and hysteresis, and frequency-dependent deviations in both magnitude and phase. These observed deviations affect the consistency between commanded and realized flux dynamics and can propagate to force-generation error if they are not explicitly addressed in the control design.
+
+Guided by these observations, this dissertation adopts a linked investigation from system identification to flux control and force generation. The intended outcome is a traceable and reproducible decision path that explains how performance is obtained and how the framework can be extended with confidence for ultra-precise high-speed untethered manipulation in aqueous solution.
+
+In this thesis, the primary emphasis is the stepwise decomposition of this control chain and the physical interpretation of each design decision. Workflow reproducibility and process structuring are treated as supporting contributions that strengthen implementation and reuse.
 
 \section{Research Objective and Scope}
 
 The objective of this dissertation is to establish a traceable control-oriented framework for Hall-sensor-based hexapole actuation, and to show how design decisions propagate from model construction to final force behavior. The scope focuses on control-system design, analysis, and validation for magnetic manipulation in aqueous solution.
 
 \textbf{Aim 1: System identification for control use.}
-This aim establishes an identification workflow that converts open-loop physical observations into model information suitable for controller design. The investigation emphasizes how coupling, hysteresis-related behavior, and dynamic characteristics are represented for decision making. Simulation and experimental evidence are presented together in the same chapter to evaluate both model consistency and control relevance.
+This aim establishes an identification workflow that converts open-loop physical observations into model information suitable for controller design. The key question is how coupling, hysteresis-related behavior, and dynamic characteristics should be represented for design decisions. Simulation and experimental evidence are presented together in the same thread to evaluate both model consistency and control relevance.
 
 \textbf{Aim 2: Flux-control design and tradeoff analysis.}
-This aim studies inner-loop flux control from a design-tradeoff perspective, including baseline PI control and model-based control structures. The focus is on physical interpretation of each control element and on decoupling quality in multi-axis operation. Simulation and experimental results are reported together to show where prediction and measured behavior agree or diverge, and why.
+This aim studies inner-loop flux control from a design-tradeoff perspective, including baseline PI control and model-based control structures. The key question is which controller element addresses which physical issue and how this affects multi-axis decoupling quality. Simulation and experimental results are reported together to show where prediction and measured behavior agree or diverge, and why.
 
 \textbf{Aim 3: Force-generation quality analysis.}
-This aim examines the force-generation chain with emphasis on decoupling behavior, scheduling effects, and force-quality indicators. The purpose is to explain how upstream design choices affect downstream force output in a physically interpretable way. Simulation and experimental results are presented together within this thread rather than separated into a standalone result-only section.
+This aim examines the force-generation chain with emphasis on decoupling behavior, scheduling effects, and force-quality indicators. The key question is how upstream design choices constrain downstream force output quality. Simulation and experimental results are presented together within this thread rather than separated into a standalone result-only section.
 
-The primary contribution is the explicit explanation of design tradeoffs and reproducible decision logic across the three aims. Workflow integration and automation are treated as supporting contributions. Claims are made under tested operating conditions, and broad biological interpretation is outside the scope of this dissertation.
+Across the three aims, the primary contribution is the explicit explanation of design tradeoffs through a traceable and physically interpretable decision path. Workflow integration, automation, and process reproducibility are supporting contributions. Claims are made under tested operating conditions, and broad biological interpretation is outside the scope of this dissertation.
 
 \section{Dissertation Overview}
 
-This dissertation is organized as follows. Chapter 1 introduces the background, motivation, objective, scope, and the three technical aims. Chapter 2 presents the modeling foundation required for subsequent control development, including force representation, allocation logic, and sensing relationships.
+This dissertation is organized as follows. Chapter 1 introduces the background, motivation, objective, scope, and the three technical aims.
 
-Chapter 3 develops the control-oriented system-identification thread and explains how open-loop observations are converted into design-relevant model information. Simulation and experimental analyses are presented in parallel to support interpretation.
+Chapter 2 presents the full system overview, including the hexapole actuation platform, sensing and force-production chain, layered control architecture, and the shared analysis framework used throughout this thesis.
 
-Chapter 4 presents the flux-control thread, including baseline and model-based designs, component-level reasoning, and multi-axis decoupling behavior. Simulation and experimental evidence are discussed together in the same technical context.
+Chapter 3 develops the system-identification thread and explains how open-loop observations are converted into model information for control design. Simulation and experimental analyses are presented together in the same technical context.
 
-Chapter 5 presents the force-generation thread and analyzes how allocation and scheduling choices influence force quality and cross-axis behavior. Simulation and experimental results are presented together to preserve causal interpretation across the chain.
+Chapter 4 presents the flux-control thread, including baseline and model-based designs, component-level interpretation, and multi-axis decoupling behavior. Simulation and experimental evidence are discussed together for direct comparison with design intent.
 
-Chapter 6 summarizes implementation-level integration and cross-layer validation. Chapter 7 discusses system-level extension and application-oriented implications. Chapter 8 concludes the dissertation and outlines future directions.
+Chapter 5 presents the force-generation thread and analyzes how allocation and scheduling choices influence force quality and cross-axis behavior. The chapter also integrates cross-layer validation and closes with concluding remarks and future directions.
+
+Together, Chapters 3 through 5 provide one continuous evidence chain from observed actuator behavior to model choice, controller design, and final force-output quality.
