@@ -2,48 +2,44 @@
 
 \section{Background and Motivation}
 
-Accurate force generation and measurement at pico- to nano-Newton levels are essential for probing living cells and monitoring active biological processes in aqueous solution. For this class of application, force precision alone is not sufficient. A practical system must also maintain stable high-speed operation, suppress channel interaction, and provide repeatable closed-loop behavior.
+Accurate force generation and measurement at pico- to nano-Newton levels are essential for probing living cells and monitoring active biological processes in aqueous solution. For this class of application, force precision alone is not sufficient. A practical system must also sustain high-speed operation, suppress channel interaction, and maintain repeatable closed-loop behavior.
 
 Scanning-probe-based technologies have enabled major progress in mechanobiology. Atomic force microscopy provides high-resolution force sensing and topography measurement \cite{binnig1986afm}. Optical tweezers provide powerful micro-scale manipulation capability \cite{ashkin1986observation}. Comparative reviews also show that each technology has practical strengths and limitations in force authority, dynamic operation, and experimental constraints \cite{neuman2008singlemolecule,gosse2002magnetic,devlaminck2012magnetic}.
 
-Within magnetic manipulation, the hexapole electromagnetic approach has established strong technical baselines \cite{zhang2011design,long2021optimal,long2022hallsensor,meng2023ultraprecise,meng2024piconewton}. In this line of development, major advances were achieved on one continuously evolved platform, with substantial mathematical derivation and platform-specific implementation effort.
+Within magnetic manipulation, the hexapole electromagnetic approach has established strong technical baselines \cite{zhang2011design,long2021optimal,long2022hallsensor,meng2023ultraprecise,meng2024piconewton}. In this line of development, major advances were achieved on one continuously evolved platform with substantial derivation effort and platform-specific implementation.
 
-Therefore, the remaining need is not another feasibility demonstration. The key need is to convert this accumulated know-how into a development path that can be reused beyond one machine. In this dissertation, the motivation is to make the design rationale explicit: what tradeoffs are made, what physical issue each step addresses, and how each effect is verified.
+Therefore, the remaining need is not another feasibility demonstration. The key need is to convert accumulated know-how into a reusable development route beyond one machine configuration. In this dissertation, the motivation is to make design rationale explicit: what tradeoffs are made, what physical issue each step addresses, and how each effect is verified.
 
-The first primary motivation is to structure the full development process as an explicit and reusable blueprint for hexapole-form tweezers. Instead of isolated performance reports, the workflow is decomposed into connected stages so that design intent and validation logic can be traced from stage to stage.
+This need is directly linked to engineering complexity in practical development. The actuator is over-actuated and coupled, magnetic behavior includes remanence- and hysteresis-related uncertainty, and measurement quality is affected by drift, vibration, and electromagnetic interference. Without a clear stage-by-stage logic, these factors are difficult to interpret consistently and difficult to transfer to new development efforts.
 
-The second primary motivation is to automate this workflow to reduce development difficulty and entry barrier. Concretely, identification should be executable through a fixed procedure, and flux-control development should be supported by an accessible simulation-and-tuning environment once the identified model is available.
+The target of this thesis is automation-oriented development. To make automation meaningful, the workflow must first be decomposed into traceable stages with explicit interfaces and physically interpretable validation criteria. In other words, automation is treated as an objective that requires a well-defined and verifiable development chain as its prerequisite.
 
-These two motivations are treated with equal weight in this thesis. The target value is a development framework that is not limited to one specific hardware build, but can be transferred to other hexapole-form tweezer platforms with compatible architecture.
+With this viewpoint, the framework is positioned to be generalizable to Hall-sensor-based hexapole magnetic tweezers with compatible architecture, while claims are still grounded in tested operating conditions.
 
-Guided by these motivations, this dissertation follows one linked technical chain: system identification, flux control, and force generation. This chain provides the evidence path for explaining not only what performance is achieved, but also why the result is achieved and how the development process can be reproduced.
+Guided by this motivation, this dissertation follows one linked technical chain: system identification, flux control, and force generation. This chain provides the evidence path for explaining not only what performance is achieved, but also why the result is achieved, how decisions are reproduced, and how automation is supported in practice.
 
 \section{Research Objective and Scope}
 
-The objective of this dissertation is to establish a generalizable development framework for hexapole-form magnetic tweezers, with equal emphasis on process structuring and workflow automation, while preserving control-oriented validation quality from model construction to force output.
-
-\textbf{Pillar A (Equal Weight): Development-process structuring.}
-This pillar formalizes the end-to-end development path as a reusable blueprint, so that each stage has explicit inputs, outputs, and design purpose.
-
-\textbf{Pillar B (Equal Weight): Workflow automation.}
-This pillar turns key stages into repeatable operations, especially in identification and control-design iteration, to lower development difficulty and accelerate adoption.
+The objective of this dissertation is to establish a generalizable automation framework for Hall-sensor-based hexapole magnetic tweezers by constructing and validating a traceable control-development chain from model construction to force output.
 
 \textbf{Aim 1: System identification for control use.}
-This aim establishes an identification workflow that converts open-loop physical observations into model information suitable for controller design. The key question is how coupling, hysteresis-related behavior, and dynamic characteristics should be represented for design decisions. Simulation and experimental evidence are presented together in the same thread to evaluate both model consistency and control relevance.
+This aim establishes an identification workflow that converts open-loop physical observations into model information suitable for controller design. The key question is how coupling, hysteresis-related behavior, and dynamic characteristics should be represented for design decisions. Simulation and experimental evidence are presented in the same thread to evaluate both model consistency and control relevance.
 
 \textbf{Aim 2: Flux-control design and tradeoff analysis.}
-This aim studies inner-loop flux control from a design-tradeoff perspective, including baseline PI control and model-based control structures. The key question is which controller element addresses which physical issue and how this affects multi-axis decoupling quality. Simulation and experimental results are reported together to show where prediction and measured behavior agree or diverge, and why.
+This aim studies inner-loop flux control from a design-tradeoff perspective, including baseline PI control and model-based control structures. The key question is which controller element addresses which physical issue and how this affects multi-axis decoupling quality. Simulation and experimental evidence are presented in the same thread for direct comparison with design intent.
 
 \textbf{Aim 3: Force-generation quality analysis.}
-This aim examines the force-generation chain with emphasis on decoupling behavior, scheduling effects, and force-quality indicators. The key question is how upstream design choices constrain downstream force output quality. Simulation and experimental results are presented together within this thread rather than separated into a standalone result-only section.
+This aim examines the force-generation chain with emphasis on decoupling behavior, scheduling effects, and force-quality indicators. The key question is how upstream design choices constrain downstream force output quality. Simulation and experimental evidence are presented in the same thread rather than separated into a standalone result-only section.
 
-Across the three aims, the main contribution is the equal-weight realization of the two pillars through one technical evidence chain. Claims are made under tested operating conditions, and broad biological interpretation is outside the scope of this dissertation.
+The scope of this dissertation focuses on control-oriented workflow construction, validation logic, and automation interfaces for Hall-sensor-based hexapole magnetic tweezers. Mechatronic integration is included as enabling evidence required for reproducible calibration and closed-loop validation.
+
+The overall purpose is to establish a generalizable and reproducible automation framework grounded in tested operating conditions and compatible architecture assumptions.
 
 \section{Dissertation Overview}
 
-This dissertation is organized as follows. Chapter 1 defines the motivation, objective, scope, and equal-weight pillars of process structuring and automation.
+This dissertation is organized as follows. Chapter 1 defines the motivation, objective, scope, and claim boundary of the automation-oriented framework.
 
-Chapter 2 presents the full system overview and unified development framework, including platform context, chain structure, and automation interfaces used in later chapters.
+Chapter 2 presents the system overview and workflow interfaces, including mechatronic enabling conditions, signal/control data paths, calibration-to-model interfaces, and automation interfaces used in later chapters.
 
 Chapter 3 develops the system-identification thread and demonstrates how open-loop observations are transformed into control-use model information. Simulation and experimental analyses are presented together in the same technical context.
 

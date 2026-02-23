@@ -2,40 +2,34 @@
 
 \chapter{System Overview and Unified Development Framework}
 
-\section{Hexapole Actuation Platform}
+\section{Mechatronic Platform and Enabling Conditions}
 
-This dissertation considers a Hall-sensor-based hexapole electromagnetic actuator for precision manipulation in aqueous solution. The platform uses six independently driven poles to generate magnetic flux and magnetic-field gradients in a three-dimensional workspace. Because force objectives are three-dimensional while actuation is six-dimensional, the system is over-actuated and requires explicit allocation and control logic.
+This dissertation considers a Hall-sensor-based hexapole electromagnetic actuator for precision manipulation in aqueous solution. The platform uses six independently driven poles to generate magnetic flux and magnetic-field gradients in a three-dimensional workspace. Because force objectives are three-dimensional while actuation is six-dimensional, the system is over-actuated and requires explicit allocation and control logic \cite{zhang2011design,long2021optimal,long2022hallsensor}.
 
-From an engineering perspective, the platform combines non-contact operation, strong force authority, and microscope compatibility. These properties make it suitable for high-speed untethered manipulation when flux generation and multi-axis interaction are properly handled.
+The implementation environment integrates the electromagnetic actuator, Hall-sensor measurement channels, power-amplifier chain, microscope-based visual measurement, FPGA real-time processing, and PC-side operation software. From an engineering perspective, this mechatronic integration is treated as an enabling layer for reproducible control development, not as a separate primary contribution axis.
 
-\section{End-to-End Control Chain}
+For this reason, the following conditions are explicitly controlled in the workflow: measurement stability under thermal drift and low-frequency vibration, electromagnetic interference suppression in sensing channels, and reliable operation interfaces for repeatable experiment execution. These conditions define whether downstream identification and control validation can be interpreted consistently.
 
-The physical and computational chain considered in this work starts from actuation commands, proceeds through magnetic-flux generation, and ends at force output on the probe. Hall-sensor measurements provide the core feedback channel for closed-loop flux regulation, and the force-generation stage maps control outputs to task-level force behavior.
+\section{End-to-End Signal and Control Data Path}
 
-For dissertation-level reasoning, this chain is treated as one connected pipeline rather than isolated blocks. Upstream uncertainty and design decisions can propagate to downstream force quality, so each stage must be interpreted in relation to the full chain.
+The physical and computational chain considered in this work starts from command generation, proceeds through magnetic-flux actuation and sensing, and ends at force output behavior on the probe. Hall-sensor channels provide core feedback for inner-loop flux regulation, while visual tracking channels provide motion-related measurement for system operation and validation context.
 
-\section{Development-Process Structuring Blueprint (Pillar A)}
+Two interfaces are emphasized at this chapter level. First, the command path links controller outputs to DAC/amplifier/coil actuation. Second, the measurement path links Hall-sensor and visual-tracking outputs to synchronized estimation and logging paths in FPGA/PC processing.
 
-The first equal-weight pillar is process structuring. Chapter 2 defines a reusable blueprint for developing hexapole-form tweezers:
+Visual tracking is intentionally treated at interface level in this chapter: its role, signal timing, and effective resolution/latency implications for control interpretation are specified, but algorithmic derivation is deferred. This keeps Chapter 2 focused on system interfaces rather than method internals.
 
-1. establish platform and measurement context;
-2. extract control-use model information from calibration data;
-3. design and validate flux-control structure;
-4. evaluate force-generation quality under design choices;
-5. close the chain with cross-layer interpretation.
+\section{Calibration-to-Model Interface}
 
-This blueprint makes stage boundaries explicit and keeps design decisions traceable from observation to final force behavior.
+To support downstream control design, open-loop calibration data are converted into control-use model information through a fixed interface. The interface includes frequency-sweep data acquisition, stable-period extraction, frequency-domain component construction, and model fitting with low-frequency-priority weighting for control relevance.
 
-\section{Workflow Automation Interfaces (Pillar B)}
+The resulting model artifacts are defined as reusable handoff objects for subsequent design stages. This chapter keeps the interface definition explicit, while detailed identification analysis, fitting behavior, and validation evidence are developed in Chapter 3.
 
-The second equal-weight pillar is workflow automation. Chapter 2 defines where automation is integrated into the blueprint:
+\section{Automation Interfaces for Design Iteration}
 
-1. identification-stage repeatable processing and fitting flow;
-2. control-stage simulation-and-tuning loop after identification;
-3. stage-to-stage data handoff for force-generation validation.
+Automation is integrated through explicit stage interfaces rather than ad hoc scripts. Identification-stage processing is organized as a repeatable pipeline. After model handoff, flux-control design is connected to a simulation-and-tuning loop with defined inputs and outputs. Force-generation validation then consumes these outputs through standardized stage-to-stage interfaces.
 
-These interfaces are defined to reduce development burden and improve reproducibility when deploying the framework on additional hexapole-form platforms.
+The practical objective of these interfaces is to reduce development effort while preserving traceability of design decisions. Automation claims are therefore tied to interface reproducibility and evidence continuity across stages.
 
-\section{Chapter Interface to Chapters 3--5}
+\section{Chapter Bridge and Evidence Contract}
 
-Chapter 2 provides the common language and unified framework for the remaining technical chapters. Chapter 3 develops the identification thread, Chapter 4 develops the flux-control thread, and Chapter 5 develops the force-generation thread and closes the cross-layer evidence chain.
+Chapter 2 establishes the common language and interface contract for the remaining technical chapters. Chapter 3 develops the identification thread, Chapter 4 develops the flux-control thread, and Chapter 5 develops the force-generation thread with cross-layer validation and concluding remarks. Together, these chapters form one continuous evidence chain from observed behavior to model choice, design decision, and force-output quality.

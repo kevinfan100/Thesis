@@ -1,21 +1,29 @@
-\chapter{討論}
+\chapter{Flux Control Design and Validation}
 
-本章旨在分析與解釋結果，探討其學術與實務意義，並與文獻比較，凸顯研究的價值。
-    
-\section{內容要素：}
-\begin{itemize}
-    \item 結果解釋：闡述結果的科學或實務意義，回答研究問題。
-    \item 文獻比較：將結果與先前研究對比，突出本研究的獨特性或一致性。
-    \item 局限性分析：誠實討論研究的限制，如樣本大小或方法局限。
-    \item 影響與應用：探討結果對學術、產業或其他領域的貢獻。
-    \item 未來方向：提出後續研究或應用的具體建議。
-\end{itemize}
+\section{Chapter Objective and Interface from Identification}
 
-\section{撰寫建議：}
-\begin{itemize}
-    \item 結構化討論，先解釋結果，再比較文獻，最後談影響與局限。
-    \item 避免誇大成果，保持客觀與科學態度。
-    \item 用具體數據或文獻支持論點，增強說服力。
-    \item 若不知如何開始，可先列出結果與研究問題的對應關係，再展開分析。
+This chapter develops the flux-control stage based on the control-use model obtained in Chapter 3. The objective is to translate identified dynamics into practical controller design and to quantify how design choices affect bandwidth, decoupling behavior, and robustness under tested operating conditions.
 
-\end{itemize}
+\section{Flux-Control Problem Definition and Design Targets}
+
+This section defines the inner-loop control problem, including tracking objective, decoupling requirement, disturbance sensitivity, and target dynamic behavior. These targets provide a common basis for comparing controller structures in the rest of this chapter.
+
+\section{Baseline PI Control Design and Initial Validation}
+
+This section presents the baseline PI design path and its expected behavior from model-based prediction. Simulation and experimental results are used together to identify where baseline design is sufficient and where performance limitations emerge.
+
+\section{Model-Based Control with Disturbance Rejection}
+
+This section develops the model-based control structure, including disturbance-rejection elements and design parameters that shape closed-loop behavior. The emphasis is on design rationale, not only performance display, so each control component is linked to a specific physical issue.
+
+\section{Component-Level Interpretation and Decoupling Analysis}
+
+This section compares controller structures at component level and interprets their effects on coupling suppression, tracking behavior, and sensitivity to model mismatch. The analysis provides the causal link required for downstream force-generation interpretation.
+
+\section{Simulation and Experimental Validation}
+
+This section provides paired simulation and experimental validation across representative test conditions. The results show where predicted and measured behavior are consistent and establish the validated controller outputs that will be consumed by Chapter 5.
+
+\section{Chapter Summary and Interface to Chapter 5}
+
+This chapter concludes with the accepted flux-control configuration and its validated behavior envelope. It then defines the interface handoff to the force-generation stage, including which outputs are treated as trusted inputs for force-quality analysis.

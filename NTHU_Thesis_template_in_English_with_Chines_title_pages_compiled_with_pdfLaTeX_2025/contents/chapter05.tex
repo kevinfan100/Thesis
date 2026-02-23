@@ -1,20 +1,25 @@
-\chapter{結論}
+\chapter{Force Generation, Cross-Layer Validation, and Conclusions}
 
-結論章節為全文的收斂，旨在重申研究動機與核心發現，總結貢獻，強化論文影響力，避免重複前文措辭。
+\section{Chapter Objective and Interface from Flux Control}
 
-\section{內容要素：}
-\begin{itemize}
-    \item 重述研究目標與主要結果，強調其重要性。
-    \item 總結研究對學術或實務的貢獻。
-    \item 提出未來研究的具體建議或應用方向。
+This chapter develops the force-generation stage using validated outputs from the flux-control stage. The objective is to evaluate how upstream identification and control decisions influence downstream force quality and operational behavior in a traceable manner.
 
-\end{itemize}
+\section{Force-Generation Interface and Allocation Logic}
 
-\section{撰寫建議：}
-\begin{itemize}
-    \item 語言簡潔有力，突出研究價值。
-    \item 回應緒論中的研究問題，形成首尾呼應。
-    \item 避免引入新數據或未提及的觀點。
-    \item 可展望研究的長期影響，如對政策、產業或學術發展的潛在作用。
+This section defines the force-generation interface from desired task-level force behavior to actuator-level command variables. The emphasis is on interface consistency, allocation logic, and implementation assumptions required for reproducible operation.
 
-\end{itemize}
+\section{Force-Quality Criteria and Scheduling Context}
+
+This section defines force-quality criteria used in this dissertation, including main-axis quality, cross-axis interaction behavior, and scheduling-related response characteristics. The criteria are selected to support control-oriented interpretation and chapter-to-chapter comparability.
+
+\section{Simulation and Experimental Validation of Force Output}
+
+This section presents simulation and experimental validation in the same technical thread to assess force-generation behavior under representative operating conditions. The goal is to verify whether force output quality is consistent with the intended design chain from identification and flux control.
+
+\section{Cross-Layer Attribution: Identification to Flux to Force}
+
+This section closes the evidence chain by attributing force-level outcomes to upstream decisions and validated interfaces. The discussion focuses on what is causally supported by evidence under tested conditions, and how this attribution supports reproducible development.
+
+\section{Conclusions and Future Directions}
+
+This section summarizes the dissertation-level contribution as an automation-oriented and control-grounded development framework for Hall-sensor-based hexapole magnetic tweezers. It also outlines practical next steps for extending the framework in future studies while preserving traceability and reproducibility.

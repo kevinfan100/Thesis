@@ -1,6 +1,6 @@
 # Thesis Argument Canon (Single Source of Truth)
 
-Last updated: 2026-02-23 (late-3)  
+Last updated: 2026-02-23 (late-4)  
 Owner: Kevin + Codex
 
 ## 0. Purpose and Priority
@@ -19,10 +19,10 @@ Rules:
 Core tone:
 1. Prior work already demonstrated strong end-performance.
 2. This thesis does not re-argue feasibility by repeating performance showcase.
-3. This thesis gives equal-weight emphasis to development-process structuring and workflow automation, then verifies both through traceable evidence.
+3. This thesis treats automation as the objective, and process structuring/verification as the prerequisite that makes automation credible and reusable.
 
 In one sentence:
-`The thesis contribution is not "more performance numbers," but "a reusable development process and an automation-enabled workflow for hexapole-form tweezers, validated through a traceable ID->Flux->Force evidence chain."`
+`The thesis contribution is not "more performance numbers," but "a generalizable automation framework for Hall-sensor-based hexapole tweezers, established through a traceable ID->Flux->Force development chain."`
 
 ---
 
@@ -41,38 +41,38 @@ This missing chain prevents objective-level reasoning and reproducible design de
 
 ## 3. Contribution Hierarchy (Locked)
 
-## 3.1 Primary Contribution A (Main, Equal Weight)
+## 3.1 Primary Contribution (Main)
 
-Development-process structuring as a reusable blueprint:
-1. Decompose the full development path into explicit stages from open-loop calibration to force-output validation.
+Automation-oriented development framework:
+1. Define a reusable automation target for Hall-sensor-based hexapole tweezers.
+2. Construct explicit stage interfaces so calibration/model/control outputs can be reused and transferred.
+3. Make automation evidence-driven instead of tool-demo-driven.
+
+Value:
+1. Lowers development barrier for new hexapole-form platforms.
+2. Makes deployment and iteration less dependent on tacit expert knowledge.
+
+## 3.2 Enabling Contribution (Supporting the main contribution)
+
+Process structuring and traceability:
+1. Decompose the full development path from open-loop calibration to force-output validation.
 2. Preserve physical interpretation at each stage so design decisions are explainable.
 3. Keep the chain explicit as:
    `Identification -> Flux Control -> Force Generation`.
 
 Value:
-1. Reduces development ambiguity for new hexapole-form tweezer platforms.
-2. Converts tacit implementation experience into an explicit engineering path.
-
-## 3.2 Primary Contribution B (Main, Equal Weight)
-
-Workflow automation as a practical enabler:
-1. Automate repeatable identification operations in a fixed pipeline.
-2. Provide a simulation-and-tuning environment for flux control once identification is completed.
-3. Connect automated outputs to downstream force-generation validation.
-
-Value:
-1. Lowers development difficulty and entry barrier.
-2. Improves reproducibility and iteration speed across platforms.
+1. Converts implementation experience into an explicit engineering path.
+2. Provides a verification scaffold that supports automation validity claims.
 
 ## 3.3 Technical Realization Thread (Mainline)
 
-Use ID/Flux/Force as the technical realization of the two primary contributions:
+Use ID/Flux/Force as the technical realization of the automation framework:
 1. ID stage: extract design-relevant model information from calibration data.
 2. Flux stage: analyze control design tradeoffs and decoupling behavior.
 3. Force stage: evaluate downstream quality under allocation/scheduling choices.
 
 Value:
-1. Ensures that process structuring and automation are grounded in verifiable control evidence.
+1. Ensures that automation is grounded in verifiable control evidence.
 2. Maintains one continuous causal chain for chapter-level validation.
 
 ---
@@ -115,18 +115,21 @@ Should not overdo:
 ## 5.2 Ch1.2 Research Objective and Scope
 
 Must do:
-1. Explicitly define one overall objective with two equal-weight primary pillars:
-   process structuring + workflow automation.
-2. Keep three technical aims (ID/Flux/Force) as implementation of the two pillars.
+1. Explicitly define one overall objective as:
+   `generalizable automation framework for Hall-sensor-based hexapole magnetic tweezers`.
+2. Keep three technical aims (ID/Flux/Force) as implementation of this objective.
 3. State simulation and experiment as same-thread evidence in each aim.
-4. Define scope, claim boundary, and what is out of scope.
+4. Define scope and boundary:
+   control/workflow in scope, biological interpretation out of scope.
 
 ## 5.3 Ch1.3 Dissertation Overview
 
 Must do:
 1. Chapter-to-question mapping.
 2. Chapter-to-evidence mapping.
-3. Make verification path visible before readers enter methods chapters.
+3. Keep the fixed 5-chapter mapping:
+   Ch1 motivation/scope, Ch2 system/workflow interfaces, Ch3 ID, Ch4 Flux, Ch5 Force with cross-layer validation.
+4. Make verification path visible before readers enter methods chapters.
 
 ---
 
@@ -142,6 +145,15 @@ Recommended sequence:
 Important integration rule:
 1. In Ch1.1, mention digital-control issues naturally but do not force hard-layer boundaries in wording.
 2. Detailed discretization treatment appears naturally when flux-control logic is introduced.
+
+---
+
+## 6A. Ch2 Integration Depth Rule (Locked)
+
+Visual tracking is treated as an enabling measurement interface in Ch2:
+1. Include role, signal interface, delay/resolution impact, and drift/vibration/EMI mitigation.
+2. Do not include tracking algorithm derivation or tracking-only method comparison in Ch2.
+3. Keep Ch2 as an interface chapter; method depth belongs to later technical chapters only when directly tied to control evidence.
 
 ---
 
@@ -191,7 +203,8 @@ Style:
 | 2026-02-23 | Added Flux Control round-1 inventory and Force Generation discussion status | Build full cross-layer discussion map before unified Ch1 rewrite |
 | 2026-02-23 (late) | Locked user decisions for Flux discussion scope and deferred validations | Keep Ch1 planning stable before simulation/experiment completion |
 | 2026-02-23 (late-2) | Updated Ch1 wording policy: avoid explicit pending-bandwidth statement and treat B-decoupling comparison as validated evidence | Align chapter tone with latest user decision |
-| 2026-02-23 (late-3) | Switched Ch1 strategy to two equal-weight pillars (process structuring + workflow automation) with strong framework-level generalization | Align thesis motivation with latest locked user direction |
+| 2026-02-23 (late-3) | Switched Ch1 strategy to dual-pillar framing (process structuring + workflow automation) with strong framework-level generalization | Align thesis motivation with latest locked user direction |
+| 2026-02-23 (late-4) | Reframed to automation-first single storyline and locked Ch2 visual-tracking depth as interface-level | Align thesis framing with professor-report-based narrative and current writing policy |
 
 ---
 

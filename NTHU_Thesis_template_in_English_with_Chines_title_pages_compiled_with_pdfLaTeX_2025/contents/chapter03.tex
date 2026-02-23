@@ -1,21 +1,29 @@
-\chapter{結果}
+\chapter{System Identification for Control-Oriented Development}
 
-本章專注呈現研究數據與分析成果，透過圖表輔助說明，作為論文的實證基礎。
-\section{內容要素：}
-\begin{itemize}
-    \item 數據呈現：按邏輯順序展示重要數據，輔以圖表（如曲線圖、柱狀圖）。
-    \item 圖表說明：每張圖表需有清晰標題與說明，確保獨立可讀。
-    \item 成果介紹：依圖表順序逐一描述數據，突出與研究目標相關的發現。
-    \item 重大成就：強調研究的關鍵成果及其對研究問題的回應。
+\section{Chapter Objective and Evidence Contract}
 
-\end{itemize}
+This chapter develops the system-identification stage of the thesis workflow. The objective is to convert open-loop observations into model information that is directly usable for control design and downstream force-generation analysis. The evidence contract of this chapter is to present simulation and experimental results in the same thread, so model quality is assessed by control relevance rather than by fitting score alone.
 
-這裡測試插入參考資訊~\cite{doi:10.1021/jp211439d,PhysRevB.83.075403}。
+\section{Open-Loop Calibration Context and Data Interface}
 
-\section{撰寫建議：}
-\begin{itemize}
-    \item 僅呈現數據，避免過多解釋或推論（留待討論章節）。
-    \item 圖表設計規範（清晰標籤、適當比例），與正文一致。
-    \item 按研究目標或假設順序組織數據，增強邏輯性。
-    \item 簡述數據的可靠性和再現性（如重複實驗次數或誤差範圍）。
-\end{itemize}
+This section defines the calibration context used in this dissertation, including excitation protocol, measurement channels, operating conditions, and data acquisition interface. The purpose is to make the identification input reproducible and to clarify what uncertainty sources are present before controller design begins.
+
+\section{Frequency-Response Construction and Observable Phenomena}
+
+This section describes how frequency-domain information is constructed from calibration data and how key physical phenomena are interpreted at this stage, including coupling behavior, remanence- and hysteresis-related effects, and frequency-dependent response variation. The focus is on observable evidence and its relevance to model structure selection.
+
+\section{Control-Use Model Structure and Reduction Logic}
+
+This section presents the model representation used for control development and the reduction logic that maps detailed channel behavior into a controller-usable form. The objective is to preserve physically meaningful coupling information while keeping a practical interface for the control-design stage.
+
+\section{Fitting Strategy and Control-Relevant Quality Criteria}
+
+This section defines the fitting strategy and quality criteria used in identification, with emphasis on low-frequency control relevance and predictable downstream behavior. The criteria are organized to support later design decisions in flux control and force generation.
+
+\section{Simulation and Experimental Validation}
+
+This section provides paired simulation and experimental validation for the identification stage. The reported results verify consistency between modeled behavior and measured behavior under tested operating conditions, and establish the handoff artifacts required by Chapter 4.
+
+\section{Chapter Summary and Interface to Chapter 4}
+
+This chapter concludes by summarizing what model information is accepted for control design, what uncertainty remains, and how identification outputs are passed to the flux-control stage. This closes the first link of the ID-to-Flux-to-Force evidence chain.
