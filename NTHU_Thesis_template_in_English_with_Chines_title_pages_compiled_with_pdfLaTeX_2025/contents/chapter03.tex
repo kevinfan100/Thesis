@@ -1,29 +1,65 @@
-\chapter{System Identification of Hexapole Magnetic Flux Dynamics}
+\chapter{System Identification of Magnetic Flux Generation Dynamics}
 
-\section{Chapter Objective and Evidence Contract}
+\section{Introduction}
 
-This chapter develops the system-identification stage of the thesis workflow. The objective is to convert open-loop observations into model information that is directly usable for control design and downstream force-generation analysis. The evidence contract of this chapter is to present simulation and experimental results in the same thread, so model quality is assessed by control relevance rather than by fitting score alone.
+This chapter develops the system-identification stage of the dissertation and converts open-loop calibration measurements into model information that can be used directly for flux-control design. The chapter follows the Hall-sensor-based hexapole modeling direction established in prior work, while reorganizing the identification path into a reusable and automation-ready workflow \cite{long2022hallsensor,meng2024piconewton}.
 
-\section{Open-Loop Calibration Context and Data Interface}
+The technical emphasis is control-oriented model usability rather than fitting score alone. The target is to preserve coupling structure and control-relevant dynamic behavior from measured data, so that downstream design decisions in Chapter 4 can be explained and reproduced.
 
-This section defines the calibration context used in this dissertation, including excitation protocol, measurement channels, operating conditions, and data acquisition interface. The purpose is to make the identification input reproducible and to clarify what uncertainty sources are present before controller design begins.
+\section{Automated Open-Loop Calibration Workflow}
 
-\section{Frequency-Response Construction and Observable Phenomena}
+Open-loop calibration is executed using an automated processing chain implemented in the Openloop\_Cali package. The workflow consists of: sweep excitation and synchronized data logging, steady-state window detection, super-period frequency-domain conversion, dominant-component extraction, and fitting-stage data assembly.
 
-This section describes how frequency-domain information is constructed from calibration data and how key physical phenomena are interpreted at this stage, including coupling behavior, remanence- and hysteresis-related effects, and frequency-dependent response variation. The focus is on observable evidence and its relevance to model structure selection.
+For each excitation frequency, the dominant response component is used to construct amplitude-ratio and phase-lag data. THD and loop-shape diagnostics are retained as auxiliary indicators of nonlinearity, but the model-construction path remains focused on the dominant component used for control-oriented linearization at the tested operating condition.
 
-\section{Control-Use Model Structure and Reduction Logic}
+This automation stage removes case-by-case manual preprocessing and creates a consistent data interface for comparing fitting strategies. As a result, identification outputs can be regenerated and traced under the same processing assumptions.
 
-This section presents the model representation used for control development and the reduction logic that maps detailed channel behavior into a controller-usable form. The objective is to preserve physically meaningful coupling information while keeping a practical interface for the control-design stage.
+\section{Frequency-Response Construction and Key Dynamic Observations}
 
-\section{Fitting Strategy and Control-Relevant Quality Criteria}
+The calibration experiments produce six-output responses under each single-input excitation. Repeating this for all six inputs yields a six-by-six response structure that exposes coupling among channels and provides the data basis for model construction.
 
-This section defines the fitting strategy and quality criteria used in identification, with emphasis on low-frequency control relevance and predictable downstream behavior. The criteria are organized to support later design decisions in flux control and force generation.
+\subsection{Dominant-Component Extraction and Bias Handling}
 
-\section{Simulation and Experimental Validation}
+Remanence-related bias and phase offset are visible in raw open-loop measurements. To obtain comparable response data, the identification process uses dominant-frequency extraction and phase-offset normalization before model fitting. This treatment does not assume globally linear actuator physics; it provides a control-usable local representation for the tested condition.
 
-This section provides paired simulation and experimental validation for the identification stage. The reported results verify consistency between modeled behavior and measured behavior under tested operating conditions, and establish the handoff artifacts required by Chapter 4.
+\subsection{Coupling, Hysteresis-Related Behavior, and Usable Bandwidth Clues}
 
-\section{Chapter Summary and Interface to Chapter 4}
+The measured responses show three key characteristics: channel coupling, remanence/hysteresis-related effects, and frequency-dependent amplitude-ratio and phase-lag variation. These observations provide practical clues for model-design priorities, including low-frequency fidelity inside the intended control bandwidth and explicit retention of coupling behavior for multi-axis control design.
 
-This chapter concludes by summarizing what model information is accepted for control design, what uncertainty remains, and how identification outputs are passed to the flux-control stage. This closes the first link of the ID-to-Flux-to-Force evidence chain.
+\section{Dynamic Modeling of Magnetic Flux Generation}
+
+Based on the identified response data, this chapter adopts two complementary fitting paths to build a control-usable model structure.
+
+\subsection{One-Curve Weighted Fitting for Channel-Wise Dynamics}
+
+The first path fits each channel pair independently using a second-order model with low-frequency-priority weighting:
+\begin{equation}
+H_{ij}(s) = \frac{b_{ij}}{s^{2} + a_{1,ij}s + a_{2,ij}} .
+\end{equation}
+This path provides channel-level interpretability and serves as a transparent baseline for checking fitting behavior across all 36 channel pairs.
+
+\subsection{Multi-Curve Weighted Fitting for Shared Dynamics and Coupling Structure}
+
+The second path jointly fits all channel pairs and extracts shared dynamics with a coupling matrix:
+\begin{equation}
+\mathbf{H}(s) = \frac{A_{2}}{s^{2} + A_{1}s + A_{2}}\,\mathbf{B}.
+\end{equation}
+Here, $\mathbf{B}$ preserves relative coupling and gain distribution across channels, while the shared second-order dynamics provide a compact representation for controller design iteration.
+
+\subsection{Final Identified Model for Control Development}
+
+The model selected for downstream use is the shared-dynamics-plus-coupling representation, because it balances structural compactness and coupling fidelity for six-input six-output control design. The output of this chapter is therefore a continuous-time identified model and associated parameter set that can be directly consumed by the flux-control design workflow.
+
+Discrete-time transformation and closed-loop synthesis are intentionally deferred to Chapter 4, where digital-control design choices are introduced in their proper context.
+
+\section{Validation for Control Design Use}
+
+Validation in this chapter is defined by control-development usefulness: whether the identified model reproduces measured amplitude-ratio and phase-lag behavior within the control-relevant frequency range and preserves coupling tendencies needed for multi-axis design decisions.
+
+Simulation and experiment are used together under the same identification assumptions to check consistency between predicted and measured trends. The outcome of this validation is a justified model interface for Chapter 4, not a standalone end-performance claim.
+
+\section{Summary}
+
+This chapter established an automated and traceable identification workflow from open-loop calibration to model extraction. The resulting model captures coupling and dominant dynamics in the control-relevant range and provides the model basis for flux-control design in Chapter 4.
+
+At the dissertation level, this chapter completes the first technical stage of the automation objective: turning measured actuator behavior into reusable and controller-ready model artifacts.
