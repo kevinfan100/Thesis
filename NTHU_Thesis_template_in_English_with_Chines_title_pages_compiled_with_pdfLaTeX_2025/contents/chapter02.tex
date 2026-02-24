@@ -2,34 +2,67 @@
 
 \chapter{System Overview and Unified Development Framework}
 
-\section{Mechatronic Platform and Enabling Conditions}
+\section{Introduction}
 
-This dissertation considers a Hall-sensor-based hexapole electromagnetic actuator for precision manipulation in aqueous solution. The platform uses six independently driven poles to generate magnetic flux and magnetic-field gradients in a three-dimensional workspace. Because force objectives are three-dimensional while actuation is six-dimensional, the system is over-actuated and requires explicit allocation and control logic \cite{zhang2011design,long2021optimal,long2022hallsensor}.
+This chapter establishes the system-level foundation of the dissertation. The objective is to define the platform architecture, force-model interface, and implementation context used in later chapters. Detailed derivations and performance comparisons are intentionally deferred to Chapter 3 through Chapter 5.
 
-The implementation environment integrates the electromagnetic actuator, Hall-sensor measurement channels, power-amplifier chain, microscope-based visual measurement, FPGA real-time processing, and PC-side operation software. From an engineering perspective, this mechatronic integration is treated as an enabling layer for reproducible control development, not as a separate primary contribution axis.
+The chapter is organized as follows. Section 2.2 introduces the Hall-sensor-based hexapole electromagnetic actuator platform. Section 2.3 presents the core force-model interfaces used throughout the control-development chain. Section 2.4 describes mechatronic and optical integration, including FPGA-PC operation and experiment workflow. Section 2.5 summarizes how this system foundation supports subsequent technical development.
 
-For this reason, the following conditions are explicitly controlled in the workflow: measurement stability under thermal drift and low-frequency vibration, electromagnetic interference suppression in sensing channels, and reliable operation interfaces for repeatable experiment execution. These conditions define whether downstream identification and control validation can be interpreted consistently.
+\section{Hexapole Electromagnetic Actuating System}
 
-\section{End-to-End Signal and Control Data Path}
+This dissertation considers a Hall-sensor-based hexapole electromagnetic actuator for precision manipulation in aqueous solution. The system uses six independently driven poles connected through a common magnetic yoke. Because force objectives are three-dimensional while actuation is six-dimensional, the platform is over-actuated and requires explicit allocation and control design \cite{zhang2011design,long2021optimal,long2022hallsensor}.
 
-The physical and computational chain considered in this work starts from command generation, proceeds through magnetic-flux actuation and sensing, and ends at force output behavior on the probe. Hall-sensor channels provide core feedback for inner-loop flux regulation, while visual tracking channels provide motion-related measurement for system operation and validation context.
+From a control perspective, the platform is treated as a six-input six-output magnetic-flux generation system with coupling among channels. Hall-sensor measurements are embedded in the actuation loop, so downstream control decisions are based on measured magnetic variables rather than current command alone. This architecture provides the physical basis for the thesis chain from system identification to flux control and force generation.
 
-Two interfaces are emphasized at this chapter level. First, the command path links controller outputs to DAC/amplifier/coil actuation. Second, the measurement path links Hall-sensor and visual-tracking outputs to synchronized estimation and logging paths in FPGA/PC processing.
+At this stage, the chapter focuses on architecture-level description and shared physical definitions. Detailed model fitting, controller synthesis, and force-quality interpretation are developed in later chapters.
 
-Visual tracking is intentionally treated at interface level in this chapter: its role, signal timing, and effective resolution/latency implications for control interpretation are specified, but algorithmic derivation is deferred. This keeps Chapter 2 focused on system interfaces rather than method internals.
+\section{Hexapole Force Modeling}
 
-\section{Calibration-to-Model Interface}
+This section provides the minimum set of force-model interfaces required by the dissertation. The purpose is to define common mathematical objects and signal mappings used across chapters, without expanding full derivations.
 
-To support downstream control design, open-loop calibration data are converted into control-use model information through a fixed interface. The interface includes frequency-sweep data acquisition, stable-period extraction, frequency-domain component construction, and model fitting with low-frequency-priority weighting for control relevance.
+\subsection{Magnetic-Flux-Based Hexapole Force Model}
 
-The resulting model artifacts are defined as reusable handoff objects for subsequent design stages. This chapter keeps the interface definition explicit, while detailed identification analysis, fitting behavior, and validation evidence are developed in Chapter 3.
+The force-generation description follows the flux-based formulation and is written as
+\begin{equation}
+f_{m}(p,\phi) = g_{\phi}(\epsilon)\,\bar{f}_{m}(\hat{p},\phi),
+\end{equation}
+where $p$ denotes probe position, $\hat{p}$ denotes normalized position in the workspace, and $\phi$ denotes the six-channel magnetic-flux vector. This compact form is used as the control-oriented force-model interface in later chapters.
 
-\section{Automation Interfaces for Design Iteration}
+In this dissertation, the model is used to support design and interpretation tasks: mapping desired force behavior to actuator variables, relating channel coupling to force-output behavior, and defining consistent simulation-to-experiment comparisons.
 
-Automation is integrated through explicit stage interfaces rather than ad hoc scripts. Identification-stage processing is organized as a repeatable pipeline. After model handoff, flux-control design is connected to a simulation-and-tuning loop with defined inputs and outputs. Force-generation validation then consumes these outputs through standardized stage-to-stage interfaces.
+\subsection{Hall-Sensor-Based Force Model}
 
-The practical objective of these interfaces is to reduce development effort while preserving traceability of design decisions. Automation claims are therefore tied to interface reproducibility and evidence continuity across stages.
+Because flux is measured through Hall channels in practical operation, the model interface includes Hall-voltage mapping:
+\begin{equation}
+\phi = D_{H}v_{H},
+\end{equation}
+where $v_{H}$ denotes Hall-sensor voltage vectors and $D_{H}$ is the calibrated voltage-to-flux gain matrix.
 
-\section{Chapter Bridge and Evidence Contract}
+This mapping is the key link between mechatronic measurement and force modeling. In later chapters, this interface is used to evaluate model consistency under the tested operating setup and to connect measured feedback variables to force-level interpretation.
+The force-allocation procedure and its quantitative validation are reserved for Chapter 5.
 
-Chapter 2 establishes the common language and interface contract for the remaining technical chapters. Chapter 3 develops the identification thread, Chapter 4 develops the flux-control thread, and Chapter 5 develops the force-generation thread with cross-layer validation and concluding remarks. Together, these chapters form one continuous evidence chain from observed behavior to model choice, design decision, and force-output quality.
+\section{Mechatronic and Optical Integration}
+
+This section describes how hardware, sensing, and operation software are integrated to support repeatable control-development experiments on the same platform.
+
+\subsection{Real-Time Control Hardware Integration}
+
+The implementation combines DAC-based command output, linear power amplifiers, coil actuation, ADC-based Hall-sensor acquisition, FPGA real-time execution, and host-PC supervision. In runtime operation, command and measurement channels are processed under one coordinated real-time framework for experiment execution and logging.
+
+The FPGA side provides deterministic timing and channel management, while the PC side handles experiment setup, parameter management, and post-run data organization. This partition is used throughout the dissertation as the baseline implementation setting.
+
+\subsection{Optical and Visual Tracking Integration}
+
+The optical chain includes microscope imaging, camera acquisition, and objective-positioning hardware. Visual tracking is treated as an operation and validation interface that complements Hall-sensor-based magnetic feedback during experiment setup, monitoring, and cross-checking.
+
+This section keeps a system-integration focus. Tracking algorithm details are not expanded here and are referenced only to the extent required for understanding the integrated platform workflow.
+
+\subsection{Software Interface and Operation Flow}
+
+To improve practical usability, the platform includes a PC-side software interface coordinated with FPGA execution. The interface supports experiment configuration, runtime monitoring, data capture, and workflow triggering for calibration and control-development tasks.
+
+The planned operation flow in this dissertation is organized as: platform setup, experiment execution, synchronized data logging, and stage-wise handoff to the technical analysis chapters. The implementation details of identification automation and controller design are presented in later chapters.
+
+\section{Summary}
+
+This chapter defines the shared system foundation of the dissertation: platform architecture, force-model interfaces, and mechatronic-optical operation context. Based on this foundation, Chapter 3 develops system identification, Chapter 4 develops flux-control design and validation, and Chapter 5 develops force generation with cross-layer interpretation.
