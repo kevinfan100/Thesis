@@ -58,9 +58,8 @@
   tablename = 表,
   abstractname = 摘要,
   chapter={
-    name = {第,章},
-    %number = \arabic{chapter}, % Arabic numerals for clarity in thesis
-      number = \chinese{chapter}, % or Chinese numerals 
+    name = {Chapter~,},
+    number = \arabic{chapter},
     format = \huge\bfseries\centering, % ~18pt, bold, centered
     beforeskip = -1.0\baselineskip,
     afterskip = 0.5\baselineskip,
@@ -170,9 +169,9 @@
 \crefformat{figure}{圖~#2#1#3~}
 \crefformat{table}{表~#2#1#3~}
 \crefformat{equation}{~(#2#1#3)~式}
-\crefformat{chapter}{第#2\chinese{#1}#3章}
-\crefformat{section}{~#2#1#3~節}
-\crefformat{subsection}{~#2#1#3~小節}
+\crefformat{chapter}{Chapter~#2#1#3}
+\crefformat{section}{Section~#2#1#3}
+\crefformat{subsection}{Subsection~#2#1#3}
 \crefformat{appendix}{附錄~#2#1#3~}
 
 
@@ -222,4 +221,3 @@
 % \appendix{NUM}{TITLE}
 %
 \usepackage[titletoc,toc,title]{appendix}
-
