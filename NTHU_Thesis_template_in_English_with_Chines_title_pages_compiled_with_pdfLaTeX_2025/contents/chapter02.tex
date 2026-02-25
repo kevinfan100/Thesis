@@ -1,28 +1,29 @@
 % !TeX root = ../main.tex
 
-\chapter{System Overview and Unified Development Framework}
+\chapter{System Overview}
 
 \section{Introduction}
 
-This chapter establishes the system-level foundation of the dissertation. The objective is to define the platform architecture, force-model interface, and implementation context used in later chapters. Detailed derivations and performance comparisons are intentionally deferred to Chapter 3 through Chapter 5.
+This chapter establishes the system-level foundation of the dissertation from two layers. The first layer is the hexapole electromagnetic actuator path that enables force-capable flux control. The second layer is the visual-system path that supports application-level development after flux control is established, including motion-oriented experiments.
 
-The chapter is organized as follows. Section 2.2 introduces the Hall-sensor-based hexapole electromagnetic actuator platform. Section 2.3 presents the core force-model interfaces used throughout the control-development chain. Section 2.4 describes mechatronic and optical integration, including FPGA-PC operation and experiment workflow. Section 2.5 summarizes how this system foundation supports subsequent technical development.
+The chapter is organized as follows. Section 2.2 introduces the hexapole electromagnetic actuating system. Section 2.3 presents the force-model interfaces used in later chapters. Section 2.4 describes mechatronic implementation and magnetic-flux measurement. Section 2.5 introduces vision-based 3-D probe tracking as the visual-system layer. Section 2.6 summarizes the chapter.
 
 \section{Hexapole Electromagnetic Actuating System}
 
-This dissertation considers a Hall-sensor-based hexapole electromagnetic actuator for precision manipulation in aqueous solution. The system uses six independently driven poles connected through a common magnetic yoke. Because force objectives are three-dimensional while actuation is six-dimensional, the platform is over-actuated and requires explicit allocation and control design \cite{zhang2011design,long2021optimal,long2022hallsensor}.
+This dissertation considers a Hall-sensor-based hexapole electromagnetic actuator for precision manipulation in aqueous solution. The system uses six independently driven poles connected through a common magnetic yoke. Because force objectives are three-dimensional while actuation is six-dimensional, the platform is over-actuated and requires explicit allocation and control design.
 
-From a control perspective, the platform is treated as a six-input six-output magnetic-flux generation system with coupling among channels. Hall-sensor measurements are embedded in the actuation loop, so downstream control decisions are based on measured magnetic variables rather than current command alone. This architecture provides the physical basis for the thesis chain from system identification to flux control and force generation.
+From a control perspective, the platform is treated as a six-input six-output magnetic-flux generation system with coupling among channels. Hall-sensor measurements are embedded in the actuation loop, so downstream control decisions are based on measured magnetic variables rather than current command alone.
 
 At this stage, the chapter focuses on architecture-level description and shared physical definitions. Detailed model fitting, controller synthesis, and force-quality interpretation are developed in later chapters.
 
 \section{Hexapole Force Modeling}
 
-This section provides the minimum set of force-model interfaces required by the dissertation. The purpose is to define common mathematical objects and signal mappings used across chapters, without expanding full derivations.
+This section provides the force-model interfaces used in the control-development chain.
 
 \subsection{Magnetic-Flux-Based Hexapole Force Model}
 
-The force-generation description follows the flux-based formulation and is written as
+The force-generation relation is written as
+
 \begin{equation}
 f_{m}(p,\phi) = g_{\phi}(\epsilon)\,\bar{f}_{m}(\hat{p},\phi),
 \end{equation}
@@ -30,7 +31,7 @@ where $p$ denotes probe position, $\hat{p}$ denotes normalized position in the w
 
 In this dissertation, the model is used to support design and interpretation tasks: mapping desired force behavior to actuator variables, relating channel coupling to force-output behavior, and defining consistent simulation-to-experiment comparisons.
 
-\subsection{Hall-Sensor-Based Force Model}
+\subsection{Hall-Sensor-Based Hexapole Force Model}
 
 Because flux is measured through Hall channels in practical operation, the model interface includes Hall-voltage mapping:
 \begin{equation}
@@ -41,28 +42,22 @@ where $v_{H}$ denotes Hall-sensor voltage vectors and $D_{H}$ is the calibrated 
 This mapping is the key link between mechatronic measurement and force modeling. In later chapters, this interface is used to evaluate model consistency under the tested operating setup and to connect measured feedback variables to force-level interpretation.
 The force-allocation procedure and its quantitative validation are reserved for Chapter 5.
 
-\section{Mechatronic and Optical Integration}
+\section{Mechatronic and Measurement of Magnetic Flux}
 
-This section describes how hardware, sensing, and operation software are integrated to support repeatable control-development experiments on the same platform.
+This section describes the implementation layer for magnetic-flux control development, including hardware integration, data channels, and interfaces for open-loop flux characterization.
 
-\subsection{Real-Time Control Hardware Integration}
+The implementation combines DAC-based command output, linear power amplifiers, coil actuation, ADC-based Hall-sensor acquisition, FPGA execution, and host-PC supervision. The FPGA and host-PC are coordinated through a unified software interface for experiment setup, synchronized logging, and data handoff to identification and controller-design tasks.
 
-The implementation combines DAC-based command output, linear power amplifiers, coil actuation, ADC-based Hall-sensor acquisition, FPGA real-time execution, and host-PC supervision. In runtime operation, command and measurement channels are processed under one coordinated real-time framework for experiment execution and logging.
+Six Hall channels are used to measure channel-wise magnetic-flux behavior under open-loop excitation. The measurement setup is used to observe coupling, bias/hysteresis-related behavior, and frequency-dependent response characteristics in the tested operating condition.
 
-The FPGA side provides deterministic timing and channel management, while the PC side handles experiment setup, parameter management, and post-run data organization. This partition is used throughout the dissertation as the baseline implementation setting.
+The measured Hall voltages are converted to flux variables through calibrated gain mapping, and the resulting data are used as the common input to downstream identification and control-design analysis.
 
-\subsection{Optical and Visual Tracking Integration}
+\section{Vision-Based 3-D Probe Tracking}
 
-The optical chain includes microscope imaging, camera acquisition, and objective-positioning hardware. Visual tracking is treated as an operation and validation interface that complements Hall-sensor-based magnetic feedback during experiment setup, monitoring, and cross-checking.
+This section introduces the visual-system layer used for application-level development after force-capable flux control is established.
 
-This section keeps a system-integration focus. Tracking algorithm details are not expanded here and are referenced only to the extent required for understanding the integrated platform workflow.
-
-\subsection{Software Interface and Operation Flow}
-
-To improve practical usability, the platform includes a PC-side software interface coordinated with FPGA execution. The interface supports experiment configuration, runtime monitoring, data capture, and workflow triggering for calibration and control-development tasks.
-
-The planned operation flow in this dissertation is organized as: platform setup, experiment execution, synchronized data logging, and stage-wise handoff to the technical analysis chapters. The implementation details of identification automation and controller design are presented in later chapters.
+The optical chain includes microscope imaging, camera acquisition, and objective-positioning hardware. This setup provides the observation channel required for operation monitoring and post-run interpretation under aqueous experimental conditions.
 
 \section{Summary}
 
-This chapter defines the shared system foundation of the dissertation: platform architecture, force-model interfaces, and mechatronic-optical operation context. Based on this foundation, Chapter 3 develops system identification, Chapter 4 develops flux-control design and validation, and Chapter 5 develops force generation with cross-layer interpretation.
+This chapter defines the system foundation through the actuator layer and the visual-system layer. Section 2.4 establishes mechatronic implementation and magnetic-flux measurement for control development, and Section 2.5 introduces the visual tracking setup used for application-level tasks. Based on this foundation, Chapter 3 develops system identification, Chapter 4 develops flux-control design and validation, and Chapter 5 develops force generation with cross-layer interpretation.

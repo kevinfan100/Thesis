@@ -2,7 +2,7 @@
 
 \section{Introduction}
 
-This chapter develops the system-identification stage of the dissertation and converts open-loop calibration measurements into model information that can be used directly for flux-control design. The chapter follows the Hall-sensor-based hexapole modeling direction established in prior work, while reorganizing the identification path into a reusable and automation-ready workflow \cite{long2022hallsensor,meng2024piconewton}.
+This chapter develops the system-identification stage of the dissertation and converts open-loop calibration measurements into model information that can be used directly for flux-control design. The chapter follows established Hall-sensor-based hexapole modeling practice while reorganizing the identification path into a reusable and automation-ready workflow.
 
 The technical emphasis is control-oriented model usability rather than fitting score alone. The target is to preserve coupling structure and control-relevant dynamic behavior from measured data, so that downstream design decisions in Chapter 4 can be explained and reproduced.
 
@@ -14,7 +14,7 @@ For each excitation frequency, the dominant response component is used to constr
 
 This automation stage removes case-by-case manual preprocessing and creates a consistent data interface for comparing fitting strategies. As a result, identification outputs can be regenerated and traced under the same processing assumptions.
 
-\section{Frequency-Response Construction and Key Dynamic Observations}
+\section{Frequency-Response Construction and Dynamic Observations}
 
 The calibration experiments produce six-output responses under each single-input excitation. Repeating this for all six inputs yields a six-by-six response structure that exposes coupling among channels and provides the data basis for model construction.
 
@@ -22,7 +22,7 @@ The calibration experiments produce six-output responses under each single-input
 
 Remanence-related bias and phase offset are visible in raw open-loop measurements. To obtain comparable response data, the identification process uses dominant-frequency extraction and phase-offset normalization before model fitting. This treatment does not assume globally linear actuator physics; it provides a control-usable local representation for the tested condition.
 
-\subsection{Coupling, Hysteresis-Related Behavior, and Usable Bandwidth Clues}
+\subsection{Coupling, Hysteresis-Related Effects, and Bandwidth Characteristics}
 
 The measured responses show three key characteristics: channel coupling, remanence/hysteresis-related effects, and frequency-dependent amplitude-ratio and phase-lag variation. These observations provide practical clues for model-design priorities, including low-frequency fidelity inside the intended control bandwidth and explicit retention of coupling behavior for multi-axis control design.
 

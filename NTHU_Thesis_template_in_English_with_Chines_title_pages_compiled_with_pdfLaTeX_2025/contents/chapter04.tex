@@ -1,29 +1,49 @@
 \chapter{Flux Control Design and Validation}
 
-\section{Chapter Objective and Interface from Identification}
+\section{Introduction}
 
-This chapter develops the flux-control stage based on the control-use model obtained in Chapter 3. The objective is to translate identified dynamics into practical controller design and to quantify how design choices affect bandwidth, decoupling behavior, and robustness under tested operating conditions.
+This chapter develops the flux-control stage using the identified model from Chapter 3. The objective is to convert identification outputs into a controller design that is quantitatively verifiable and directly usable by the downstream force-generation stage.
 
-\section{Flux-Control Problem Definition and Design Targets}
+The chapter follows the same control-oriented logic established in Hall-sensor-based flux-control development, while emphasizing explicit design tradeoff interpretation and reproducible decision steps. Simulation and experiment are presented in the same thread for each controller design choice.
 
-This section defines the inner-loop control problem, including tracking objective, decoupling requirement, disturbance sensitivity, and target dynamic behavior. These targets provide a common basis for comparing controller structures in the rest of this chapter.
+\section{Flux-Control Formulation and Design Interface}
 
-\section{Baseline PI Control Design and Initial Validation}
+The inner-loop objective is to make measured Hall-voltage response $\mathbf{v}_{m}$ track desired reference $\mathbf{v}_{d}$ with predictable bandwidth and controllable cross-channel coupling behavior. The control interface uses the identified six-input six-output model and its coupling structure as the design basis.
 
-This section presents the baseline PI design path and its expected behavior from model-based prediction. Simulation and experimental results are used together to identify where baseline design is sufficient and where performance limitations emerge.
+For digital implementation, the continuous-time model identified in Chapter 3 is used to construct the discrete-time control plant. In this chapter, decoupling is implemented through the coupling-matrix inverse $\mathbf{B}^{-1}$, and controller behavior is evaluated by amplitude-ratio, phase-lag, and bandwidth trends under tested operating conditions.
 
-\section{Model-Based Control with Disturbance Rejection}
+\section{Baseline PI Flux Control}
 
-This section develops the model-based control structure, including disturbance-rejection elements and design parameters that shape closed-loop behavior. The emphasis is on design rationale, not only performance display, so each control component is linked to a specific physical issue.
+\subsection{PI Control Law and Decoupling Interface}
 
-\section{Component-Level Interpretation and Decoupling Analysis}
+The baseline controller uses a discrete-time PI law with channel coupling compensation through $\mathbf{B}^{-1}$. This baseline is intentionally retained because it provides a transparent reference for interpreting tracking and coupling behavior before introducing more complex components.
 
-This section compares controller structures at component level and interprets their effects on coupling suppression, tracking behavior, and sensitivity to model mismatch. The analysis provides the causal link required for downstream force-generation interpretation.
+\subsection{Initial Validation and Observed Limitations}
 
-\section{Simulation and Experimental Validation}
+Baseline PI performance is evaluated by paired simulation and experiment in frequency-sweep tests. The comparison shows where the baseline response is consistent with design expectation and where mismatch becomes visible as frequency increases. This mismatch motivates component-level enhancement rather than ad hoc parameter tuning.
 
-This section provides paired simulation and experimental validation across representative test conditions. The results show where predicted and measured behavior are consistent and establish the validated controller outputs that will be consumed by Chapter 5.
+\section{Model-Based Flux Control with Feedforward and Disturbance Compensation}
+
+\subsection{Controller Structure and Parameterization}
+
+The model-based controller is built from three coordinated components: feedback control, feedforward shaping, and disturbance compensation. In implementation, the design is parameterized by bandwidth-related parameters (for example, $f_{B,f}$, $f_{B,c}$, and $f_{B,e}$), so expected closed-loop behavior can be adjusted in a structured way.
+
+\subsection{Physical Roles of Control Components}
+
+Each control component addresses a specific issue observed in identification and baseline testing. Feedforward improves reference-tracking speed and phase behavior, disturbance compensation mitigates model-mismatch and hysteresis-related residual effects, and feedback enforces closed-loop stability and tracking convergence.
+
+The disturbance-related internal signal (for example, $\mathbf{u}_{w1}$) is used as an interpretation channel to show how model-based compensation reacts under dynamic excitation.
+
+\section{Comparative Validation and Decoupling Analysis}
+
+Comparative analysis is conducted across controller structures using the same data-processing and evaluation pipeline. The main comparisons include PI versus model-based control, feedforward enabled versus bypassed, and full-matrix decoupling versus diagonal-only decoupling treatment.
+
+The evaluation focuses on control-relevant evidence: frequency response (amplitude ratio and phase lag), bandwidth behavior, cross-channel coupling suppression, and consistency between predicted and measured trends. The purpose is to establish which design element produces which improvement, so the control decision process remains explainable and repeatable.
+
+This validation is executed through the parameterized simulation-and-test workflow developed in this project, so controller-design assumptions, parameter updates, and verification outputs remain traceable within one consistent software interface.
 
 \section{Summary}
 
-This chapter concludes with the accepted flux-control configuration and its validated behavior envelope. It then defines the interface handoff to the force-generation stage, including which outputs are treated as trusted inputs for force-quality analysis.
+This chapter establishes a validated flux-control design path from baseline PI to model-based control with feedforward and disturbance compensation. The resulting controller configuration is accepted as the inner-loop interface for Chapter 5.
+
+At the dissertation level, this chapter completes the second technical stage of the automation objective: controller design is expressed as a reusable and evidence-linked workflow, supported by the project’s parameterized simulation software for repeatable validation and iteration.
