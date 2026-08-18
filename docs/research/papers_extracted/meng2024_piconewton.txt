@@ -1,0 +1,893 @@
+                    This article has been accepted for inclusion in a future issue of this journal. Content is final as presented, with the exception of pagination.
+
+
+                                       IEEE/ASME TRANSACTIONS ON MECHATRONICS                                                                                          1
+
+
+
+
+Control of the Probe-Sample Interaction Force at
+the Piconewton Scale by a Magnetic Microprobe
+              in Aqueous Solutions
+                                                 Ta-Min Meng               and Chia-Hsiang Menq
+
+
+   Abstract—This article describes the design and imple-                             multiaxis motion devices [1], [2], propulsion of miniature swim-
+mentation of a control system that controls the probe-                               ming machines [3], [4], [5], multiaxis scanning probe technol-
+sample interaction force at the piconewton scale by ma-                              ogy [6], [7], and control of medical devices [8], [9], [10], [11],
+nipulating a magnetic microprobe in aqueous solutions un-
+der a microscope. The control system has two functions,                              [12]. More recently, they have been used to enable untethered
+namely accurate force generation by magnetic flux control                            manipulation of microprobes in force spectroscopy [13], lead-
+and precise control of the probe-sample interaction force.                           ing to advanced techniques employed in biomedical research.
+Magnetic flux control uses an improved six-input-six-output                          Specifically, magnetic tweezers have been developed to probe
+digital control law along with a disturbance estimator to                            biological processes closely related to interaction forces rang-
+achieve two control objectives. First, the magnetic flux at
+each pole tip of a previously developed hexapole electro-                            ing from subpiconewtons (pN ) to tens of piconewtons scales
+magnetic actuator can be individually and precisely con-                             [14], [15], [16], e.g., manipulating macromolecules [17], [18],
+trolled at frequencies over 4 kHz, and the experimental re-                          [19], steering magnetic particles and microrobots [4], [5], [11],
+sults precisely followed the theoretical predictions based                           [12], [20], [21], [22], probing cell membranes [23], [24], and
+on the design. Second, together with the optimized flux                              measuring intracellular properties [25].
+allocation, the flux control system generates precise mag-
+netic forces, making the six-input hexapole actuator behave                             To provide scanning probe functionality using magnetic
+like a decoupled three-axis force generator with a band-                             tweezer technology, a hexapole electromagnetic actuator along
+width of more than 4 kHz. Interaction force control com-                             with a visual servo control system was developed to enable
+pares the measured deformation of the sample with the ex-                            3-D magnetic actuation and stable trapping of a single mag-
+pected deformation, updated in real time by a deformation                            netic microprobe in aqueous solutions [22]. A newer hexapole
+predictor, to generate the magnetic force to control the in-
+teraction between the probe and the sample. Digital control                          actuator has recently been developed to significantly improve
+laws, the estimator, and the predictor are all implemented                           its force generation capability [26]. It uses six pointed poles,
+using a high-speed Field Programmable Gate Array (FPGA)                              each made of iron-steel rod and driven by separate coils.
+system. Experiments confirm that through mathematical                                All coils and poles are magnetically connected by a yoke
+modeling, digital control technology, high-speed electron-                           to enhance the generation of magnetic flux. Optimal current
+ics, and real-time computation, accurate three-dimensional
+force generation at the piconewton scale with high band-                             allocation associated with hexapole actuation [27] was de-
+width and precise interaction force control with zero-mean                           vised to solve four problems in force generation, namely:
+random error, attributed to random thermal force and mea-                            redundancy; coupling; nonlinearity; and position-dependency.
+surement noise, are achieved.                                                        It was implemented in an FPGA system for real-time cur-
+   Index Terms—Electromagnetic actuation, interaction                                rent allocation to enable current-based control of the probing
+force control, magnetic flux control.                                                system.
+                                                                                        While current-based control enables stable magnetic trapping
+                                                                                     and visual servo control [26], [27], magnetic remanence and
+                           I. INTRODUCTION
+                                                                                     hysteresis could lead to uncertainties in magnetic flux gener-
+      LECTROMAGNETIC actuators are widely used in a
+E     variety of applications, including magnetic levitation of
+                                                                                     ation. These uncertainties increase when greater forces need
+                                                                                     to be generated, leading to greater force errors, and reducing
+                                                                                     the performance of the actuator. In addition, quasi-static rela-
+                                                                                     tionships in current-based force models ignore the dynamics
+   Manuscript received 22 November 2022; revised 24 March 2023; ac-
+cepted 18 May 2023. Recommended by Technical Editor J. Schultz and                   of magnetic flux generation, which is important for advanced
+Senior Editor Y. Li. This work was supported in part by the endowment                applications that require high-bandwidth precision force gen-
+fund for the Ralph W. Kurtz Chair in Mechanical Engineering at the Ohio              eration. Aiming at the problem of positioning error caused by
+State University. (Corresponding author: Chia-Hsiang Menq.)
+   The authors are with the Department of Mechanical and Aerospace                   residual magnetic remanence, Hall-sensor-based magnetic force
+Engineering, The Ohio State University, Columbus, OH 43210 USA                       modeling and optimal flux allocation were developed [28]. In
+(e-mail: meng.350@osu.edu; menq.1@osu.edu).                                          addition, a magnetic flux control system was developed to solve
+   Color versions of one or more figures in this article are available at
+https://doi.org/10.1109/TMECH.2023.3278730.                                          the problems caused by hysteresis and increase the bandwidth
+   Digital Object Identifier 10.1109/TMECH.2023.3278730                              of magnetic force generation [29].
+                   1083-4435 © 2023 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                 See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+      Authorized licensed use limited to: National Taiwan University. Downloaded on February 01,2024 at 09:13:37 UTC from IEEE Xplore. Restrictions apply.
+                  This article has been accepted for inclusion in a future issue of this journal. Content is final as presented, with the exception of pagination.
+
+
+2                                                                                                                 IEEE/ASME TRANSACTIONS ON MECHATRONICS
+
+
+
+   This article describes the design and implementation of a
+control system that controls the magnetic field in the 3-D
+workspace of a previously developed hexapole actuator [28] to
+control the magnetic force exerted on a magnetic microprobe
+as well as the probe-sample interaction force at the piconewton
+scale. Section II briefly reviews the experimental setup that uses
+the hexapole actuator to apply a controllable 3-D magnetic force
+to a single magnetic microprobe in aqueous solutions [27], as
+well as the most relevant results for magnetic force modeling
+and inverse modeling [28].
+   The control of the magnetic field is achieved by controlling
+the magnetic fluxes at the six pole tips that enclose the 3-D
+workspace of the actuator. Magnetic flux control is an im-
+proved version of the previous implementation [29], wherein
+a six-input-six-output discrete model was calibrated and used
+to design and analyze the magnetic flux control. Two main
+limitations were, however, observed experimentally. First, the
+control performance did not match the design. It was necessary
+to significantly reduce the control gain of the design to achieve
+stability in the experiment [29]. Second, even with experimental
+tuning of the control gain, the closed-loop bandwidth achieved
+was limited to less than 1 kHz.
+   The design, theoretical performance analysis, and experi-                         Fig. 1. Experimental setup for untethered manipulation of the mag-
+mental validation of the improved six-input-six-output control                       netic probe in aqueous solutions (reproduced from Fig. 7 in [29]).
+law are presented in Section III. The improved control law
+has three components: feedback control law designed accord-                          and controlled manipulation of active biological samples by the
+ing to the six-input-six-output discrete model of the hexapole                       microprobe in aqueous solutions.
+actuator; disturbance estimator and disturbance compensation;
+and prefilter designed to increase the bandwidth of the flux                                  II. MANIPULATION OF MAGNETIC MICROPROBE
+control. Experiments have shown that whereas the hexapole
+actuator has multipole coupling, uncertainties caused by mag-                           Fig. 1 shows a previously developed experimental setup that
+netic remanence and hysteresis, and limited bandwidth, with the                      uses a hexapole electromagnetic actuator to apply controllable
+improved six-input-six-output flux control, the magnetic flux                        3-D magnetic force for untethered manipulation of a single mag-
+at each pole tip can be individually and precisely controlled                        netic microprobe in aqueous solutions. The top left panel shows
+at frequencies over 4 kHz without any experimental tuning.                           the hexapole actuator integrated with an inverted microscope
+More importantly, the experimental results precisely followed                        (Olympus IX81) equipped with a CMOS camera (Mikrotron:
+the theoretical predictions based on the design. Moreover, to-                       MC3010) and an ultra-precise 3-D motion tracking system to
+gether with the optimized flux allocation, the developed flux                        form a 3-D visual servo control system [29]. The bottom left
+control system generates precise magnetic forces, making the                         panel shows the hexapole system is assembled on an x–y–z piezo-
+six-input hexapole system behave like a decoupled three-axis                         electric motion stage. The top right panel shows the electronics
+force generator with a bandwidth of more than 4 kHz.                                 used for real-time image processing and digital control. The
+   The design and experimental verification of force control are                     bottom right panel shows a typical real-time image.
+described in Section IV. Interaction force control has three com-                       The dynamics of the microscopic probe moving in aqueous
+ponents: the parameter estimator that estimates time-varying                         solutions is governed by the Langevin equation at low Reynolds
+indentation gain and elastic force in real time; the deformation                     numbers [30]. When interacting with a sample, the motion of
+predictor that uses the estimated parameters to predict the ex-                      the probe is driven by the controllable magnetic force fm and
+pected deformation; and the motion stabilizer that stabilizes the                    affected by the probe-sample interaction force fI and random
+probe with the expected sample deformation. The control system                       thermal force fT . By modeling the sample as an object having
+compares the measured sample deformation with the expected                           viscoelastic mechanical properties, the interaction force can be
+deformation, updated in real time using Kalman filtering, to                         divided into two components, namely the elastic force and the
+generate magnetic forces to control probe-sample interactions,                       damping force, i.e., fI = fE + fD . Therefore, the equation of
+while using a feedback control law to achieve motion stabiliza-                      motion is expressed as
+tion. Experiments confirm that accurate 3-D force generation                                     γ ṗ (t) = fm (p (t) , I (t)) − fE (t) + fT (t) ,                   (1)
+at the piconewton scale with a bandwidth over 4 kHz has been
+achieved and that precise control of the interaction force of the                    where γ is the viscous damping coefficient matrix, p the probe
+microprobe with a living cell has been demonstrated. The func-                       position, and I the vector of the six input currents applied to the
+tions of the control system form the basis for automatic probing                     hexapole actuator.
+
+    Authorized licensed use limited to: National Taiwan University. Downloaded on February 01,2024 at 09:13:37 UTC from IEEE Xplore. Restrictions apply.
+                   This article has been accepted for inclusion in a future issue of this journal. Content is final as presented, with the exception of pagination.
+
+
+MENG AND MENQ: CONTROL OF THE PROBE-SAMPLE INTERACTION FORCE AT THE PICONEWTON SCALE                                                                                  3
+
+
+
+   When there is no probe-sample interaction, the goal of the                       [28] was implemented and used to control magnetic forces. It
+manipulation is to stabilize the probe in aqueous solutions and                     leads to optimal flux allocation to render effective 3-D force
+steer the probe within the 3-D workspace [29], wherein fE                           generation for real-time applications. The most relevant results
+vanishes and γ is the drag coefficient associated with the moving                   are summarized below.
+probe in aqueous solutions. When the microprobe is controlled                          At a specified position of the probe and along a specified
+to probe a sample, e.g., a live cell, fE varies nonlinearly with the                direction, φ̂opt (ϕ, θ, A p̂) could be numerically determined by
+deformation of the sample and γ is dominated by the nonlinear                       minimizing the Lagrange function using MATLAB optimiza-
+damping coefficient of the deformation process. The objective of                    tion toolbox. Optimal solutions associated with predetermined
+control is to adjust the six input currents to generate the required                positions A p̂k , covering the desired spatial range in the 3-
+magnetic force to stabilize the probe and control the interaction                   D workspace, and along a set of selected discrete directions
+force of the probe with the sample.                                                 r̂(ϕj , θj ), covering the entire 3-D orientation, were numeri-
+                                                                                    cally determined. Least squares fitting was then employed to
+A. Magnetic Gradient Force                                                          construct an analytical direction-dependent 6 × 4 × 4 optimal
+                                                                                    flux-allocation matrix, DLS (ϕ, θ) [24], to serve as a kernel for
+   Three pairs of pointed pole tips are symmetrically placed on
+                                                                                    optimal magnetic flux allocation
+three orthogonal axes, delineating the three axes of three-axis                                                    
+actuation, to concentrate the magnetic flux into the workspace,                                     φ̂opt ϕ, θ, A p̂ = P̂ T DLS (ϕ, θ) P̂         (3)
+where the sample and the moving magnetic probe are placed
+[26]. The workspace is a polyhedron, whose size is determined                       where P̂ = [x̂, ŷ, ẑ, 1]T is the augmented position vector. Opti-
+by the distance between each individual pole tip and the center,                    mal flux allocation can then be determined by scaling
+                                                                                                                      
+denoted by . Although  is adjustable, it is 500 micrometers for                                    A A                                 
+                                                                                                                         fd
+all experiments reported herein.                                                               φopt fd , p̂ =               φ̂opt ϕ, θ, A p̂ .     (4)
+                                                                                                                         gφ
+   Two coordinate systems, i.e., the measurement coordinate
+system and the actuation coordinate system, are defined for                            The magnetic flux is produced by the magnetomotive force,
+measurement and actuation modeling, respectively. The z-axis                        which is proportional to the input current, I, and the turns of the
+of the measurement coordinate system is aligned with the optical                    coil, Nc . By Hopkinson’s law in magnetic circuit analysis, the
+axis of the microscope. A rotation matrix is defined to correlate                   magnetic flux is quasi-statically related to the input current by
+the position coordinates of the probe between the two coordinate                    φI = (Nc /Ra )KI I, where Ra is the lumped magnetic reluc-
+systems, i.e., M p = M
+                     A R p. The resulting gradient force is ex-
+                          A
+                                                                                    tance and KI is the flux distribution matrix. This approach has
+pressed as a flux-based force model with respect to the actuation                   been successfully applied to achieve stable visual-servo control
+coordinate system [28]                                                              of the magnetic probe in aqueous solutions [27]. However, it
+                                                                                  has three major limitations: lacking knowledge of accurate Ra
+              A             6  6
+                                                 ui · uj
+         A
+           fm p, φ = gΦ               Φi Φj ∇                 (2)                   and KI ; suffering from uncertainty attributed to remanence and
+                              i=1 j=1
+                                                  r̂i2 r̂j2                         hysteresis in magnetic flux generation; and ignoring the dynamic
+                                                                                    of magnetic flux generation.
+where gφ = [V χ/(2μo )]/[(4π)2 5 ] denotes the force gain asso-
+ciated with the magnetic probe and the size of the workspace, V                     C. Measurement of Magnetic Flux
+is the volume of and χ the magnetic susceptibility of the probe,
+and μo is the vacuum magnetic permeability. It is seen that each                        Direct measurement of magnetic flux is used to solve prob-
+of the three components of the 3-D gradient force is represented                    lems in current-based magnetic flux generation. The approach
+as a quadratic form in the six variables of the magnetic-flux                       is to integrate six Hall sensors into the hexapole actuator. Due to
+                                                  T                                 the size of the sensor, a cuboid of 4.1 mm × 3 mm × 1.15 mm,
+vector, φ = [φ1 φ2 φ3 φ4 φ5 φ6 ] . It is worth noting
+                                                                                    it is not feasible to place them at each tip of the six poles. Three
+that in the expression on the right side of (2) the position
+                                                                                    Hall sensors are, therefore, placed on the top surfaces of the
+coordinates of the probe and the six pole tips, as well as the
+                                                                                    three poles (P2, P4, P5) on the upper plane and the other three
+distance between them, are normalized with respect to the radius
+                                                                                    on the bottom surfaces of the three poles (P1, P3, P6) on the
+of the workspace , i.e., p̂ = p/ and r̂ = r/. Therefore, when
+                                                                                    lower plane The Hall element within the IC chip is a 0.3 mm
+referring to the normalized actuator coordinate system, the six
+                                                                                    diameter plate, which is 0.41 mm to the surface of the chip.
+magnetic tips are located at x̂ = ±1, ŷ = ±1, and ẑ = ±1, and
+                                                                                        It was experimentally verified that the measurement of the
+∇(ui · uj /r̂i2 r̂j2 ) is dimensionless, depicting multipole coupling
+                                                                                    Hall sensor on the surface, denoted as vs, is proportional to that
+and position-dependence in hexapole actuation.
+                                                                                    of a suppositional Hall sensor at the tip, denoted as vt [28]. It
+                                                                                    was shown that when applying a sinusoidal input current to P1,
+B. Optimal Flux Allocation
+                                                                                    the ratio between vs and vt remained almost constant (∼ 0.47)
+   Assigning the correct value for the 6 × 1 controllable vari-                     as the frequency being increased up to 4000Hz. Therefore, a
+ables, φ, to generate the desired 3 × 1 force, A fd , is essential                  quasi-static relationship is valid up to at least 4000 Hz. The
+for the practical use of the hexapole actuator. In addition, the                    surface-mount Hall sensors can, therefore, be used to measure
+allocation of φ is position-dependent and needs to be done in real                  the magnetic flux at the six tips, i.e., φ = DH vH , wherein DH
+time. A previously developed magnetic flux allocation method                        is a diagonal voltage-flux gain matrix and vH the sensor-voltage
+
+     Authorized licensed use limited to: National Taiwan University. Downloaded on February 01,2024 at 09:13:37 UTC from IEEE Xplore. Restrictions apply.
+                  This article has been accepted for inclusion in a future issue of this journal. Content is final as presented, with the exception of pagination.
+
+
+4                                                                                                                 IEEE/ASME TRANSACTIONS ON MECHATRONICS
+
+
+
+
+                                                                                     Fig. 3. Normalized magnitude ratio and phase lag of the hexapole
+                                                                                     actuator subject to first pole excitation. Color circles are experimental
+Fig. 2. Flux generation experiment: Multipole coupling; bias; and                    results. Black curves are calculated using the fitted dynamic model.
+hysteresis.
+
+
+
+vector [29]. Normalizing DH , i.e., D̄H = DH /DH , and
+substituting it into (2), the 3-D magnetic force can be determined
+                                                               
+            A                  6  6
+                                                     ui · uj
+       A
+         fm p, vH = gH                   Φ̄i Φ̄j ∇                (5)
+                                 i=1 j=1
+                                                      r̂i2 r̂j2                      Fig. 4. Block diagram of the six-input-six-output magnetic flux control
+                                                                                     system.
+where φ̄ = D̄H vH and gH = DH 2 gφ is the force gain
+associated with the sensor-voltage vector. Once the force gain,                      normalized response of the second pole is not shown in Fig. 3
+i.e., gH , and the five independent parameters of D̄H , being                        since it is the least important.
+determined via calibration, (5) can be used to calculate the                             A second order six-input-six-output dynamic model was then
+generated force. In addition, optimal voltage allocation can be                      fitted using all 36 sets of amplitude ratios and phase lag
+derived from φ̂opt (ϕ, θ, A p̂) to implement flux control for force
+                                                                                                                     1.4848 × 107
+generation                                                                                    H (s) =                                         B                      (7)
+                                                                                                          s2 + 8.1877 × 103 s + 1.4848 × 107
+              A A              fd −1                                             where B
+                                                                                       ⎡ 0.2816                                                                ⎤
+          vopt fd , p̂ =             D̄H φ̂opt ϕ, θ, A p̂ .     (6)                                   −0.0052     −0.0406     −0.0305     −0.0316     −0.0505
+                                 gH
+                                                                                       ⎢−0.0111        0.2659     −0.0423     −0.0666     −0.0756     −0.0346⎥
+                                                                                       ⎢−0.0470       −0.0332      0.2795     −0.0064     −0.0237     −0.0550⎥
+                                                                                     = ⎢−0.0308                                                       −0.0193⎦
+                                                                                                                                                              ⎥.
+D. Dynamics of Magnetic Flux Generation                                                ⎣              −0.0646     −0.0129      0.2348     −0.0833
+                                                                                         −0.0411      −0.0661     −0.0217     −0.0760      0.2537     −0.0118
+   The six Hall sensors were connected to a FPGA board via                               −0.0477      −0.0208     −0.0402     −0.0250     −0.0056      0.2302
+
+a six-channel AD converter. The dynamics of flux generation                            It shows that when focusing on the dominant frequency
+were studied in two experiments. First, a single input current,                      components of the response, the multipole coupling in flux
+I5 = 0.6 · sin(0.2πt)A, was applied to P5 and the voltage read-                      generation can be depicted by a 6 × 6 matrix, B, and the dynamic
+ings of the six Hall sensors were recoded and shown in Fig. 2.                       process by an overdamped second order dynamic system with a
+Three observations are made: since the input current I5 was used                     bandwidth of about 200 Hz.
+to magnetize P5, it produced a larger flux that converged to the
+tip of P5 while generating a smaller flux by coupling to each                             III. HALL-SENSOR-BASED MAGNETIC FLUX CONTROL
+of the other five poles; the resulting flux bias was caused by
+                                                                                        A six-input-six-output magnetic flux control system is de-
+remanence; and hysteresis is evident.
+                                                                                     signed to achieve precise and high-bandwidth flux generation to
+   The frequency response of flux generation was examined in
+                                                                                     precisely control the force applied to the microprobe.
+the second experiment. Six single-pole excitations were tested.
+In each test, the amplitude of the input current is 0.6 A and the
+                                                                                     A. Magnetic Flux Control
+frequency was increased from 0.1 to 1.6 kHz. Voltage readings
+for all six sensors were recorded. The FFT was then used to                             A six-input-six-output discrete control law is designed and
+calculate the discrete frequency spectrum of the six output re-                      implemented to achieve magnetic flux control. A block diagram
+sponses to validate that the dominant frequency be the excitation                    of the control system is shown in Fig. 4, where the controlled
+frequency and to remove the bias caused by remanence. The                            plant is depicted within the red dashed box and kA is the
+amplitude ratio and phase lag were then calculated. There were                       amplifier gain. Based on the allocated voltage vd and Hall-sensor
+six frequency response tests, each producing six sets of results,                    measurement vm , the flux control law actively adjusts the six
+one of which is shown in Fig. 3. It is worth noting that the                         actuation currents to control the magnetic flux at the six pole
+
+    Authorized licensed use limited to: National Taiwan University. Downloaded on February 01,2024 at 09:13:37 UTC from IEEE Xplore. Restrictions apply.
+                   This article has been accepted for inclusion in a future issue of this journal. Content is final as presented, with the exception of pagination.
+
+
+MENG AND MENQ: CONTROL OF THE PROBE-SAMPLE INTERACTION FORCE AT THE PICONEWTON SCALE                                                                                     5
+
+
+
+tips. The control law is an improved version of the previous                        of an estimator to directly estimate w is complicated. To simplify
+implementation [29]. Since the magnetic flux control system is                      the design of the estimator, w is converted to w
+a sampled-data system with zero-order-hold and sampling, the
+discrete model used in the previous implementation is a discrete                       w [k] = − a1 w [k − 1] − a2 w [k − 2]
+approximation that is matched over a limited bandwidth.                                            + B {w[k] − (1 − b1 ) w [k − 1] − b1 w [k − 2]} .
+   For the continuous-time process described by H(s) and                                                                                         (12)
+preceded by a ZOH, the exact discrete model is derived as
+H(z −1 ) = (1 − z −1 )Z{H(s)/s}, where Z is the z-transform                            The resulting error dynamics become
+of the time series sampled from a continuous time signal whose                          δvw [k + 1] = λc δvw [k] − k {w [k] + bw [k − 1]} .                         (13)
+Laplace transform is the expression in the brace [31]. Using
+                                                                                                                                           
+H(s) in (7) and the sampling rate of 100 kHz, the discrete model                       Letting w1 [k] = w [k] and w2 [k] = w [k − 1], and combing
+of the sampled-data system is                                                       (10) and (13) with disturbance compensation, δv = δvr + δvw ,
+                                 −4
+                                                                                  the error dynamics are derived
+       −1       −1 7.2126 × 10    × 1 + 0.9731z −1
+   H z       =z                                          B. (8)                      δv [k + 1] = λc δv[k] + δvdf [k + 1] − kew1 [k] − kbew2 [k]
+                     (1 − 0.9733z −1 ) (1 − 0.9467z −1 )
+                                                                                                                                               (14)
+   The discrete model shows that the sampled-data system has a                      where ew1 = w1 − ŵ1 and ew2 = w2 − ŵ2 . The disturbance is
+delay of one step, two stable poles, and a zero, −0.9731, close                     modeled as: w1 [k + 1] = w1 [k] + δw[k], δw[k + 1] = δw[k],
+to −1 in the z-plane. It is worth noting that when using a direct                   and w2 [k + 1] = w1 [k]. Since the error dynamics (13) as well
+digital design special attention needs to be paid to the zero close                 as the disturbance model are decoupled, the augmented state
+to −1 to avoid the ringing pole in the discrete control law of                      estimator [31], [33] is cast in a decoupled format
+the design [32]. According to (8), the dynamic model associated                          ⎧
+with the control variable is cast as a difference equation                               ⎪
+                                                                                         ⎪  δv̂i [k + 1] = λc δv̂i [k] + δvdf i [k + 1]
+                                                                                         ⎪
+                                                                                         ⎪
+                                                                                         ⎪
+                                                                                         ⎪                  +1 {δvi [k] − δv̂i [k]}
+       vm [k + 1] = − a1 vm [k] − a2 vm [k − 1]                                          ⎨
+                                                                                            ŵ1i [k + 1] = ŵ1i [k] + δ ŵi [k]
+                                                                                                                                               (15)
+                         + kB (u[k] + bu [k − 1] + w[k])                    (9)          ⎪
+                                                                                         ⎪                  +2 {δvi [k] − δv̂i [k]}
+                                                                                         ⎪
+                                                                                         ⎪
+                                                                                         ⎪
+                                                                                         ⎪ δ ŵi [k + 1] = δ ŵi [k] + 3 {δvi [k] − δv̂i [k]}
+wherein the joined effect of the modeling error and remanence                            ⎩
+                                                                                            ŵ2i [k + 1] = ŵ1i [k] + 4 {δvi [k] − δv̂i [k]}
+is presented as a disturbance w, and a1 , a2 , k, and b are from (8).
+The goal of magnetic flux control is to control vm to track vd                      where i = 1, · · · , 6 and  s are the four feedback gains of the es-
+when affected by w. The discrete control law consists of three                      timator. Based on (14) and the disturbance model, the estimation
+components: a prefilter on the desired voltage vd to generate                       error dynamics is derived
+vdf that serves as the reference of the feedback control law, a                       ⎡             ⎤ ⎡                               ⎤⎡          ⎤
+conventional feedback control law to achieve the desired error                          eδv [k + 1]         λc − 1 −k 0 −kb              eδv [k]
+                                                                                      ⎢ ew1 [k + 1] ⎥ ⎢ −2                        0 ⎥  ⎢         ⎥
+dynamics associated with δv = vdf − vm , and an estimator to                          ⎢             ⎥ ⎢                  1 1          ⎥ ⎢ ew1 [k] ⎥ . (16)
+                                                                                      ⎣eδw [k + 1]⎦ = ⎣ −3              0 1       0  ⎦ ⎣ eδw [k]⎦
+provide an estimated disturbance ŵ. The control law achieving
+the control objective is, therefore, expressed as a superposition                       ew2 [k + 1]          −4         1 0       0      ew2 [k]
+of uf b and ŵ, i.e., u[k] = uf b [k] − ŵ[k].                                         Let all eigenvalues be λe , the four feedback gains of the
+   Since the sampled-data system has a zero, −b, close to                           estimator are derived,
+−1, when specifying typical error dynamics, i.e., δv[k + 1] =                                 ⎧
+λc δv[k], where 0 ≤ λc < 1, for a direct digital design a ring-                               ⎪
+                                                                                              ⎪ 1 = 2 + λc − 4λe
+                                                                                              ⎪
+                                                                                              ⎪
+ing pole will be created. Instead, the desired error dynamics                                 ⎪       (λ −1)3 (4b+λ +3)
+                                                                                              ⎨2 = e k(b+1)2 e
+attributed to the reference input are specified as                                                              4                         .  (17)
+                                                                                              ⎪
+                                                                                              ⎪ 3 = −(λ  e −1)
+
+                                                                                              ⎪
+                                                                                              ⎪
+                                                                                                       k(b+1)
+            δvr [k + 1] = λc δvr [k] + δvdf [k + 1]                       (10)                ⎪
+                                                                                              ⎩4 = (λe +4bλe +6b λe −4b(2b+1)λ
+                                                                                                        4       3  2 2
+                                                                                                                               e +3b +2b)
+                                                                                                                                    2
+
+                                                                                                                     bk(b+1)2
+where δvdf [k + 1] = vdf [k + 1] − (1 − b1 )vdf [k] − b1 vdf
+[k − 1] and b1 has to be (1 − λc ) · b/(1 + b) so that the                             Using the inverse conversing of (12), the estimated ŵ, which
+closed-loop system has a zero at −b. The feedback control law                       is ŵ1 , is converted to ŵ for disturbance compensation
+can be derived accordingly                                                              ŵ[k] = (1 − b1 ) ŵ [k − 1] + b1 ŵ [k − 2] + B−1 {ŵ1 [k]
+uf b [k] = (1 − b1 ) uf b [k − 1] + b1 uf b [k − 2]                                                 +a1 ŵ1 [k − 1] + a2 ŵ1 [k − 2]} .                               (18)
+                       −1
+            + ku · B        {δv[k] + a1 δv [k − 1] + a2 δv [k − 2]}                    Applying the control law, u[k] = ûf b [k] − ŵ[k], where ûf b
+                                                                (11)                is determined by replacing δv in (11) with δv̂, the closed-loop
+where ku = (1 − λc )/(1 + b)/k. It is seen that the ringing pole,                   response of magnetic flux control is derived from (14)
+−b = −0.9731, is moved to −b1 , where b1 ≈ (1 − λc )/2.                                                                    1 − λc
+  When using the feedback control of the design, the error                             vm [k + 1] = λc vm [k] +                   {vdf [k] + bvdf [k − 1]}
+                                                                                                                            1+b
+dynamics attributed to w are expressed as a set of coupled fourth-
+order difference equations, hence the design and implementation                                            + kew1 [k] + kbew2 [k].                                    (19)
+
+     Authorized licensed use limited to: National Taiwan University. Downloaded on February 01,2024 at 09:13:37 UTC from IEEE Xplore. Restrictions apply.
+                    This article has been accepted for inclusion in a future issue of this journal. Content is final as presented, with the exception of pagination.
+
+
+6                                                                                                                   IEEE/ASME TRANSACTIONS ON MECHATRONICS
+
+
+
+   The prefilter is designed to further improve the control of mag-
+netic flux for high-speed applications. Using (19) and referring
+to the design of feedforward controllers for nonminimum phase
+systems [34], [35], a prefilter is designed
+                       1          
+    vdf [k] =                       bvd [k + d]
+                (1 − λc ) (1 + b)
+                                                                              
+                + (1 − bλc ) vd [k + d − 1] − λc vd [k + d − 2]
+                                                                             (20)
+
+where d is the number of preview steps. Ignoring the estimation
+error, the response of magnetic flux control is
+                       1        
+vm [k + 1] =               bvd [k + d − 1]
+                            2
+                   (1 + b)
+                                                                                    Fig. 5. Upper panel shows the comparison of sinusoidal magnetic flux
+                   + 1 + b2 vd [k + d − 2] + bvd [k + d − 3] .                         generation, six components of the measured sensor voltage vm versus
+                                                                                       the desired voltage vd . The lower panel shows sinusoidal magnetic
+                                                                             (21)      force generation, three components of the 3-D output magnetic force
+                                                                                       fm versus the desired magnetic force fdz .
+   The frequency response of the control system with prefiltering
+is derived, i.e., [(1 + 2b · cos θ + b2 )/(1 + b)2 ]ej(d−2)θ , where
+θ = ωΔt and Δt = 10−5 seconds. It is evident that when d = 2,
+the phase error of the response is zero. As can be seen, the                           shows that the bias, caused by magnetic remanence, and hystere-
+system has a unity steady-state gain that drops to 0.707 at 20                         sis/phase lag in flux generation were minimized by closed-loop
+kHz. The control law along with the augmented estimator and                            flux control. The lower panel shows that multi-axis coupling and
+the prefilter is used to achieve three objectives, i.e., minimizing                    hysteresis/phase lag in 3-D force generation were significantly
+the uncertainty attributed to magnetic remanence and hystere-                          reduced by optimal voltage allocation and closed-loop magnetic
+sis, increasing the bandwidth of magnetic flux generation, and                         flux control. Similar results were obtained when the desired force
+eliminating multipole coupling within the bandwidth of interest.                       was generated in different other directions.
+They are implemented using a high-speed FPGA system (Altera:
+Arria V GT) for real-time computation.                                                 C. Frequency Response of Magnetic Flux Control
+   Three set of experimental results are presented below to verify
+the effectiveness of flux control. In each experiment, the desired                        The frequency response of the six-input-six-output magnetic
+force and the position of the probe are first specified in the                         flux control system was experimentally evaluated. In each ex-
+measurement coordinate, M fd and M p, converted to the actuator                        periment, the amplitude of the desired voltage associated with
+coordinate, A fd and A p, then vopt obtained by optimal voltage                        a single pole was set to be 2V and the frequency was increased
+allocation (6) to serve as the input of the flux control system, i.e.,                 from 0.1 to 4 kHz. The value of λc associated with the control
+vd . The real-time computation for coordinate transformation and                       law is 0.8179 (3200 Hz), that of λe for the estimator 0.3659
+optimal voltage allocation operates at a frequency of 1.6 kHz,                         (16000 Hz), and the number of preview steps is zero, d = 0.
+while the flux control is 100 kHz. The output of flux control,                         The voltage readings of all six Hall sensors were recorded. The
+vm , is then used to calculate the 3-D magnetic force, M fm , in                       magnitude ratio and phase lag were then calculated to form
+real time or via batch processing.                                                     frequency response curves. Fig. 6 shows the frequency response
+                                                                                       curves of vm associated with the six pole tips when the desired
+                                                                                       voltage for P5 is 2V and those for the other five poles are zeros. It
+B. Elimination of Bias and Hysteresis                                                  is seen that while the hexapole actuator has multipole coupling,
+   Two experiments were used to demonstrate the effectiveness                          uncertainties caused by magnetic remanence and hysteresis, and
+of closed-loop flux control. In both experiments, the desired                          limited bandwidth, with the improved six-input-six-output flux
+force was a sinusoidal function, fd (t) = 5 · sin(100πt)pN ,                           control, the magnetic flux at each pole tip can be individually
+along a specified direction. Voltage allocation was converted                          and precisely controlled at frequencies over 4 kHz without any
+to current allocation, i.e., I = K−1
+                                   I DH vd , to realize current                        experimental tuning. More importantly, the experimental results
+based flux generation in the first experiment, whereas optimal                         precisely followed the theoretical predictions based on the de-
+voltage allocation along with closed-loop flux control was used                        sign. Similar results were obtained when different individual
+to control magnetic flux generation in the second experiment.                          pole was selected in the experiment. It shows that while the
+The six Hall-sensor voltage readings, vm , were recorded and                           hexapole actuator has multipole coupling, uncertainties caused
+used to calculate the resulting 3-D magnetic force.                                    by magnetic remanence and hysteresis, and limited bandwidth,
+   The comparison of experimental results is shown in Fig. 5,                          with six-input-six-output magnetic flux control, the magnetic
+where the desired force is along the z-axis. The upper panel                           flux at each pole tip can be individually, accurately controlled
+
+      Authorized licensed use limited to: National Taiwan University. Downloaded on February 01,2024 at 09:13:37 UTC from IEEE Xplore. Restrictions apply.
+                   This article has been accepted for inclusion in a future issue of this journal. Content is final as presented, with the exception of pagination.
+
+
+MENG AND MENQ: CONTROL OF THE PROBE-SAMPLE INTERACTION FORCE AT THE PICONEWTON SCALE                                                                                  7
+
+
+
+
+Fig. 6. Frequency response curves of six-axis magnetic flux control
+are compared with the theoretical predictions based on the design.
+                                                                                    Fig. 8. Hysteresis and multipole coupling in hexapole current
+                                                                                    actuation.
+
+
+
+
+                                                                                    Fig. 9.    Block diagram of probe-sample interaction force control.
+
+
+
+                                                                                       Fig. 8 uses three set of data from the frequency response
+Fig. 7. Frequency response curves of the three-axis magnetic force
+generation are compared with the theoretical predictions based on the               experiments at 10, 50, and 100 Hz (see Fig. 7) to show the
+design.                                                                             relationship between the input current and output sensor voltage
+                                                                                    reading. It shows that the hysteresis (ten cycles) and multipole
+                                                                                    coupling associated with hexapole current actuation are signif-
+at frequencies up to 4 kHz. In addition, the experimental results                   icant. Nonetheless, it verifies that the flux control law could
+accord well with the theoretical predictions.                                       actively adjust the six input currents to control the magnetic flux
+                                                                                    at the six tips of the hexapole actuator to follow the desired value
+D. Frequency Response of Magnetic Force Generation                                  vd to precisely generate the desired magnetic force fd .
+   The frequency response of the three-input-three-output mag-
+                                                                                              IV. CONTROL OF PROBE-SAMPLE INTERACTION
+netic force generation system was experimentally evaluated. In
+each experiment, with the preselected amplitude and direction                          Fig. 9. shows the block diagram of probe-sample interaction
+of the desired force, the frequency was increased from 0.1Hz                        force control by a magnetic microprobe in aqueous solution,
+to 4 kHz. The voltage readings of all six Hall sensors were                         wherein fId is the desired interaction force and po is the position
+recorded and used to calculate the resulting magnetic force to                      of the probe at the beginning of the probing process. The desired
+form frequency response curves. Fig. 7 shows the frequency                          interaction force fId , points to the negative surface normal
+response curves of the three-axis output force when the desired                     direction of the sample while its direction remains unchanged
+force is 5 pN along the x-axis. When the magnitude of the                           during each probing process.
+desired force was increased to 10 pN , the obtained frequency                          When a magnetic force is applied to the probe to indent the
+response curves are fully accord with those shown in Fig. 7. In                     sample surface, an interaction force is formed, resulting in a
+addition, the experimental results are in good agreement with                       nonlinear dynamic indentation response. Since this nonlinear
+the theoretical predictions. Similar results were obtained when                     response depends on a priori unknown mechanical properties
+the y-axis or the z-axis was selected in the experiment. The                        of the sample, process parameters need to be estimated in real
+results show that together with the optimized flux allocation, the                  time. Interaction force control includes three components: the
+developed flux control system generates precise magnetic forces,                    parameter estimator that estimates time-varying indentation gain
+making the six-input hexapole system behave like a decoupled                        and elastic force in real time; the deformation predictor that uses
+three-axis force generator with a bandwidth of more than 4 kHz.                     the estimated parameters to predict the sample deformation; and
+
+     Authorized licensed use limited to: National Taiwan University. Downloaded on February 01,2024 at 09:13:37 UTC from IEEE Xplore. Restrictions apply.
+                   This article has been accepted for inclusion in a future issue of this journal. Content is final as presented, with the exception of pagination.
+
+
+8                                                                                                                  IEEE/ASME TRANSACTIONS ON MECHATRONICS
+
+
+
+the motion stabilizer that stabilizes the probe with the expected                        Using proportional control, fdz [k] = fIdz [k] + kp δzm [k],
+sample deformation, pI . Motion stabilization is achieved using                       where kp is the control gain and δzm [k] = zI [k − 2] − zm [k].
+a feedback control law. Therefore, the required control force,                        Through optimal flux allocation and closed-loop flux control, the
+fd , is a superposition of the desired interaction force and the                      magnetic force is precisely generated, fmz [k] = fdz [k]. Since
+feedback control effort, i.e., fd = fId + uf b . Through optimal                      zm [k] = z[k − 2] + nz [k], where nz [k] is measurement noise,
+flux allocation and closed-loop flux control, the magnetic force                      the dynamic equation with feedback control is derived from (24)
+is precisely generated, fm = fd .
+                                                                                        z [k + 1] = z[k] + az [k] {fIdz [k] + kp δz [k − 2] − fE [k]}
+A. Modeling and Control of Sample Indentation
+                                                                                                         + az [k] {kp nz [k] + fT z [k]} .                            (27)
+   For simplicity, the following analysis focuses on the control
+of the interaction force along the z-axis. The results can be                           Comparing (26) and (27), the equation of motion error,
+applied to any uniaxial force control. When being in contact                          δz[k] = zI [k] − z[k], is derived
+with the sample, in addition to thermal force, two more forces
+are applied to the probe, namely the magnetic force and the
+                                                                                           δz [k + 1] = δz[k] − âz [k]kp δz [k − 2] − fˆD [k]eaz [k]
+interaction force. Since the probe continues to move within the
+sampling interval, these two forces vary with the motion of the                                               − âz [k]efE [k] − az [k]rz [k]                         (28)
+probe. Using the zero-order-hold to realize digital control, for
+kΔt ≤ t < (k + 1)Δt, the first order Taylor expansion is used                         where âz is the estimate of az , eaz = az − âz is the estimation
+to approximate the position-dependent magnetic force, fmz , as                        error, fˆE is the estimate of fE , efE = fE − fˆE is the estimation
+well as the resulting interaction force, fIz , between the probe                      error, fˆD [k] = {kp δz[k − 2] + fIdz [k] − fˆE [k]} is the estimate
+and the sample, which is modeled as an object having nonlinear                        of fD , and rz [k] = kp nz [k] + fT z [k] is random excitation. It is
+viscoelastic properties                                                               seen that when the estimation errors are negligible, eaz ≈ 0 and
+      ⎧
+      ⎨ fmz (z (t) , vd ) ≈ fmz [k] + kmz [k]δz (t)                                   efIz ≈ 0, the probe moves with the expected deformation zI .
+                                                            (22)                      Since the motion error δz is the output of a linear system, (28),
+      ⎩                                                                               driven by random force, rz [k], attributed to thermal force and
+         fIz (t) ≈ fE [k] + ks [k]δz (t) + γs [k]δ ż (t)
+                                                                                      measurement noise, the motion error is zero-mean random error.
+where fmz [k] = fmz (z[k], vd [k]) is the magnetic force at t =                       Therefore, the generated magnetic force has two components,
+kΔt, kmz [k] = −(∂fmz /∂z)|z[k],vd [k] , fE [k] is the elastic force                  i.e.,
+at t = kΔt, ks [k] is the elastic force coefficient, and γs [k] is the
+damping coefficient. Both ks and γs are deformation-dependent                              fmz [k] = fdet [k] + fran [k] ≈ fIdz [k] + kp δzm [k]                      (29)
+mechanical properties of the sample.
+   From (1), the movement of the probe within the sampling
+                                                                                      wherein the deterministic component follows the desired in-
+interval is governed by the following equation:
+                                                                                      teraction force without error, fdet [k] = fIdz [k], and the ran-
+  γz [k]δ ż (t) = −kz [k]δz (t) + {fmz [k] − fE [k] + fT z [k]} ,                    dom component has a theoretically predictable variance, i.e.,
+                                                               (23)                   var (fran ) = kp2 {var(δz) + σn2 z }.
+where γz [k] ≈ γs [k] is the unknown viscous damping coeffi-                             It is worth noting that thermal noise and measurement noise
+cient, kz [k] = ks [k] − kmz [k] ≈ ks [k] is the unknown elastic                      are coupled to the generated magnetic force through feedback
+force coefficient, and fT z [k] is the thermal force. The dynamic                     control. Therefore, when force generation is the objective, a
+equation can then be converted to a difference equation                               smaller feedback gain kp is used to reduce the feedback control
+                                                                                      force and thus the random component of the magnetic force.
+    z [k + 1] = z[k] + az [k] {fmz [k] − fE [k] + fT z [k]}                 (24)      In addition, if the expected deformation zI is not used in the
+where the indentation gain is                                                         control law, the motion error, δz[k] = zo − z[k], is no longer a
+                                                                                  zero-mean random error. Thus, deterministic force error, caused
+                                kz [k]
+         az [k] = 1 − exp −            Δt    /kz [k].                       (25)      by the deterministic force, {−fIdz [k] + fE [k]}, is expected.
+                                γz [k]
+   It is worth noting that in the absence of probe-sample interac-
+                                                                                      B. Real-Time Estimation of Process Parameters
+tion kz [k] = −kmz [k], which is thought of as a negative spring
+constant that causes instability. When using feedback control                            Real-time estimation of the elastic force and the indentation
+to stabilize the probe, the effect of the negative spring over a                      gain is required to achieve the desired indentation control. Due
+sampling period is negligible as the Δt is small, and az [k] in                       to the two-step measurement delay, δz[k − 2] appears in (28)
+(25) can be approximated as az [k] = Δt/γz . However, az [k] is                       through feedback control, therefore, three variables, δz1 [k] =
+significantly reduced with probe-sample interaction.                                  δz[k − 2], δz2 [k] = δz[k − 1], and δz3 [k] = δz[k], are used to
+   With the estimated indentation gain and the estimated elastic                      model the dynamics of motion error. In addition, the elastic force
+force, the predicted motion of the probe is governed by                               and the input gain are modeled by two separate second-order pro-
+                                                                                    cesses, respectively. Thus, a process model with seven variables
+        zI [k + 1] = zI [k] + âz [k] fIdz [k] − fˆE [k] .    (26)                    is used to depict the true state of the seven variables at time k
+
+     Authorized licensed use limited to: National Taiwan University. Downloaded on February 01,2024 at 09:13:37 UTC from IEEE Xplore. Restrictions apply.
+                    This article has been accepted for inclusion in a future issue of this journal. Content is final as presented, with the exception of pagination.
+
+
+MENG AND MENQ: CONTROL OF THE PROBE-SAMPLE INTERACTION FORCE AT THE PICONEWTON SCALE                                                                                   9
+
+
+
+evolved from the state at (k − 1)
+   ⎧
+   ⎪
+   ⎪  δz1 [k + 1] = δz2 [k]
+   ⎪
+   ⎪
+   ⎪
+   ⎪  δz 2 [k + 1] = δz3 [k]
+   ⎪
+   ⎪
+   ⎪
+   ⎪  δz   [k + 1] = −âz [k]kp δz1 [k] + δz3 [k] − fˆD [k]eaz [k]
+   ⎨ 3
+                     −âz [k]efE [k] − az [k]rz [k]
+   ⎪
+   ⎪  f    [k + 1] = f E [k] + δfE [k]
+   ⎪
+   ⎪
+        E
+   ⎪
+   ⎪ δf    [k + 1] = δf  E [k]
+   ⎪
+   ⎪
+        E
+   ⎪
+   ⎪   a   [k + 1] = a z [k] + δaz [k]
+   ⎩ z
+     δaz [k + 1] = δaz [k]
+                                                                 (30)
+where az [k]rz [k] is the process noise. At time k the available
+measurement is δzm [k], which is separated into two components
+by a real-time algorithm. The determinist component serves
+as a measurement of δz1 [k] and the variance of the random                           Fig. 10. Magnetic force is compared with the drag force and the de-
+component is used to calculate az [k − 2]. Therefore, the output                     sired force.
+matrix of the process is a 2 × 7 matrix
+                                                
+                         1 0 0 0 0 0 0
+                 H=                                .             (31)
+                         0 0 0 0 0 1 0
+                                                                                     C. Experimental Verification of Force Generation
+  With a 7 × 2 feedback matrix, L[k], the estimator is cast as                       Accuracy
+   ⎧                                                                                    The normalized flux gain matrix and the probe-specific force
+   ⎪
+   ⎪    δẑ1 [k + 1] = δẑ2 [k] + {11 [k]ez1 [k] + 12 [k]eaz [k]}
+   ⎪
+   ⎪                                                                                 gain were determined via experimental calibration, i.e., D̄H =
+   ⎪
+   ⎪    δẑ 2 [k + 1] = δẑ3 [k] + {21 [k]ez1 [k] + 22 [k]eaz [k]}
+   ⎪
+   ⎪                                                                                 diag(0.444, 0.364, 0.445, 0.436, 0.353, 0.436) and gH =
+   ⎪
+   ⎪    δẑ 3 [k + 1] = −âz [k]kp δẑ1 [k] + δẑ3 [k]
+   ⎪
+   ⎪                    + {31 [k]ez1 [k] + 32 [k]eaz [k]}                          4.741(pN/V 2 ) for the spherical magnetic probe with a radius
+   ⎪
+   ⎪
+   ⎨ ˆ
+        fIz [k + 1] = fˆIz [k] + δ fˆIz [k]
+                                                                                     of 2.25 μm. They are used to realize optimal voltage allocation
+                                                                                     using (6) and to calculate the magnetic force from Hall-sensor
+   ⎪
+   ⎪                    + {41 [k]ez1 [k] + 42 [k]eaz [k]}
+   ⎪
+   ⎪    ˆIz [k + 1] = δ fˆIz [k] + {51 [k]ez [k] + 52 [k]ea [k]}                   voltage using (5). However, the accuracy of (5), hexapole mag-
+   ⎪
+   ⎪  δ f
+   ⎪
+   ⎪
+                                                1               z
+                                                                                     netic force model, needs to be experimentally verified.
+   ⎪
+   ⎪     âz [k + 1] = âz [k] + δâz [k]
+   ⎪
+   ⎪                                                                                    The control system was applied to stabilize the probe in water
+   ⎪
+   ⎪                    + {61 [k]ez1 [k] + 62 [k]eaz [k]}
+   ⎩                                                                                 and control the interaction force between the probe and the
+       δâz [k + 1] = δâz [k] + {71 [k]ez1 [k] + 72 [k]eaz [k]}
+                                                                                     surrounding water. Since there is no elastic force in probe-
+                                                                     (32)
+                                                                                    sample interaction, the probe motion, driven by the magnetic
+where [k] s are entries of L[k], ez1 [k] = δz1 [k] − δẑ1 [k] and
+                                                                                     force fm and subject to random thermal force fT , is governed
+eaz [k] = az [k − 2] − âz [k]. Comparing (30) and (32), the dy-
+                                                                                     by γ ṗ = fm + fT , wherein fE in (1) removed. The linear
+namic of estimation errors, e, is derived
+                                                                                     relationship, i.e., fD = γ ṗ, is used to calculate the drag force
+           e [k + 1] = Fe [k]e[k] − L[k]He[k] + r[k]                       (33)      by measuring the probe’s velocity. In the experimental setup,
+                                                                                     the CMOS camera has high photosensitivity and superior signal
+where r[k] is the process noise attributed to az [k]rz [k] and Fe [k]                to noise ratio. It has been experimentally verified that when
+is the state transition matrix                                                       using a 60× magnification lens, the measurement resolution for
+               ⎡                                               ⎤
+                     0      1 0        0      0      0       0                       a spherical probe with a radius of 2.25 μm is about 0.7 nm
+               ⎢     0      0 1        0      0      0       0⎥                      (rms) in both the x- and y- directions, and 2.3 nm (rms) in the z-
+               ⎢                                               ⎥
+               ⎢−âz [k]kp 0 1 −âz [k] 0 −fˆD [k] 0⎥                                direction [37].
+               ⎢                                               ⎥
+    Fe [k] = ⎢ ⎢     0      0 0        1      1      0       0⎥⎥.                       Three experiments were used to verify the accuracy of force
+               ⎢     0      0  0       0      1      0       0 ⎥                     generation. First, the probe was stabilized at the center of the
+               ⎢                                               ⎥
+               ⎣     0      0 0        0      0      1       1⎦                      workspace using kp = 0.1(pN/μm), each of the three compo-
+                     0      0 0        0      0      0       1                       nents of the desired force was set to be 0.5 pN and oscillating
+                                                                (34)                 at 1 Hz. The resulting magnetic force fm is compared with the
+   With Fe [k] and H, L[k] is updated by the standard recursive                      drag force fD and the desired force fId in Fig. 10. It is seen
+calculation used in the Kalman filtering method [31], [36],                          that fm accord well with fId . Since fD = fm + fT , the mean
+wherein the covariance matrix, Q[k], of the process noise is                         and standard deviation of {fD [k] − fm [k]} was calculated, i.e.,
+related to the variance of thermal force and that of measurement                     σδfx = 1.0822 pN , σδfy = 1.0820 pN , and σδfz = 1.1170 pN .
+noise according to az [k]rz [k] ≈ âz [k]{kp nz [k] + fT z [k]}, and                 It is verified that the mean of all three components is very
+the covariance matrix, R[k], of the measurement noise is derived                     close to zero and the standard deviation is very close to the
+from the variance of nz . Since eaz [k] = az [k − 2] − âz [k], the                  theoretical values of the thermal force, i.e., σfT x,y = 1.0817 pN
+estimated input gain has a delay of two steps.                                       and σfT z = 1.1153 pN .
+
+
+      Authorized licensed use limited to: National Taiwan University. Downloaded on February 01,2024 at 09:13:37 UTC from IEEE Xplore. Restrictions apply.
+                   This article has been accepted for inclusion in a future issue of this journal. Content is final as presented, with the exception of pagination.
+
+
+10                                                                                                                 IEEE/ASME TRANSACTIONS ON MECHATRONICS
+
+
+
+
+Fig. 11. As in Fig. 10, the left panel compares the resulting magnetic
+force with the drag force and the desired force in the second experiment
+and the right panel compares the resulting magnetic force with the drag
+force and the desired force in the third experiment.                                  Fig. 13.    Input gain estimated in three live-cell indentation experiments.
+
+
+
+
+                                                                                      with a contact force of 0.5 pN preceding the indentation and
+                                                                                      stabilized at the separation point proceeding the indentation. In
+                                                                                      between, there are exactly 1600 samples associated with the
+                                                                                      indentation cycle.
+                                                                                         The bottom left panel shows the difference between the mag-
+                                                                                      netic force and the desired force. The results verify that the
+                                                                                      deterministic component of the magnetic force accords well with
+                                                                                      the desired force and the difference is close to random error. The
+                                                                                      top right panel shows the comparison from the 10 Hz experiment,
+                                                                                      while the bottom right panel shows the comparison from the 100
+                                                                                      Hz experiment. It is worth noting that the standard deviation of
+                                                                                      the force error for all three experiments is about 0.1 pN , which
+Fig. 12. Comparison between the magnetic force and the desired force                  is less than 10% of the thermal force. Since the interaction force
+in live-cell indentation experiments.                                                 is a superposition of magnetic force and thermal forces, control
+                                                                                      of interaction force is mainly limited by thermal forces.
+                                                                                         Fig. 13 shows the input gain estimated in real time in the
+   Second, the magnitude of the desired force was increased to                        three live-cell indentation experiments. The temporal variable
+5 pN and the frequency increased to 10 Hz. The comparison                             is normalized, i.e., θ = ωt, to plot three set of results of the
+is shown in the left panel of Fig. 11. The probe was then                             three experiments with distinct time scales in the same plot.
+stabilized at (30 μm 30 μm 15 μm) in the third experiment. The                        The results show that the input gain reduced as the elastic force
+magnitude and frequency of the desired force were 5 pN and                            coefficient of the cell increased with surface deformation. The
+1 Hz, respectively. The comparison is shown in the right panel                        result from the 100 Hz indentation experiment clearly shows
+of Fig. 11. It is worth noting that the magnetic force (green) is                     that the estimation of input gain has a delay of two steps.
+on top of the desired force (red). Both comparisons verify the
+accuracy of magnetic force generation and that of the hexapole                                          V. CONCLUSION AND DISCUSSION
+flux-based magnetic force model.
+                                                                                         A force control system has been designed and developed
+                                                                                      to accurately generate the 3-D magnetic force exerted on a
+D. Experimental Verification of Interaction Force Control
+                                                                                      magnetic microprobe in aqueous solutions under a microscope
+   The control system was applied to control the probe to indent                      and precisely control the probe-sample interaction force at
+the top surface of a live cell in the negative z direction. Three                     the piconewton scale. Accurate force generation was achieved
+experiments were performed, in which the desired forces were                          through magnetic flux control, wherein a six-input-six-output
+fIdz (t) = 10(pN ) × (1 + cos ωt) at three distinct frequencies,                      digital control law and a disturbance estimator were designed
+namely 1, 10, and 100 Hz. The force control loop has a sam-                           and implemented using a high-speed FPGA system for real-time
+pling frequency of 1.6 kHz. Six Hall-sensor voltages are used                         computation operating at 100 kHz.
+to calculate the magnetic force fmz [k] using (5), which are                             Experiments have shown that whereas the hexapole actuator
+compared with the desired force fIdz [k], as shown in Fig. 12.                        has multipole coupling, uncertainties caused by magnetic rema-
+The top left panel shows the comparison of samples from the 1                         nence and hysteresis, and limited bandwidth, the control system
+Hz indentation experiment with the desired interaction force. It                      is able to actively adjust the six input currents to accurately
+is worth noting that the probe was stabilized on the cell surface                     control the magnetic flux at each individual pole tips to follow
+
+     Authorized licensed use limited to: National Taiwan University. Downloaded on February 01,2024 at 09:13:37 UTC from IEEE Xplore. Restrictions apply.
+                     This article has been accepted for inclusion in a future issue of this journal. Content is final as presented, with the exception of pagination.
+
+
+MENG AND MENQ: CONTROL OF THE PROBE-SAMPLE INTERACTION FORCE AT THE PICONEWTON SCALE                                                                                    11
+
+
+
+the desired values at frequencies above 4 kHz. In addition, the                       [11] D. Li, F. Niu, J. Li, X. Li, and D. Sun, “Gradient-enhanced electromagnetic
+experimental results accord well with the theoretical predictions.                         actuation system with a new core shape design for microrobot manipula-
+                                                                                           tion,” IEEE Trans. Ind. Electron., vol. 67, no. 6, pp. 4700–4710, Jun. 2020,
+Moreover, together with optimal flux allocation, the flux control                          doi: 10.1109/TIE.2019.2928283.
+system has been used to render accurate magnetic force gener-                         [12] J. Lee, X. Zhang, C. H. Park, and M. J. Kim, “Real-time teleoperation
+ation. It enables the six-input hexapole system to behave like a                           of magnetic force-driven microrobots with 3D haptic force feedback for
+                                                                                           micro-navigation and micro-transportation,” IEEE Robot. Automat. Lett.,
+decoupled three-axis force producer with high bandwidth.                                   vol. 6, no. 2, pp. 1769–1776, Apr. 2021, doi: 10.1109/LRA.2021.3060708.
+   The second function of the control system has been designed                        [13] K. C. Neuman and A. Nagy, “Single-molecule force spectroscopy: Op-
+and implemented to control the interaction force between the                               tical tweezers, magnetic tweezers and atomic force microscopy,” Nature
+                                                                                           Methods, vol. 5, no. 6, pp. 491–505, Jun. 2008.
+probe and the sample. It has been theoretically proven that when                      [14] J. T. Finer, R. M. Simmons, and J. A. Spudich, “Single myosin molecule
+the estimation errors are negligible, the resulting magnetic force                         mechanics–Piconewton forces and nanometer steps,” Nature, vol. 368,
+has two components. The deterministic component precisely                                  no. 6467, pp. 113–119, Mar. 1994.
+                                                                                      [15] P. Cluzel et al., “DNA: An extensible molecule,” Science, vol. 271,
+follows the desired interaction force, and the random component                            no. 5250, pp. 792–794, Feb. 1996.
+has a theoretically predictable variance. The control system                          [16] J. Zlatanova and S. H. Leuba, “Magnetic tweezers: A sensitive tool to
+was applied to stabilize and move the probe in water, wherein                              study DNA and chromatin at the single-molecule level,” Biochem. Cell
+                                                                                           Biol., vol. 81, pp. 151–159, 2003.
+the resulting drag force has been used to verify the accuracy                         [17] C.-H. Chiou, Y.-Y. Huang, M.-H. Chiang, H.-H. Lee, and G.-B. Lee, “New
+of three-dimensional magnetic force generation, ranging from                               magnetic tweezers for investigation the mechanical properties of single
+subpiconewtons to ten piconewtons, at the center and away from                             DNA molecules,” Nanotechnology, vol. 17, pp. 1217–1224, 2006.
+                                                                                      [18] N. Walter, C. Selhuber, H. Kessler, and J. P. Spatz, “Cellular unbinding
+the center of the workspace.                                                               forces of initial adhesion processes on nanopatterned surfaces probed with
+   The control system was applied to control the probe to indent                           magnetic tweezers,” Nano Lett., vol. 6, no. 3, pp. 398–402, Mar. 2006.
+the top surface of a live cell at three distinct frequencies. Experi-                 [19] D. Salas, V. Gocheva, and M. Nöllmann, “Constructing a magnetic tweez-
+                                                                                           ers to monitor RNA translocation at the single-molecule level,” in RNA
+mental results have verified that the deterministic component of                           Remodeling Proteins, Berlin, Germany: Springer, 2015, pp. 257–273.
+the magnetic force accords well with the desired force and the                        [20] J. K. Fisher et al., “Thin-foil magnetic force system for high-numerical-
+difference is close to random error. The developed control sys-                            aperture microscopy,” Rev. Sci. Instrum., vol. 77, 2006, Art. no. 023702.
+                                                                                      [21] Z. P. Zhang, Y. N. Huang, and C. H. Menq, “Actively controlled manipula-
+tem enables the hexapole actuator to generate accurate magnetic                            tion of a magnetic microbead using quadrupole magnetic tweezers,” IEEE
+force to precisely control the interaction of the microprobe with                          Trans. Robot., vol. 26, no. 3, pp. 531–541, Jun. 2010.
+the sample. The functions of the control system form the basis                        [22] Z. P. Zhang, F. Long, and C. H. Menq, “Three-dimensional visual servo
+                                                                                           control of a magnetically propelled microscopic bead,” IEEE Trans.
+for automatic probing and controlled manipulation of active                                Robot., vol. 29, no. 2, pp. 373–382, Apr. 2013.
+biological samples in aqueous solutions.                                              [23] B. G. Hosu, M. Sun, F. Marga, M. Grandbois, and G. Forgacs, “Eukaryotic
+                                                                                           membrane tethers revisited using magnetic tweezers,” Phys. Biol., vol. 4,
+                                                                                           no. 2, pp. 67–78, Jun. 2007.
+                              REFERENCES                                              [24] Z. P. Zhang, Y. H. Shi, S. M. Jhiang, and C. H. Menq, “Mechani-
+                                                                                           cal anisotropy and adaptation of metastatic cells probed by magnetic
+ [1] Z. P. Zhang and C. H. Menq, “Six-axis magnetic levitation and motion                  microbeads,” in Proc. Imag., Manipulation, Anal. Biomolecules, Cells,
+     control,” IEEE Trans. Robot., vol. 23, no. 2, pp. 196–205, Apr. 2007.                 Tissues VIII, 2010, vol. 7568, pp. 131–137.
+ [2] S. K. Kuo, X. Shan, and C. H. Menq, “Large travel ultra precision X-Y-           [25] A. H. B. de Vries, B. E. Krenn, R. van Driel, and J. S. Kanger, “Micro
+     theta motion control of a magnetic suspension stage,” IEEE/ASME Trans.                magnetic tweezers for nanomanipulation inside live cells,” Biophys. J.,
+     Mechatron., vol. 8, no. 3, pp. 334–341, Sep. 2003.                                    vol. 88, no. 3, pp. 2137–2144, 2005.
+ [3] L. Zhang, J. J. Abbott, L. X. Dong, B. E. Kratochvil, D. Bell, and B. J.         [26] F. Long, D. Matsuura, and C. H. Menq, “Actively controlled hexapole elec-
+     Nelson, “Artificial bacterial flagella: Fabrication and magnetic control,”            tromagnetic actuating system enabling 3-D force manipulation in aqueous
+     Appl. Phys. Lett., vol. 94, pp. 064107–1–064107–3, 2009.                              solutions,” IEEE/ASME Trans. Mechatron., vol. 21, no. 3, pp. 1540–1551,
+ [4] X. Wu, J. Liu, C. Huang, M. Su, and T. Xu, “3-D path following of                     Jun. 2016.
+     helical microswimmers with an adaptive orientation compensation model,”          [27] F. Long, P. Cheng, T. M. Meng, and C. H. Menq, “Optimal current
+     IEEE Trans. Automat. Sci. Eng., vol. 17, no. 2, pp. 823–832, Apr. 2020,               allocation rendering 3-D magnetic force production in hexapole elec-
+     doi: 10.1109/TASE.2019.2947071.                                                       tromagnetic actuation,” IEEE/ASME Trans. Mechatronics, vol. 26, no. 5,
+ [5] L. Zheng et al., “3D navigation control of untethered magnetic mi-                    pp. 2408–2417, Oct. 2021.
+     crorobot in centimeter-scale workspace based on field-of-view tracking           [28] F. Long, T.-M. Meng, J.-J. Wang, and C.-H. Menq, “Hall-sensor-based
+     scheme,” IEEE Trans. Robot., vol. 38, no. 3, pp. 1583–1598, Jun. 2022,                magnetic force modeling and inverse modeling for hexapole electro-
+     doi: 10.1109/TRO.2021.3118205.                                                        magnetic actuation,” IEEE/ASME Trans. Mechatron., vol. 27, no. 5,
+ [6] Y. Jeong, G. R. Jayanth, S. M. Jhiang, and C. H. Menq, “Design and                    pp. 2806–2817, Oct. 2022.
+     fabrication of an active multi-axis probing system for high-speed atomic         [29] T.-M. Meng and C.-H. Menq, “Ultra-precise high-speed untethered
+     force microscopy,” IEEE Trans. Nanotechnol., vol. 9, no. 3, pp. 392–399,              manipulation of magnetic scanning microprobe in aqueous solutions,”
+     May 2010.                                                                             IEEE/ASME Trans. Mechatron., vol. 28, no. 1, pp. 280–291, Feb. 2023,
+ [7] G. R. Jayanth and C. H. Menq, “Two-axis force sensing and control of                  doi: 10.1109/TMECH.2022. 3196596.
+     a re-orientable scanning probe,” IEEE/ASME Trans. Mechatron., vol. 18,           [30] W. Coffey, Y. P. Kalmykov, and J. Waldron, The Langevin Equation: With
+     no. 2, pp. 687–696, Apr. 2013.                                                        Applications to Stochastic Problems in Physics, Chemistry and Electrical
+ [8] M. P. Kumar, J. J. Abbott, B. E. Kratochvil, R. Borer, A. Sengul, and                 Engineering, 2nd ed. Singapore: World Sci., 2004.
+     B. J. Nelson, “OctoMag: An electromagnetic system for 5-DOF wireless             [31] G. F. Franklin, J. D. Powell, and M. Workman, Digital Control of Dynamic
+     micromanipulation,” IEEE Trans. Robot., vol. 26, no. 6, pp. 1006–1017,                Systems, 3rd ed. Reading, MA, USA: Addison-Wesley, 1998.
+     Dec. 2010.                                                                       [32] J. Golten and A. Verwer, Control System Design and Simulation. New
+ [9] C. Bergeles, B. E. Kratochvil, and B. J. Nelson, “Visually servoing                   York, NY, USA: McGraw-Hill, 1991.
+     magnetic intraocular microdevices,” IEEE Trans. Robot., vol. 28, no. 4,          [33] W.-H. Chen, J. Yang, L. Guo, and S. Li, “Disturbance-observer-based
+     pp. 798–809, Aug. 2012.                                                               control and related methods—An overview,” IEEE Trans. Ind. Electron.,
+[10] X. Zhang, H. Kim, and M. J. Kim, “Design, implementation, and analysis                vol. 63, no. 2, pp. 1083–1095, Feb. 2016.
+     of a 3-D magnetic tweezer system with high magnetic field gradient,”             [34] M. Tomizuka, “Zero phase error tracking algorithm for digital control,”
+     IEEE Trans. Instrum. Meas., vol. 68, no. 3, pp. 680–687, Mar. 2019,                   Amer. Soc. Mech. Eng. J. Dyn. Syst., Meas., Control., vol. 109, no. 1,
+     doi: 10.1109/TIM.2018.2857082.                                                        pp. 65–68, Mar. 1987.
+
+
+
+      Authorized licensed use limited to: National Taiwan University. Downloaded on February 01,2024 at 09:13:37 UTC from IEEE Xplore. Restrictions apply.
+                     This article has been accepted for inclusion in a future issue of this journal. Content is final as presented, with the exception of pagination.
+
+
+12                                                                                                                   IEEE/ASME TRANSACTIONS ON MECHATRONICS
+
+
+
+[35] J. Xia and C. H. Menq, “Precision tracking control of non-minimum phase                                   Chia-Hsiang Menq received the Ph.D. degree
+     systems with zero phase error,” Int. J. Control, vol. 61, no. 4, pp. 791–807,                             in mechanical engineering from Carnegie Mel-
+     1995.                                                                                                     lon University, Pittsburgh, PA, USA, in 1985.
+[36] J. Y. Ishihara, M. H. Terra, and J. C. T. Campos, “Robust Kalman filter                                      Since 1985, he has been with The Ohio State
+     for descriptor systems,” IEEE Trans. Autom. Control, vol. 51, no. 8,                                      University, Columbus, OH, USA. Since 2006,
+     pp. 1354–1354, Aug. 2006, doi: 10.1109/TAC.2006.878741.                                                   he has been the holder of the Ralph W. Kurtz
+[37] P. Cheng, S. M. Jhiang, and C. H. Menq, “Real-time visual sensing system                                  Endowed Chair in Mechanical Engineering with
+     achieving high-speed 3D particle tracking with nanometer resolution,”                                     The Ohio State University.
+     Appl. Opt., vol. 52, no. 31, pp. 7530–7539, Nov. 2013.                                                       Dr. Menq is a Fellow of the American Society
+                                                                                                               of Mechanical Engineers, the American Associ-
+                                                                                                               ation for the Advancement of Science, and the
+                                                                                        Society of Manufacturing Engineers.
+                           Ta-Min Meng received the B.S. degree in power
+                           mechanical engineering from the National
+                           Tsing Hua University, Hsinchu, Taiwan, in 2015,
+                           and the Ph.D. degree in mechanical engineering
+                           from The Ohio State University, Columbus, OH,
+                           USA, in 2023.
+                              His research interests include modeling, esti-
+                           mation, sensing, and control of precision elec-
+                           tromechanical systems.
+
+
+
+
+     Authorized licensed use limited to: National Taiwan University. Downloaded on February 01,2024 at 09:13:37 UTC from IEEE Xplore. Restrictions apply.
+

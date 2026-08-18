@@ -1,0 +1,837 @@
+280                                IEEE/ASME TRANSACTIONS ON MECHATRONICS, VOL. 28, NO. 1, FEBRUARY 2023
+
+
+
+
+                   Ultra-Precise High-Speed Untethered
+                    Manipulation of Magnetic Scanning
+                     Microprobe in Aqueous Solutions
+                                                 Ta-Min Meng             and Chia-Hsiang Menq
+
+
+   Abstract— This article describes the design and develop-                       biological samples. It is a two-dimensional (2-D) surface tool,
+ment of an integrated system that renders ultra-precise and                       mainly applied to obtain surface topography and micromechan-
+high-speed, untethered manipulation of a single magnetic                          ical property of planar surfaces [2]. The typical scan range
+scanning microprobe in aqueous solutions under a micro-
+scope. The system uses a six-input-three-output hexapole                          (∼ 10 μm) and speed (one line per second) are inadequate
+electromagnetic actuator to control the magnetic gradi-                           for live cell (∼ 30 μm) applications. Due to the restriction
+ent force exerted on the probe and a three-dimensional                            of mechanical connections, it is not suitable for intracellular
+vision-based motion tracking system to enable feedback                            applications. When operating in aqueous solution, the force
+control. The control system has three core functions that
+                                                                                  resolution of a typical AFM probing system is at best several-tens
+enables superior manipulation of the magnetic microprobe.
+The six-input-six-output closed-loop magnetic flux control                        of piconewtons (pN).
+significantly suppresses the effect of magnetic hystere-                             Optical trapping is another useful modern technique for the
+sis and greatly increases the bandwidth of magnetic flux                          studies of biological systems under physiological conditions
+generation. The optimal flux allocation solves four issues                        [3]–[5], but there are key barriers inhibiting its applications to
+in multipole magnetic force generation: redundancy; cou-
+                                                                                  the study of live biological systems. The typical spatial range
+pling; nonlinearity; and position-dependency. The position-
+dependent discrete-time motion control law determines the                         (∼ 1 μm) is very limited. Although increasing laser power to
+required force for stabilization and tracking. These three                        trap small objects has been demonstrated, heating is a main issue
+core functions have been implemented using a high-speed                           that needs to be resolved [6]–[8]. Furthermore, the specificity of
+field programmable gate array (FPGA) system. Experiments                          optical trapping in controlling the probe is in doubt. Unwanted
+have verified that the use of digital control technology,
+                                                                                  trap of debris may easily mix with the probe. Despite these
+high-speed electronics, mathematical modeling, and real-
+time computation has achieved superior manipulation of a                          issues, optical tweezers have gained their popularity due to one
+single magnetic microprobe in aqueous solutions.                                  distinct advantage, i.e., a stable trap is readily established for a
+                                                                                  microscopic dielectric object [9], [10].
+  Index Terms—Electromagnetic actuation, magnetic flux
+control, motion tracking, untethered manipulation.                                   Multipole electromagnetic actuators are widely used in a va-
+                                                                                  riety of applications, including magnetic levitation of multiaxis
+                                                                                  motion devices [11], [12], propulsion of miniature swimming
+                            I. INTRODUCTION                                       machines [13], [14], and multiaxis scanning probe technology
+      PPLYING scanning probe microscopy (SPM) to scan bio-                        [15], [16]. They have recently been implemented as magnetic
+A     logical samples and to manipulate biological processes
+has become an important technique for the studies of cell
+                                                                                  tweezers to enable untethered manipulation of microprobes [17]
+                                                                                  and employed to probe biological processes with interaction
+mechanics and mechanobiology [1]. Atomic force microscopy                         forces ranging from sub-piconewtons to tens of piconewtons
+(AFM) provides high spatial resolution and is capable of force                    scales [18]. Most existing magnetic tweezers are simple force
+sensing, but there are major limitations when applied to probe                    applicators/transducers. In a typical experiment, one attaches
+                                                                                  magnetic particles to molecules of interest and then applies an
+                                                                                  external magnetic field to exert a force (∼ pN) for quasi-static
+   Manuscript received 26 February 2022; revised 22 June 2022; ac-                measurement of tensile strength of or binding forces between
+cepted 30 July 2022. Date of publication 18 August 2022; date of current          molecules [19]–[21]. Although these setups are popular bio-
+version 16 February 2023. Recommended by Technical Editor C. E.
+Okwudire and Senior Editor X. Tan. This work was supported in part                physical tools, their application is limited to simple experiments
+by the endowment fund for the Ralph W. Kurtz Chair in Mechanical                  on isolated biological samples.
+Engineering at the Ohio State University. (Corresponding author: Chia-               Recently, hexapole electromagnetic actuators have been de-
+Hsiang Menq.)
+   The authors are with the Department of Mechanical and Aerospace                veloped, in which six pointed poles, each driven by a sepa-
+Engineering, The Ohio State University, Columbus, OH 43210 USA (e-                rate coil, are employed to enable the generation of 3-D forces
+mail: meng.350@osu.edu; menq.1@osu.edu).                                          [22], [23]. They are six-input-three-output nonlinear actuators.
+   Color versions of one or more figures in this article are available at
+https://doi.org/10.1109/TMECH.2022.3196596.                                       The optimal current allocation [24] associated with hexapole
+   Digital Object Identifier 10.1109/TMECH.2022.3196596                           actuation has been devised to achieve the inverse modeling
+
+
+                    1083-4435 © 2022 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                  See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+      Authorized licensed use limited to: National Taiwan University. Downloaded on February 01,2024 at 07:42:12 UTC from IEEE Xplore. Restrictions apply.
+MENG AND MENQ: ULTRAPRECISE HIGH-SPEED UNTETHERED MANIPULATION OF MAGNETIC SCANNING MICROPROBE                                                              281
+
+
+
+required for magnetic force generation. It was implemented to
+realize real-time current allocation, thereby enabling current-
+based control of the probing system. Together with vision-based
+particle tracking systems, a visual servo control system has been
+developed to enable 3-D magnetic actuation and stable trapping
+of individual magnetic microprobes in aqueous solutions [24],
+illustrating the potential of providing scanning probe function-
+ality using magnetic tweezer technology.
+   The hexapole actuator uses the six input currents to pro-
+duce magnetic fluxes at the six pole tips to control the mag-
+netic field in the 3-D workspace and the 3-D magnetic gra-
+dient force exerted on the magnetic probe. The current-based
+model uses a quasi-static relationship between the actuation
+current and the generated magnetic flux, which ignores the
+history-dependent nonlinearity, i.e., hysteresis, in and the eddy-
+current-induced dynamics in magnetic flux generation. While
+the current-based control enables stable magnetic trapping and
+visual-servo control [22]–[24], hysteresis and dynamics of flux
+generation cannot be ignored when the scanning probe func-
+                                                                                Fig. 1. Upper left panel shows the CAD model of the hexapole system.
+tion requires high-speed and precise steering of the magnetic                   The upper right panel shows a prototype of the hexapole electromag-
+microprobe.                                                                     netic actuator. The bottom left panel illustrates the symmetric arrange-
+   This article describes the design and development of an                      ment of the six pole tips. The bottom right panel shows the relationship
+                                                                                between the actuation coordinate system and the measurement coordi-
+integrated system that renders ultra-precise and high-speed                     nate system.
+untethered manipulation of a single magnetic scanning probe
+in aqueous solutions under a microscope. The integrated sys-
+tem uses previously developed hexapole actuator [23] and an                     measurement noise (see Section III). Experimental verifica-
+improved motion tracking system to form a high-speed 3-D                        tion of ultra-precise and high-speed manipulation is presented
+visual servo control system. Three core functions of the sys-                   in Section IV.
+tem are designed and implemented for precise steering of the
+magnetic microprobe at high-speeds to enable 3-D scanning.
+They are the closed-loop magnetic flux control, the optimal                       II. CONTROL OF THREE-DIMENSIONAL MAGNETIC FORCE
+voltage allocation, and the discrete-time motion control law.                     This section discusses the generation and control of 3-D mag-
+Three major contributions are identified and briefly summarized                 netic gradient forces using a hexapole electromagnetic actuation
+below.                                                                          system. The generation of 3-D magnetic force is probe-specific
+   First, the dynamics for the hexapole magnetic flux generation                and requires precise control to achieve superior untethered ma-
+were characterized with a second order six-input-six-output                     nipulation of the magnetic microprobe.
+model through experimentation with a previous Hall-sensor
+integrated actuator [25]. Based on the dynamic model, a six-
+input-six-output magnetic flux control system was developed                     A. Generation of 3-D Magnetic Force
+to solve the three issues in current-based flux generation [22],                   The two upper panels of Fig. 1 show the design and prototype
+[24]: multipole coupling; uncertainty due to magnetic hysteresis;               of a hexapole electromagnetic actuation system [23]. Three pairs
+and limited bandwidth. With six-input-six-output flux control,                  of pointed electromagnetic poles are assembled to concentrate
+the magnetic flux at each individual pole tip can be precisely                  the magnetic flux into the workspace, where the sample and the
+controlled at frequencies up to 1000 Hz (see Section II-C).                     moving magnetic probe are placed. Two coordinate systems, i.e.,
+Second, the flux allocation proposed in [25] has been integrated                the measurement coordinate system and the actuation coordinate
+with six-input-six-output magnetic flux control such that the                   system, are defined for measurement and actuation modeling,
+six-input hexapole system behaves like a decoupled three-axis                   respectively. The z-axis for the measurement coordinate system
+force producer with a bandwidth of 1000 Hz (see Section                         is aligned with the optical axis of the microscope (Olympus
+II-D). Third, in contrast to using proportional (P) control for                 IX 81) employed for the particle tracking. The tips of the six
+positioning [22]–[25] and proportional and integral (PI) control                poles are placed symmetrically on three orthogonal axes initially
+for slow-motion tracking [22]–[25], a model-based position-                     aligned with the measurement coordinate system, shown in the
+dependent control law was derived and implemented to achieve                    bottom left panel, to enclose the 3-D workspace. Specifically,
+high-speed manipulation of the magnetic microprobe in aqueous                   P2→P1, P4→P3 and P6→P5 delineate the three axes of the
+solutions, where the motion error is zero-mean random error,                    actuation coordinate system, i.e., +x, +y, and +z. By rotating
+which is dictated by both random thermal forces and random                      the six poles about the x-axis by −45o and then about the y-axis
+                                                                                by 35o , the tips of the six poles are on two parallel horizontal
+                                                                                planes in the measurement coordinate system, i.e., one upper
+
+     Authorized licensed use limited to: National Taiwan University. Downloaded on February 01,2024 at 07:42:12 UTC from IEEE Xplore. Restrictions apply.
+282                                                                        IEEE/ASME TRANSACTIONS ON MECHATRONICS, VOL. 28, NO. 1, FEBRUARY 2023
+
+
+
+plane and the other lower plane, shown in the bottom right panel,                 Hall-sensor-based hexapole magnetic force model can be de-
+and the blockage of the optical path is avoided.                                  rived from (1)
+   Each pole is driven by a separate coil. All coils and poles are                                                A M     
+                                                                                       fm M p, vH = gH MA R vH D̂H L M R p/ D̂H vH ,
+                                                                                     M                        T T
+magnetically connected by yokes. Once the controlled current                                                                             (3)
+is applied to its coil, the magnetic flux  permeates through all
+poles to pole tips. The workspace is a polyhedron, whose size                     where gH = DH 2 gφ is the force gain associated with the
+is determined by the distance between each individual pole tip                    sensor-voltage vector.
+and the center, denoted by . Although  is adjustable, for all ex-
+periments reported in Sections III and IV, it is 500 micrometers.                 B. Optimal Flux Allocation
+The probes used in all experiments are ferromagnetic spheres
+                                                                                      The hexapole actuation system is an over-actuated (six input
+with a diameter of 4.5 micrometers. The hexapole system is
+                                                                                  three output) and strongly coupled nonlinear system. Assign-
+used to generate and exert 3-D forces on the magnetic probe.
+                                                                                  ing the 6 × 1 controllable variables vd that generate the 3 × 1
+A quadratic form relating the magnetic flux at the tips of the
+                                                                                  desired actuation force is a challenging task, but also essential
+six poles to the 3-D magnetic gradient force has been derived
+                                                                                  for the practical use of the actuation system. In addition, the
+and used as a kernel for modeling force generation [25]. It is
+                                                                                  generation of magnetic force is position-dependent and the
+expressed with respect to the actuator coordinate system
+                                                                                  allocation of vd needs to be done in real time. The optimal flux
+                                           ⎡ T            ⎤                       allocation reported in [25] employs analytical derivation, con-
+                                           φ Lx (p) φ
+                                                                                  strained optimization, numerical calculation, and least square
+       A
+         fm A p, φ = g φT L (                     p ) φ ⎦ , (1)
+                                p ) φ = gφ ⎣ φT Ly (
+                                                                                  fitting to obtain the optimal flux allocation, minimizing the
+                                                    p) φ
+                                             φT Lz (
+                                                                                  two-norm of the magnetic flux vector, φT φ, to render accurate
+                                                                                  and effective 3-D force generation for real-time applications.
+where A fm is the 3-D magnetic force, A p is the position of the
+                                     T                                            Since the nonlinear relationship between the magnetic force
+probe, φ = [ φ1 φ2 φ3 φ4 φ5 φ6 ] is the 6 × 1 magnetic-flux                       and the magnetic flux is a quadratic form, using the spherical
+vector, and gφ denotes the force gain associated with the flux                    coordinates of the desired force, A fd = fd r̂(ϕ, θ ), where fd is
+vector. The gradient matrix, L [23], [24], consists of three 6 × 6                the magnitude and r̂(ϕ, θ ) is the unit radial vector, leads to a
+matrices, Lx , Ly , and Lz . Each entry of the 6 × 6 × 3 gradient                 scalable optimal solution,    φopt (ϕ, θ , Ap ), yielding the desired
+matrix is a function of the dimensionless position,    p = A p/,                unit force, r̂(ϕ, θ ). This scalable relationship renders the focus
+normalized with respect to the radius of the workspace. The                       on the direction of the desired force when finding the optimal
+gradient matrix depicts the redundancy, multipole coupling,                       flux allocation. It is essentially an optimization problem under
+position-dependance of the six-input-three-output force gener-                    nonlinear equality constraints.
+ation system. It is worth noting that gφ is inversely proportional                    MATLAB optimization toolbox was used to numerically de-
+to the fifth power of , and is probe-specific, i.e., proportional                termine the optimal solutions at predetermined positions cov-
+to the volume and susceptibility of the probe.                                    ering the desired spatial range in the 3-D workspace and along
+   The magnetic flux is produced by the magnetomotive force,                      specific discrete directions r̂(ϕ j , θ j ). Least squares fitting was
+which is proportional to the input current I, and the turns of the                then employed to construct an analytical direction-dependent
+coil, Nc . By Hopkinson’s law in magnetic circuit analysis, the                   6 × 4 × 4 optimal flux-allocation matrix, DLS (ϕ, θ ) [25] to serve
+magnetic flux is quasi-statically related to the input current by                 as a kernel for optimal magnetic flux allocation
+φI = (Nc /Ra ) KI I, where Ra is the lumped magnetic reluctance
+                                                                                                                
+and KI is the 6 × 6 flux distribution matrix. This approach has                                   opt ϕ, θ , A
+                                                                                                  φ             p ≈𝓟   T DLS (ϕ, θ )  𝓟,            (4)
+led to current-based magnetic force models [22], [23], which
+can be derived from (1)                                                           where   𝓟 = [x̂, ŷ, ẑ, 1]T is the augmented position vector. With
+                                                                                  opt (ϕ, θ , A
+                                                                                  φ             p ), one can then calculate optimal flux allocation,
+                                      A M       
+        M
+           fm M p, I = gI M A R I KI L M R p/ KI I ,
+                                 T T
+                                                               (2)                i.e., φopt ( fd , A
+                                                                                              A
+                                                                                                      p ) = fd /gφ   φopt (ϕ, θ , A
+                                                                                                                                    p ), via scaling to pro-
+                                                                                         A
+                                                                                  duce fd . It can then be used to calculate optimal current allo-
+where gI = (Nc /Ra )2 gφ is the force gain associated with the                    cation or optimal voltage allocation for force generation
+current vector. The current-based force model has two major                                 ⎧
+                                                                                            ⎪                                              
+limitations: suffering from uncertainty attributed to hysteresis in                         ⎨Iopt A fd , A  p = gfdI KI−1 φ̂opt ϕ, θ , A   p
+                                                                                                                                              .
+magnetic flux generation and ignoring the dynamic of magnetic                                                                                            (5)
+                                                                                            ⎪                                      
+flux generation.                                                                            ⎩vopt A fd , A p  = gfHd D̂−1  H φ̂opt ϕ, θ , 
+                                                                                                                                            A
+                                                                                                                                              p
+   The flux vector φ associated with the hexapole actuator is
+not readily available. It can, however, be measured using Hall
+sensors. By placing six Hall sensors (Asahi Kasei EQ-730L) in                     C. Six-Input-Six-Output Magnetic Flux Control System
+total, one on the surface of each pole, to measure the magnetic                      To overcome the limitations of current-based magnetic flux
+flux at the tip of each pole, the flux vector is related to the                   generation, the six Hall sensors are connected to a high-speed
+readings of the six Hall sensors by φ = DH vH , where DH                          field programmable gate array (FPGA) system through AD
+is a diagonal voltage-flux gain matrix and vH is the sensor-                      converters to enable magnetic flux control, aiming to achieve
+voltage vector [25]. Normalizing DH , D̂H = DH /DH , the                        precise generation and control of the magnetic force exerted on
+
+      Authorized licensed use limited to: National Taiwan University. Downloaded on February 01,2024 at 07:42:12 UTC from IEEE Xplore. Restrictions apply.
+MENG AND MENQ: ULTRAPRECISE HIGH-SPEED UNTETHERED MANIPULATION OF MAGNETIC SCANNING MICROPROBE                                                               283
+
+
+
+                                                                                 estimated to be 163 Hz. The combined effects of modeling error
+                                                                                 and remanence appear as disturbances, w.
+                                                                                     The control objective is δv[k + 1] = λc δv[k], where
+                                                                                 0 ≤ λc < 1 and δv is the tracking error, δv [k] = vd [k] −
+                                                                                 vm [k]. Using one-step preview to realize feedforward control,
+                                                                                 v f f [k] = vd [k + 1] − a1 vd [k] − a2 vd [k − 1], employing the
+Fig. 2. Block diagram of the six-input-six-output magnetic flux control
+system.                                                                          estimated tracking error δ v̂ for feedback control, δv f b [k] =
+                                                                                 (a1 − λc ) δ v̂[k] + a2 δ v̂[k − 1], and applying the estimated dis-
+                                                                                 turbance w  to compensate for w, the control law achieving
+                                                                                 the control objective is expressed as superposition of the three
+                                                                                 components:
+                                                                                                                               
+                                                                                            u [k] = B−1 v f f [k] + δv f b [k] − w    [k] .      (7)
+                                                                                    Substituting (7) into (6), the tracking error dynamic is
+                                                                                         δv [k + 1] = λc δv [k] − Bew [k]
+                                                                                                           + (a1 − λc ) eδv [k] + a2 eδv [k − 1] ,           (8)
+                                                                                 where ew = w − w    and eδv = δv − δ v̂. It is evident that the
+Fig. 3.   Experimental results of open-loop flux generation experiment.          tracking performance improves as estimation errors are reduced.
+                                                                                 It is worth noting that the tracking error and the disturbance
+                                                                                 need to be successfully estimated to realize the proposed control
+the magnetic probe. Fig. 2 shows the block diagram of the six-                   law. An augmented state estimator [26], characterized by λe ,
+input-six-output magnetic flux control system, where kA is the                   is designed to achieve this objective. Let w [k + 1] = w[k] +
+gain of the linear amplifiers (Micro Dynamics, BTA-28V-6A),                      δw[k] and denote s1 [k] = δv[k] and s2 [k] = δv[k − 1], the
+whose bandwidth is 10 kHz. Based on the allocated voltage vd                     augmented state estimator is
+and Hall-sensor measurement vm , the flux control law actively                       ⎧
+                                                                                     ⎪
+                                                                                     ⎪                 1 [k] + L1 {δv [k] −
+                                                                                       1 [k + 1] = λc s
+                                                                                       s                                       s1 [k]}
+adjusts the six actuation currents to control the magnetic flux at                   ⎪
+                                                                                     ⎪
+the six pole tips.                                                                   ⎨s             1 [k] + L2 {δv [k] −
+                                                                                       2 [k + 1] = s                       s1 [k]}
+                                                                                                                                               (9)
+   Fig. 3 presents the experimental results of open-loop magnetic                    ⎪
+                                                                                     ⎪  [k + 1] = w
+                                                                                       w             [k] + δ w [k] + L3 {δv [k] −   s1 [k]}
+                                                                                     ⎪
+                                                                                     ⎪
+flux generation. The left panel presents the voltage readings of                     ⎩
+                                                                                       δw [k + 1] = δw [k] + L4 {δv [k] −  s1 [k]},
+the six Hall sensors vs. a single 0.1 Hz input current applied
+to pole 2 (P2). It clearly shows multipole coupling, bias, and                   where Li are the four 6 × 6 feedback matrices of the estimator.
+hysteresis in magnetic flux generation. In the experiment, the                   Based on (8), i.e., the tracking error dynamic, the estimation
+frequency was increased from 0.1 to 1.6 kHz. The voltage                         error dynamics are
+readings were recorded. The discrete frequency spectrum was                        ⎡             ⎤ ⎡                        ⎤ ⎡         ⎤
+                                                                                     es1 [k + 1]        a1 I − L1 a2 I −B 0     es1 [k]
+calculated using FFT to verify that the dominant frequency is                      ⎢ es2 [k + 1] ⎥ ⎢ I − L2 0 0 0 ⎥ ⎢ es2 [k] ⎥
+                                                                                   ⎢             ⎥ ⎢                        ⎥ ⎢         ⎥ . (10)
+the excitation frequency and to remove the bias. The dominant                      ⎣ ew [k + 1] ⎦ = ⎣ −L3          0 I I ⎦ ⎣ ew [k] ⎦
+frequency components were then used to calculate amplitude
+                                                                                     eδw [k + 1]           −L4     0 0 I        eδw [k]
+ratios and phase lags to form six frequency response curves,
+presented in the right panel of Fig. 3. It shows that when focusing                 Assigning all eigenvalues to λe , the four feedback matrices of
+on the dominant frequency components of the dynamic response,                    the estimator are
+despite the presence of multipole coupling, the dynamic char-                                 ⎧
+                                                                                              ⎪
+                                                                                              ⎪  L1 = (2 + a1 − 4λe ) I
+acteristics of magnetic flux generation can be clearly seen, e.g.,                            ⎪
+                                                                                              ⎪
+                                                                                              ⎪
+                                                                                              ⎨ L2 = 1 + λ4 /a2 I
+a bandwidth of about 160 Hz.                                                                                  e
+   Six single-pole excitations were tested, each producing six                                                                       .        (11)
+                                                                                              ⎪
+                                                                                              ⎪  L3 = −(1 − λe )3 (3 + λe ) B−1
+sets of amplitude ratios and phase lags. All 36 sets were then                                ⎪
+                                                                                              ⎪
+                                                                                              ⎪
+                                                                                              ⎩
+used to fit a second order six-input-six-output discrete model                                   L4 = −(1 − λe )4 B−1
+  vm [k + 1] = a1 vm [k] + a2 vm [k − 1] + B {u [k] + w [k]} ,                      The control law, i.e., (7), and the augmented estimator, i.e., (9),
+                                                                (6)              are used to achieve two objectives, i.e., minimizing the uncer-
+where vm is the 6 × 1 sensor-voltage vector (denoted as vH in                    tainty attributed to remanence and hysteresis, and increasing the
+(3)), u the 6 × 1 vector consisting of the six input voltages being              bandwidth of magnetic flux generation. They are implemented
+sent to the D/A converter to produce six actuation currents, and B               using a high-speed FPGA system (Altera: Arria V GT) for
+the 6 × 6 input matrix. The discrete system model has two poles,                 real-time computation at 100 kHz. The frequency response of the
+p1 = 0.9898 and p2 = 0.6053. Since the discrete dominate                         six-input-six-output closed-loop magnetic flux control system
+pole in the z-plane is p1 = 0.9898 and as the sampling rate                      (see Fig. 2) was experimentally evaluated. The value of λc
+is 100 kHz, the bandwidth of the magnetic flux generation is                     associated with the control law is 0.9391 (1000 Hz) and that of
+
+      Authorized licensed use limited to: National Taiwan University. Downloaded on February 01,2024 at 07:42:12 UTC from IEEE Xplore. Restrictions apply.
+284                                                                        IEEE/ASME TRANSACTIONS ON MECHATRONICS, VOL. 28, NO. 1, FEBRUARY 2023
+
+
+
+
+                                                                                  Fig. 5. Block diagram of the three-input-three-output force generation
+                                                                                  system.
+
+
+
+
+Fig. 4.   Experimental results of closed-loop flux generation experiment.
+
+
+
+
+λe for the estimator is 0.7304 (5000 Hz). The voltage readings
+of all six Hall sensors were recorded.
+   The experimental results of closed-loop flux generation are
+presented in Fig. 4. The upper left panel presents the voltage
+readings of the six Hall sensors vs. the vd associated with the
+0.1Hz desired force along the z-direction. It clearly shows that
+the closed-loop flux control eliminates bias and hysteresis. The                  Fig. 6. Frequency response of the three input-3 output force genera-
+                                                                                  tion system.
+lower left panel presents the resulting magnetic force calculated
+using (3). It can be seen that the z-component of the generated
+magnetic force accords fully with the desired force and the other
+two components are zero. The results verify that the optimal                      at 1.6 kHz, whereas the magnetic flux control is at 100 kHz. The
+flux allocation is accurate, and able to solve the four issues                    output of the magnetic flux control vm is then used to calculate
+in multipole magnetic force generation: redundancy; coupling;                     the 3-D magnetic force M fm .
+nonlinearity; and position-dependency.                                               The frequency response of the three-input-three-output mag-
+   The right panel presents the frequency response curves of the                  netic force generation system (see Fig. 5) was experimentally
+six pole tips when the desired voltage for P1 is 2V and those for                 evaluated. In each experiment, the frequency of the desired force
+the other five poles are zeros. Similar results were obtained when                was increased from 0.1 Hz to 1.6 kHz while amplitude and
+different individual pole was selected in the experiment. It shows                desired force direction were held constant. The voltage readings
+that while the hexapole actuation system has multipole coupling,                  of all six Hall sensors were recorded and used to calculate the
+uncertainties related to remanence and hysteresis, and limited                    resulting magnetic force to form frequency response curves.
+bandwidth, with six-input-six-output flux control, the magnetic                   The left panel of Fig. 6 presents the frequency response curves
+flux at each individual pole tip can be precisely controlled at                   associated with the 3-D output force when the desired force
+frequencies up to 1000 Hz.                                                        is 5 pN along the x-axis. The right panel presents the results
+   It is worth noting that the six-input-six-output magnetic flux                 when selecting the z-axis in the experiment. These results verify
+control system is a sampled-data system with zero-order-hold                      that together with optimal flux allocation, Hall-sensor-based
+and sampling. The exact discrete model of the sampled-data                        magnetic flux control enables the six-input hexapole system to
+system has a zero close to −1 in the z-plane [26]. However, the                   behave like a decoupled three-axis force producer with high
+six-input-six-output model (6) used in the control law design                     bandwidth.
+is a discrete approximation that is accurate within a limited
+bandwidth. Therefore, the achieved closed-loop bandwidth for
+the magnetic flux control is limited to 1000 Hz.                                           III. UNTETHERED MANIPULATION OF MAGNETIC
+                                                                                                          MICROPROBE
+
+D. Three-Input-Three-Output Force Generation System                                  Fig. 7 shows the experimental setup for untethered manip-
+                                                                                  ulation of the magnetic probe in aqueous solutions, where
+   Fig. 5 shows the real-time computation of optimal flux/voltage                 the hexapole actuation system is integrated with an inverted
+allocation of, and the magnetic flux control of, the three-input-                 microscope (Olympus IX 81). The z-axis of the measurement
+three-output magnetic force generation system. In experiments,                    coordinate system is aligned with the optical axis of the mi-
+the desired force and the probe’s position in the measurement                     croscope, intersecting the x-axis and the y-axis at the center of
+coordinate system, M fd and M p, are specified first, converted to                the workspace, and the objective focal plane is flush with the
+the actuator coordinate system, A fd and A p, then vopt obtained via              xy plane. The microscope is equipped with a vision-based 3-D
+optimal voltage allocation to serve as the input of the magnetic                  particle tracking system to enable 3-D visual servo control.
+flux control system, i.e., vd . The real-time computation for co-
+ordinate transformation and optimal voltage allocation operates
+
+      Authorized licensed use limited to: National Taiwan University. Downloaded on February 01,2024 at 07:42:12 UTC from IEEE Xplore. Restrictions apply.
+MENG AND MENQ: ULTRAPRECISE HIGH-SPEED UNTETHERED MANIPULATION OF MAGNETIC SCANNING MICROPROBE                                                               285
+
+
+
+
+                                                                                Fig. 8. Block diagram of a visual servo control for untethered manipu-
+                                                                                lation of the magnetic probe in aqueous solutions.
+
+
+
+                                                                                2-D image to the calibrated object-specific model to estimate the
+                                                                                axial position [31]. With the second improvement, the system
+                                                                                achieves zero-bias measurements.
+                                                                                   The bottom right panel of Fig. 7 shows a snapshot of mea-
+                                                                                suring the immobilized reference bead and the moving probe
+                                                                                simultaneously. This dual-bead tracking allows for drift com-
+                                                                                pensation and low frequency vibration cancellation. Since it
+Fig. 7. Experimental setup for untethered manipulation of the mag-              requires a larger region of interest, i.e., 512 × 512 pixels, the
+netic probe in aqueous solutions.                                               sampling rate of visual servo control is 1.6 kHz. It has been
+                                                                                experimentally verified that when using the 60× magnification
+                                                                                lens, the measurement resolution for a spherical probe with a
+A. Vision-Based 3-D Probe Tracking                                              radius of 2.25 μm is about 0.7 nm (rms) in both the x- and y-
+   The particle tracking system is an improved version of the                   directions, and 2.3 nm (rms) in the z- direction.
+first two implementations [27], [28] of the tracking algorithm
+based on microscope off-focus images, i.e., the image of a                      B. Visual Servo Control
+particle is correlated to its z-position, and this dependence is
+established by calibration prior to running the experiment. In the                 The dynamics of microscopic probes moving in aqueous
+first implementation [27], the radial projection of the acquired                solutions are governed by the Langevin equation at low Reynolds
+image is compared to the calibrated model to determine the axial                numbers [32], driven by controllable electromagnetic forces and
+position (z) using a least-squares matching algorithm, while                    influenced by random thermal forces. The equation for 3-D
+estimating the transverse position of the particle (x, y) from                  motion is given as follows:
+the acquired image using a widely accepted centroid method                                       γ ṗ (t ) = fm (p (t ) , I (t )) + fT (t ) ,               (12)
+[29]. The total time delay attributed to image acquisition, data
+transmission, and real-time computation is the two steps of the                 where γ is the drag coefficient, characterized by Stokes’ law
+sampling cycle. The system was used in [22] to achieve visual                   for spherical probes, i.e., γ = 6π ηR, where η is the dynamic
+servo control of magnetic microbeads in water.                                  viscosity of the solution, R probe radius, p probe position, I the
+   In the second implementation [28], the system uses a high-                   vector of the six input currents applied to the hexapole actuator,
+speed CMOS camera (Mikrotron: MC3010) for image acquisi-                        fT random thermal force, and fm magnetic force, respectively.
+tion and a FPGA board for real-time computation. The camera                        The hexapole actuator uses the six input currents to produce
+acquires images of 128 × 128 pixels at a frame rate of up to                    magnetic fluxes φ(I(t )) at the six pole tips to control the mag-
+10000 frames per second (fps) under the white light illumi-                     netic field in the 3-D workspace and to generate 3-D magnetic
+nation from a standard 100 W halogen lamp. Two important                        force, fm (p(t ), I(t )) = g φT (I(t ))L(
+                                                                                                                          p )φ(I(t )) , exerted on the
+objectives had been achieved: real-time estimation of the 3-D                   magnetic probe. There are, however, challenges when using
+position matches the maximum frame rate of the camera and                       the hexapole actuator to undertake untethered manipulation of
+the timing of the output data stream of the system is precisely                 the magnetic probe in aqueous solutions. First, the hexapole
+controlled. While both implementations achieve nanoresolution,                  actuator is an over-actuated system, and the generation of mag-
+measurement is biased due to the asymmetry of the image and                     netic force is position dependent. Second, the flux generation
+the use of radial projection.                                                   process φ(I(t )) suffers from uncertainty attributed to remanence
+   The newest implementation of the system has two major                        and hysteresis and involve multipole coupling and dynamics.
+improvements over the second implementation. First, a su-                       Third, one can use the Jacobian matrix, ∂fm /∂p, to verify that
+perluminescent diode illumination system is used to further                     the dynamic system in (12) is an unstable system.
+enhance the image sensitivity and improve the measurement                          A visual servo control system is designed and implemented to
+resolution in both transverse directions and the axial direction.               address these challenges. Its block diagram is shown in Fig. 8.
+Second, instead of using the centroid method and the radial                     The 3-D tracking system operates at the sampling rate of 1.6 kHz,
+projection, the transverse position of the probe is determined                  providing the 3-D position of the probe with nanometer precision
+using the continuous image registration method [30], and an                     in real time. The control system is composed of three core
+optimal matching technique is used to compare the off-focus                     components. The optimal voltage allocation solves four issues:
+
+     Authorized licensed use limited to: National Taiwan University. Downloaded on February 01,2024 at 07:42:12 UTC from IEEE Xplore. Restrictions apply.
+286                                                                                     IEEE/ASME TRANSACTIONS ON MECHATRONICS, VOL. 28, NO. 1, FEBRUARY 2023
+
+
+
+redundancy; coupling; nonlinearity; and position-dependency.                                 of the tracking error can be derived
+The magnetic flux control significantly suppresses the uncer-
+                                                                                                              δx [k + 1] = λc · δx [k] − ε [k] ,               (18)
+tainty due to remanence and hysteresis and greatly increases
+the bandwidth of the flux generation. The motion control law                                 where ε[k] is a zero-mean random variable related to thermal
+determines the desired force for stabilization and propulsion. It                            force, measurement noise, and λc , i.e.,
+was shown in Section II that with the optimal flux allocation and                                                                                  
+                                                                                                                                      
+                                                                                                                                      d
+the closed-loop flux control, the six-input hexapole actuator can                                 ε [k] = ( t/γ ) fT [k] + (1 − λc )     fT [k − i]
+be treated as a linear decoupled three-axis force producer with                                                                             i=1
+a bandwidth of 1000 Hz.
+   When operating the visual servo control loop below its band-                                             + (1 − λc ) nx [k] .                               (19)
+width of 1000 Hz, the resulting magnetic force is close to the                                  Therefore, the tracking error is a zero-mean random error,
+desired force determined by the laws of motion control, i.e.,                                dictated by both thermal forces and measurement noise.
+fm (t ) ≈ fd (t ). Since the 3-D motion of the probe being controlled
+is decoupled, for simplicity, the equations for 1-D motion are                               C. Variance Control of the Tracking Error
+given in the following analysis:
+                                                                                                According to (18) and (19), the tracking error is attributed
+                                 γ ẋ (t ) = fd (t ) + fT (t ) .                    (13)     to two sources, i.e., thermal forces and measurement noise. By
+                                                                                             using z-transform, (18) and (19) can be rewritten as
+   Since the control law is realized in the form of digital calcu-                                                                  
+lation, integrating ẋ over one sampling period, the discrete-time                             δx z−1 = −HT z−1 δxT z−1 − Hn z−1 nx z−1 , (20)
+equation of motion of the sampled-data system is                                             where δxT denotes thermal motion, i.e., δxT = ( t/γ ) fT , and
+                                                     t                                       HT and Hn are two transfer functions. The variance of the
+              x [k + 1] = x [k] +                        ( fd [k] + fT [k]) ,       (14)     tracking error can then be derived [34]. Since our motion track-
+                                                 γ
+                                                                                             ing system has a two-step measurement delay, d = 2, the two
+where t is the sampling period and fd is the desired force                                   transfer functions are given as
+to be determined from the control law and to be realized by                                                                    )z−1 +(1−λc )z−2
+applying the optimal flux allocation and the closed-loop mag-                                             HT z−1 = z−1 1+(1−λc1−λ     cz
+                                                                                                                                         −1
+                                                                                                               −1                                .     (21)
+                                                                                                                        −1 1−λc
+netic flux control. The thermal force experienced by the probe                                            Hn z       = z 1−λc z−1
+ fT is quantified by variance σ f2T = 4kB T γ / t [33], which is
+proportional to γ and inversely proportional to t, where kB is                                  They are used to derive the variance of the tracking error
+                                                                                                                                            
+the Boltzmann’s constant and T is the absolute temperature of                                                         1                1 − λc
+the aqueous solution.                                                                                 σδx = 2 +
+                                                                                                        2
+                                                                                                                             σδxT +
+                                                                                                                               2
+                                                                                                                                                 σn2x ,   (22)
+                                                                                                                   1 − λ2c             1 + λc
+   Let the control objective be δx [k + 1] = λc · δx[k], where
+δx [k] = xd [k] − x[k], and xd [k] is the desired motion trajectory,                         where σδx 2
+                                                                                                         T
+                                                                                                             = ( t/γ ) 2 σ f2T = 4kB T t/γ is the variance of
+comparing (14) with the desired motion, the force required to                                thermal motion. The variance is a linear superposition of the
+                                                                                                                               2
+meet the control objective can be obtained                                                   thermal motion variance (σδx        T
+                                                                                                                                   ) and the measurement noise
+                                                                                                           2
+                                                                                             variance (σnx ) and is controlled by selecting the design value
+               γ
+ fd [k] =               {xd [k + 1]−λc xd [k] − (1 − λc ) x [k]}− fT [k] .                   λc . Denoting the ratio between σn2x and σδx   2
+                                                                                                                                                as rσ 2 , the design
+                   t                                                                                                                          T
+
+                                                             (15)                            achieving minimum-variance control can be derived as follows:
+  If the measurement has a d-step delay, i.e., xm [k] = x[k − d],                                                               1
+x[k] in (15) can be related to xm [k] according to (14)                                                 λc = λδxmin = 1 −               1 + 4rσ 2 − 1          (23)
+                                                                                                                               2rσ 2
+                          d                              
+                        t                                                                   and
+  x [k] = xm [k] +
+                      γ i=1
+                                ( fd [k − i] + fT [k − i]) . (16)                                                      1 2                  
+                                                                                                            σ 2δx min =  σδxT  1 + 4rσ 2 + 5 .            (24)
+                                                                                                                       2
+  A discrete-time control law, subject to the d-step measure-                                   Experiments are used to verify the tracking performance
+ment delay, is                                                                               described in (18), i.e., the mean of the tracking errors is zero,
+                       γ                                                                     and the variance of random motion depends on λc predicted
+      fd [k] =                 {xd [k + 1] − λc xd [k] − (1 − λc ) xd [k − d]                in (22). The commanded motion is a plane motion in the xy
+                           t
+                                                                                             plane of the measurement coordinate system, wherein both the
+                                                                   
+                                                                   d
+                                                                                             x-axis and y-axis motions are sine waves with an amplitude
+                       + (1 − λc ) δxm [k]} − (1 − λc )                  fd [k − i] ,
+                                                                                             of 3.74 μm and a frequency of 5 Hz. Since the plane motion
+                                                                   i=1
+                                                                                    (17)     is 15 micrometers above the bottom coverslip, rσ 2 for both
+                                                                                             the x-axis and y-axis motions is 0.489. The resulting motion
+where δxm [k] = δx[k − d] + nx [k], and nx [k] is the measure-                               of each experiment was recorded, the mean of the tracking
+ment noise. Substituting (17) into (14) and comparing the re-                                error was verified to be zero, and the variance and standard
+sulting motion with the desired motion trajectory, the dynamics                              deviation of the tracking error were calculated. Fig. 9 presents
+
+       Authorized licensed use limited to: National Taiwan University. Downloaded on February 01,2024 at 07:42:12 UTC from IEEE Xplore. Restrictions apply.
+MENG AND MENQ: ULTRAPRECISE HIGH-SPEED UNTETHERED MANIPULATION OF MAGNETIC SCANNING MICROPROBE                                                              287
+
+
+
+
+                                                                                Fig. 10. 2-D sine wave tracking: the left panel presents the resulting
+                                                                                motion, and the right panel presents the voltage readings of the six Hall
+                                                                                sensors compared with the desired voltages from the optimal voltage
+                                                                                allocation.
+
+Fig. 9. Normalized standard deviation of the tracking error, compared
+with the theoretical predictions.                                               (17) is now position-dependent (time-varying), and is written
+                                                                                as γx/y (h/R) = γN · C (h/R) and γz (h/R) = γN · C⊥ (h/R),
+                                                                                where h [k] = z[k] − w.
+the normalized standard deviation of the tracking errors for six
+experiments with different λc , i.e., λc = 0.1, 0.3, 0.4, 0.5, 0.7,
+and 0.9. They are normalized by the standard deviation of                             IV. EXPERIMENTAL VERIFICATION OF ULTRAPRECISE
+thermal motion and compared to theoretical predictions. It is                              HIGH-SPEED UNTETHERED MANIPULATION
+worth noting that the measurement noise of the z-axis is greater                   In this section, experimental results are used to demon-
+than the measurement noise of the x- and y-axes. Therefore,                     strate the significance and effectiveness of the three core func-
+the tracking error has a slightly larger standard deviation on                  tions of the control system, namely the closed-loop magnetic
+the z-axis.                                                                     flux control, the optimal magnetic flux allocation, and time-
+                                                                                varying discrete-time motion control law. In all experiments,
+D. Spatially Correlated Drag Coefficient                                        λc = 0.4 is the value used in the discrete-time motion control
+                                                                                law.
+   As the probe moves close to a wall, the drag coefficient
+varies with its distance from the surface. Displacement along
+                                                                                A. Zero-Mean Tracking Error
+two principle directions, perpendicular and parallel to the wall,
+and a dimensionless variable h/R characterize the position-                        In the first experiment, the magnetic probe was propelled to
+dependent drag coefficient, i.e., γ⊥ = 6π ηR · C⊥ (h/R) and                     move in the xy plane, where both the x-axis and y-axis motions
+γ = 6π ηR · C (h/R), where η is the dynamic viscosity, R                      being sine waves with an amplitude of 3.74 μm and a frequency
+is the radius of the probe, and h is the distance from the                      of 5 Hz. In the second experiment, the commanded motion
+center of the probe to the wall. C⊥ (h/R) and C (h/R) are                      changed from a sine wave to a triangle wave. Fig. 10 presents
+two known dimensionless functions [35], [36]. The local drag                    the experimental results of the 2-D sine wave tracking when all
+coefficient γ (p) can be accurately determined using the variance               three core functions being used to render motion control. The
+of the probe’s Brownian motion [37]. It can be done either                      left panel presents the resulting motion. The mean and standard
+using real-time estimation or by calibration prior to running                   deviation of the tracking errors of all three axes were calculated
+experiments.                                                                    and compared with their respective theoretical predictions. As
+   For simplicity, the latter approach is used. A spherical                     expected, the mean of each axis is close to zero (< 0.8 nm).
+probe with a radius of 2.25 μm was used to calibrate the                        The standard deviation of each axis is σ̂δx = 32.29 nm, σ̂δy =
+position-dependent drag coefficient. In the experiment, the wall                32.10 nm, and σ̂δz = 30.88 nm, close to their predicted values,
+surface was the top surface of the culture dish, which was                      σδx/δy = 31.97 nm and σδz = 30.69 nm. It is worth noting that
+about 15 micrometers below the xy plane of the measure-                         these random errors are attributed to random thermal forces
+ment coordinate system. The probe was sequentially moved to                     and random measurement noise. The right panel presents the
+nine different heights, where Brownian motion was recorded.                     voltage readings of the six Hall sensors compared with the
+The variance was calculated and then used to fit both nom-                      desired voltages from the optimal voltage allocation. It shows
+inal gamma and wall height. The obtained nominal gamma,                         that the closed-loop flux control be able to adjust the six actuation
+γN = 0.0424 (pN · sec/μm) is very close to the value from                       currents to generate the fluxes to follow their desired values at
+Stokes’ law, 6π ηR = 0.042412 (pN · sec/μm), and w =                            the six pole tips.
+−14.0394 (μm). In addition, the normalized position-dependent                      Fig. 11 presents the experimental results of the 2-D triangle
+drag coefficients accord well with known C⊥ (h/R) and C (h/R).                 wave tracking. The left panel presents the resulting motion. The
+The parameter γ in the discrete time control law described in                   mean and standard deviation of the tracking errors are calculated.
+
+     Authorized licensed use limited to: National Taiwan University. Downloaded on February 01,2024 at 07:42:12 UTC from IEEE Xplore. Restrictions apply.
+288                                                                        IEEE/ASME TRANSACTIONS ON MECHATRONICS, VOL. 28, NO. 1, FEBRUARY 2023
+
+
+
+
+Fig. 11. 2-D triangle wave tracking: the left panel presents the result-
+ing motion, and the right panel presents the three components of the
+desired force from the discrete-time control law.
+
+
+
+                                                                                  Fig. 13. Measured power spectral density of the tracking error: red
+                                                                                  curve is associated with the PI motion controller and blue curve is
+                                                                                  associated with the proposed motion control law.
+
+
+
+
+Fig. 12. 2-D motion tracking: the left panel presents the resulting trian-
+gular motion when replacing the motion control law with a PI controller,
+and the right panel shows the motion errors in the sine wave tracking
+when the closed-loop flux control was not used.
+                                                                                  Fig. 14. 2-D raster scan motion: the left panel shows the resulting
+                                                                                  motion, and the right panel shows the resulting scan pattern.
+
+The mean is again close to zero. The standard deviation for each
+axis is σ̂δx = 32.17 nm, σ̂δy = 32.12 nm, and σ̂δz = 30.73 nm,
+close to their predicted values. The right panel presents the                        Fig. 13 compares the measured PSD of the tracking error
+desired force determined by the discrete-time control law. It                     associated with the two triangle-wave-tracking experiments. It
+shows that the desired force has two main components, the                         can be seen the tracking error associated with the proposed
+square wave generated for the feedforward control and the high-                   motion control law is very close to the random error, whereas
+frequency feedback control effort for stabilization. These results                the PSD associated with the PI motion controller exhibits
+verify that the proposed motion control law achieves superior                     peaks at the frequency of the triangle wave (5 Hz) and its
+motion tracking independent of the reference motion trajectory,                   harmonics.
+provided that the actuator can provide the required control
+force.                                                                            B. Two-Dimensional High-Speed Scanning Motion
+   Two additional experiments are used to demonstrate the sig-
+                                                                                     To demonstrate the feasibility of rendering high-speed SPM
+nificance of the core functions of the control system. Fig. 12
+                                                                                  using the integrated control system, it was applied to perform
+presents the experimental results of 2-D motion tracking. The
+                                                                                  scanning motion control. Fig. 14 presents the experimental
+left panel presents the resulting triangular motion when replac-
+                                                                                  results of 2-D raster scanning motion of the magnetic probe
+ing the motion control law with a PI controller. The results show
+                                                                                  in aqueous solutions, where the probe was controlled to scan
+that there is obvious phase lag in the 2-D motion, and there is a
+                                                                                  over a rectangular aera of 40 μm × 16 μm in the xy plane
+deterministic error in the z-axis motion. The right panel presents
+                                                                                  within two seconds. The left panel shows the resulting motion
+the motion errors in the sine wave tracking when the closed-loop
+                                                                                  of three separate axes, and the right panel shows the resulting
+flux control was not used. The results show that while the optimal
+                                                                                  scan pattern. The mean and standard deviation of the motion
+flux allocation attempted to distribute the six actuation currents
+                                                                                  error are calculated to verify the expected performance of raster
+according to the desired force, the errors in magnetic flux gen-
+                                                                                  scanning motion, i.e., the mean of the motion error for each axis
+eration were too large to be overcome by the motion control
+                                                                                  is close to zero and the standard deviation for each axis close to
+law. Specifically, deterministic errors are evident on all three
+                                                                                  the predicted value. It is worth noting that the experiment aimed
+axes.
+                                                                                  to demonstrate the ability of high-speed motion control required
+                                                                                  in raster scanning. It was not an actual scanning, which requires
+      Authorized licensed use limited to: National Taiwan University. Downloaded on February 01,2024 at 07:42:12 UTC from IEEE Xplore. Restrictions apply.
+MENG AND MENQ: ULTRAPRECISE HIGH-SPEED UNTETHERED MANIPULATION OF MAGNETIC SCANNING MICROPROBE                                                               289
+
+
+
+
+Fig. 15.   2-D raster scan motion in inclined planes.                            Fig. 17. 3-D rapid steering: the left panel shows the resulting motion
+                                                                                 when the closed-loop flux control was not used, and the right panel
+                                                                                 shows the resulting motion when replacing the motion control law with a
+                                                                                 PI controller.
+
+
+
+
+                                                                                 Fig. 18. 3-D rapid steering: the left panel shows the resulting motion,
+                                                                                 and the right panel shows the tracking error.
+
+
+Fig. 16. Comparison of the generated magnetic force with the drag
+force experienced by the magnetic probe in two oblique plane scan                initial position in 0.25 s. The left panel presents the resulting
+experiments.
+                                                                                 motion when the closed-loop flux control was not used. The
+                                                                                 results show that the error in magnetic flux generation was large,
+                                                                                 which greatly degraded the steering performance. Nonetheless,
+force control on the z-axis. Nonetheless, the achieved motion                    the motion control law was able to stabilize the 3-D motion.
+range and the scan frame rate suggest that the integrated system                 The right panel presents the resulting motion when replacing
+can be used to render live cell scanning.                                        the motion control law with a PI controller. The results show
+   Fig. 15 presents two 2-D raster scan patterns on two different                that the 3-D motion has a significant phase lag.
+inclined planes for two separate experiments. They show that the                    Fig. 18 shows the experimental results of 3-D rapid steering
+motion control system can be used to control the magnetic probe                  when all three core functions were used to render high-speed
+to undertake raster scanning with different scan patterns and on                 visual servo control. The left panel presents the resulting 3-D
+any oblique planes. Fig. 16 presents the generated magnetic force                motion, and the right panel presents the tacking errors of the
+compared with the drag force experienced by the magnetic probe                   three axes. As expected, the results show superior performance
+in the two oblique plane scan experiments. The Hall-sensor-                      for rapid 3-D steering with no deterministic errors in any of the
+based hexapole magnetic force model, (3), is used to calculate                   three axes. The standard deviation of the random error for each
+the resulting 3-D magnetic force M fm (M p, vm ), and the drag force             axis is close to the theoretical prediction.
+is γ (M p)M ṗ. It is worth noting that the magnetic force is the
+drag force minus the thermal force, i.e., fm = γ ṗ − fT . The                                    V. CONCLUSION AND DISCUSSION
+results verify the accuracy of the Hall-sensor-based hexapole
+force model, of the optimal magnetic flux allocation, and of the                    An integrated control system has been designed and devel-
+closed-loop magnetic flux control.                                               oped to render ultraprecise and high-speed untethered manip-
+                                                                                 ulation of a single magnetic scanning probe in aqueous solu-
+                                                                                 tions under a microscope. The control system uses a hexapole
+C. Three-Dimensional Rapid Steering
+                                                                                 electromagnetic actuator to control the magnetic field in the
+   Fig. 17 presents the experimental results of 3-D rapid steer-                 3-D workspace and the 3-D magnetic force exerted on the
+ing of the magnetic probe in aqueous solutions, where the                        magnetic scanning probe. It uses a vision-based 3-D particle
+probe was steered to follow a specified conical helix in the                     tracking system to enable visual servo control. Three core func-
+workspace. The probe started from the initial position of                        tions have been designed and implemented to achieve superior
+(0 μm, 0 μm, 0 μm), was controlled to rotate along the upward                    manipulation of the magnetic microprobe. The six-input-six-
+pitch for five cycles, each cycle taking 0.35 s, reached the highest             output closed-loop magnetic flux control suppresses the effect
+point (30 μm, 0 μm, 15 μm), and then was steered back to the                     of hysteresis and greatly increases the bandwidth of magnetic
+
+      Authorized licensed use limited to: National Taiwan University. Downloaded on February 01,2024 at 07:42:12 UTC from IEEE Xplore. Restrictions apply.
+290                                                                        IEEE/ASME TRANSACTIONS ON MECHATRONICS, VOL. 28, NO. 1, FEBRUARY 2023
+
+
+
+flux generation. The optimal voltage allocation, minimizing                        [4] W. Singer, S. Bernet, N. Hecker, and M. RitshMart, “Three-dimensional
+the two-norm of the magnetic flux vector, solves four issues                           force calibration of optical tweezers,” J. Modern Opt., vol. 47,
+                                                                                       pp. 2921–2931, 2000.
+in multipole magnetic force generation: redundancy; coupling;                      [5] A. L. Stout, “Detection and characterization of individual intermolecular
+nonlinearity; and position-dependency. The position-dependent                          bonds using optical tweezers,” Biophys. J., vol. 80, no. 6, pp. 2976–2986,
+discrete-time motion control law determines the required force                         2001.
+                                                                                   [6] P. M. Hansen, V. K. Bhatia, N. Harrit, and L. Oddershede, “Expanding the
+for stabilization and tracking.                                                        optical trapping range of gold nanoparticles,” Nano Lett., vol. 5, no. 10,
+   The experimental results of magnetic flux control show that                         pp. 1937–1942, 2005.
+the closed-loop system can adjust the six actuation currents to                    [7] Y. Seol, A. E. Carpenter, and T. T. Perkins, “Gold nanoparticles: Enhanced
+                                                                                       optical trapping sensitivity coupled with significant heating,” Opt. Lett.,
+generate magnetic fluxes at the six pole tips to follow their                          vol. 31, pp. 1678–1680, 2006.
+desired values at frequencies up to 1000 Hz. The experimental                      [8] E. Peterman, F. Gittes, and C. F. Schmidt, “Laser-induced heating in optical
+results of motion control verify that together with the magnetic                       traps,” Biophys. J., vol. 84, pp. 1308–1316, 2003.
+                                                                                   [9] Y. Huang, J. Wan, M. C. Cheng, Z. Zhang, S. Jhiang, and C. H. Menq,
+flux control, independent of the desired motion trajectory, the                        “Three-axis rapid steering of optically propelled micro/nano particles,”
+position-dependent discrete-time motion control law achieves                           Rev. Sci. Instrum., vol. 80, 2009, Art. no. 063107.
+superior tracking performance, wherein the motion error is                        [10] J. Wan, Y. Huang, S. Jhiang, and C. H. Menq, “Real-time in situ cal-
+                                                                                       ibration of an optically trapped probing system,” Appl. Opt., vol. 48,
+zero-mean random error, and its variance can be analytically                           pp. 4832–4841, 2009.
+predicted and determined by random thermal forces and random                      [11] Z. Zhang and C. Menq, “Six-axis magnetic levitation and motion control,”
+measurement noise. The experimental results of raster scanning                         IEEE Trans. Robot., vol. 23, no. 2, pp. 196–205, Apr. 2007.
+                                                                                  [12] S. K. Kuo, X. Shan, and C. H. Menq, “Large travel ultra precision X-Y-
+demonstrate that the integrated system can be used to control                          Theta motion control of a magnetic suspension stage,” IEEE/ASME Trans.
+the magnetic microprobe to undertake raster scanning in the                            Mechatronics, vol. 8, no. 3, pp. 334–341, Sep. 2003.
+3-D workspace.                                                                    [13] T. Honda, K. I. Arai, and K. Ishiyama, “Micro swimming mechanisms
+                                                                                       propelled by external magnetic fields,” IEEE Trans. Magn., vol. 32, no. 5,
+   There are several aspects that can be worked on to improve                          pp. 5085–5087, Sep. 1996.
+the functionality of the control system. First, it is necessary                   [14] L. Zhang, J. J. Abbott, L. X. Dong, B. E. Kratochvil, D. Bell, and B. J.
+to design the control law using the exact discrete model of                            Nelson, “Artificial bacterial flagella: Fabrication and magnetic control,”
+                                                                                       Appl. Phys. Lett., vol. 94, 2009, Art. no. 064107.
+the sampled-data system to achieve greater bandwidth for the                      [15] Y. Jeong, G. R. Jayanth, S. M. Jhiang, and C. H. Menq, “Design and
+six-input-six-output magnetic flux control system. The exact                           fabrication of an active Multi-axis probing system for High-speed atomic
+discrete model of the sampled-data system with zero-order-hold                         force microscopy,” IEEE Trans. Nanotechnol., vol. 9, no. 3, pp. 392–399,
+                                                                                       May 2010.
+and sampling has a zero close to −1 in the z-plane [26]. When                     [16] G. R. Jayanth and C. H. Menq, “Two-axis force sensing and control of a
+using the direct design method (7) to design the control law, it                       re-orientable scanning probe,” IEEE/ASME Trans. Mechatronics, vol. 18,
+causes instability or ringing. Therefore, control methods specific                     no. 2, pp. 687–696, Apr. 2013.
+                                                                                  [17] K. C. Neuman and A. Nagy, “Single-molecule force spectroscopy: Op-
+to non-minimum phase systems [38] will be used to achieve                              tical tweezers, magnetic tweezers and atomic force microscopy,” Nature
+precise magnetic flux control of high bandwidth. Second, when                          Methods, vol. 5, no. 6, pp. 491–505, Jun. 2008.
+using the integrated system to control the motion of a probe with                 [18] J. T. Finer, R. M. Simmons, and J. A. Spudich, “Single myosin molecule
+                                                                                       mechanics - Piconewton Forces and nanometer steps,” Nature, vol. 368,
+a radius of 2.25 μm in aqueous solution at room temperature,                           no. 6467, pp. 113–119, Mar. 1994.
+the standard deviation of the thermal motion is about 32 nm. The                  [19] C.-H. Chiou, Y.-Y. Huang, M.-H. Chiang, H.-H. Lee, and G.-B. Lee,
+only way to reduce thermal motion is to increase the sampling                          “New magnetic tweezers for investigation the mechanical properties
+                                                                                       of single DNA molecules,” Nanotechnology, vol. 17, pp. 1217–1224,
+rate of the visual servo control system. Third, when applying the                      2006.
+control system in an unstructured test environment, the ability                   [20] N. Walter, C. Selhuber, H. Kessler, and J. P. Spatz, “Cellular un-
+to estimate the position-dependent drag coefficients in real time                      binding forces of initial adhesion processes on nanopatterned surfaces
+                                                                                       probed with magnetic tweezers,” Nano Lett., vol. 6, no. 3, pp. 398–402,
+is necessary. Fourth, the control of probe-sample interaction is                       Mar. 2006.
+one of the valuable and challenging applications of the system. It                [21] D. Salas, V. Gocheva, and M. Nöllmann, “Constructing a magnetic
+lays the foundation for automatic scanning, controlled probing,                        tweezers to monitor RNA translocation at the single-molecule level,”
+                                                                                       in RNA Remodeling Proteins, New York, NY, USA: Springer, 2015,
+and untethered manipulation of biological samples.                                     pp. 257–273.
+                                                                                  [22] Z. Zhang, F. Long, and C. Menq, “Three-Dimensional visual servo con-
+                                                                                       trol of a magnetically propelled microscopic bead,” IEEE Trans. Robot.,
+                          ACKNOWLEDGMENT                                               vol. 29, no. 2, pp. 373–382, Apr. 2013.
+                                                                                  [23] F. Long, D. Matsuura, and C. Menq, “Actively controlled hexapole electro-
+   The authors would like to thank the anonymous reviewers for                         magnetic actuating system enabling 3-D force manipulation in aqueous so-
+                                                                                       lutions,” IEEE/ASME Trans. Mechatronics, vol. 21, no. 3, pp. 1540–1551,
+their careful reading of our manuscript and their many insightful                      Jun. 2016.
+comments and suggestions.                                                         [24] F. Long, P. Cheng, T. M. Meng, and C. -H. Menq, “Optimal current
+                                                                                       allocation rendering 3-D magnetic force production in hexapole elec-
+                                                                                       tromagnetic actuation,” IEEE/ASME Trans. Mechatronics, vol. 26, no. 5,
+                              REFERENCES                                               pp. 2408–2417, Oct. 2021.
+                                                                                  [25] F. Long, T. -M. Meng, J. -J. Wang, and C. -H. Menq, “Hall-Sensor-Based
+ [1] S. Suresh, “Biomechanics and biophysics of cancer cells,” Acta Biomater.,         magnetic force modeling and inverse modeling for hexapole electro-
+     vol. 3, no. 4, pp. 413–438, Jul. 2007.                                            magnetic actuation,” IEEE/ASME Trans. Mechatronics, to be published,
+ [2] D. J. Müller et al., “Atomic force microscopy of native purple membrane,”         doi: 10.1109/TMECH.2021.3113273.
+     Biochimica Biophysica Acta, Bioenergetics, vol. 1460, pp. 27–38, 2000.       [26] G. F. Franklin, J. D. Powell, and M. Workman, Digital Control of Dynamic
+ [3] C. C. Huang, C. F. Wang, D. S. Mehta, and A. Chiou, “Optical tweezers as          Systems, 3rd ed. Menlo Park, CA, USA: Addison-Wesley, 1998.
+     sub-pico-newton force transducers,” Opt. Commun., vol. 195, pp. 41–48,
+     2001.
+
+
+
+      Authorized licensed use limited to: National Taiwan University. Downloaded on February 01,2024 at 07:42:12 UTC from IEEE Xplore. Restrictions apply.
+MENG AND MENQ: ULTRAPRECISE HIGH-SPEED UNTETHERED MANIPULATION OF MAGNETIC SCANNING MICROPROBE                                                                291
+
+
+
+[27] Z. Zhang and C.-H. Menq, “Three-Dimensional particle tracking with                                     Ta-Min Meng received the B.S. degree in power
+     subnanometer resolution using off-focus images,” Appl. Opt., vol. 47,                                  mechanical engineering from the National Tsing
+     no. 14, pp. 2361–2370, 2008.                                                                           Hua University, Hsinchu, Taiwan, in 2015. He is
+[28] P. Cheng, S. M. Jhiang, and C. H. Menq, “Real-time visual sensing system                               currently working toward the Ph.D. degree with
+     achieving high-speed 3D particle tracking with nanometer resolution,”                                  the Department of Mechanical and Aerospace
+     Appl. Opt., vol. 52, no. 31, pp. 7530–7539, Nov. 2013.                                                 Engineering, The Ohio State University, Colum-
+[29] J. Arines and J. Ares, “Minimum variance centroid thresholding,” Opt.                                  bus, OH, USA.
+     Lett., vol. 27, pp. 497–499, 2002.                                                                        His research interests include modeling, esti-
+[30] P. Cheng and C. Menq, “Real-time continuous image registration enabling                                mation, sensing, and control of precision elec-
+     ultra-precise two-dimensional motion tracking,” IEEE Trans. Image Pro-                                 tromechanical systems.
+     cess., vol. 22, no. 5, pp. 2081–2090, May 2013.
+[31] P. Cheng and C. Menq, “Visual tracking of six-axis motion rendering
+     ultraprecise visual servoing of microscopic objects,” IEEE/ASME Trans.
+     Mechatronics, vol. 23, no. 4, pp. 1564–1572, Aug. 2018.
+[32] W. Coffey, Y. P. Kalmykov, and J. Waldron, The Langevin Equa-
+     tion: With Applications to Stochastic Problems in Physics, Chemistry
+     and Electrical Engineering, 2nd ed., Singapore: World Sci. Publ.,
+     2004.
+[33] A. Papoulis and S. U. Pillai, Probability, Random Variables, and Stochastic
+     Process, 4th ed. Boston, MA, USA: McGraw-Hill, 2002.                                                   Chia-Hsiang Menq received the Ph.D. degree
+[34] J.-Q. Sun, Stochastic Dynamics and Control, New York, NY, USA:                                         in mechanical engineering from Carnegie Mel-
+     Elsevier, 2006.                                                                                        lon University, PA, USA, in 1985.
+[35] E. Schäffer, S. F. Nørrelykke, and J. Howard, “Surface forces and drag                                    Since 1985, he has been with the Ohio State
+     coefficients of microspheres near a plane surface measured with optical                                University, OH, USA. He has been the holder of
+     tweezers,” Langmuir, vol. 23, pp. 3654–3665, 2007.                                                     the Ralph W. Kurtz Endowed Chair in Mechan-
+[36] K. C. Neuman and S. M. Block, “Optical trapping,” Rev. Sci. Instrum.,                                  ical Engineering with The Ohio State University
+     vol. 75, pp. 2787–2809, 2004.                                                                          since 2006.
+[37] F. Gittes and C. F. Schmidt, “Thermal noise limitations on micromechan-                                   Dr. Menq is a fellow of the American Society
+     ical experiments,” Eur. Biophys. J., vol. 27, pp. 75–81, 1998.                                         of Mechanical Engineers, the American Associ-
+[38] J. Xia and C. H. Menq, “Precision tracking control of non-minimum phase                                ation for the Advancement of Science, and the
+     systems with zero phase error,” Int. J. Control, vol. 61, no. 4, pp. 791–807,   Society of Manufacturing Engineers.
+     1995.
+
+
+
+
+       Authorized licensed use limited to: National Taiwan University. Downloaded on February 01,2024 at 07:42:12 UTC from IEEE Xplore. Restrictions apply.
+

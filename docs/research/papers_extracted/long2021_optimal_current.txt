@@ -1,0 +1,729 @@
+2408                                 IEEE/ASME TRANSACTIONS ON MECHATRONICS, VOL. 26, NO. 5, OCTOBER 2021
+
+
+
+
+            Optimal Current Allocation Rendering 3-D
+             Magnetic Force Production in Hexapole
+                   Electromagnetic Actuation
+                            Fei Long , Peng Cheng , Ta-Min Meng , and Chia-Hsiang Menq
+
+
+   Abstract—This article presents the optimal current allo-                        intracellular properties [9]–[12]. Some others were employed
+cation and the magnetic force production associated with                           to propel microscopic robots as swimming machines [13]–[15]
+the hexapole electromagnetic actuation, wherein six elec-                          or for medical applications [16], [17].
+tromagnets are used to control the magnetic field and exert
+the 3-D magnetic force on a specified microscopic magnetic                            More recently, overactuated multipole actuating systems,
+particle in the 3-D workspace of the actuating system. It                          e.g., 2-D quadruple magnetic tweezers [18] and 3-D hexapole
+addresses four major issues in the inverse modeling of the                         electromagnetic actuators [19], were developed. The hexapole
+multipole electromagnetic actuation, i.e., 1) redundancy;                          actuator employed six sharp-tipped electromagnetic poles, made
+2) coupling; 3) nonlinearity; and 4) position-dependency,
+                                                                                   of thin high-permeability nickel-iron magnetic alloy film, and
+and leads to the accurate and effective 3-D magnetic force
+production within the specified workspace. Specifically, the                       six actuating coils to achieve the 3-D electromagnetic actuation.
+optimal inverse modeling of the hexapole electromagnetic                           Due to the inherent instability of the magnetic force field when
+actuation is derived to minimize the 2-norm of the 6 × 1                           applied to exert force on a magnetic particle [20], the real-time
+input current vector when applied to produce the desired                           3-D visual tracking was realized to enable the particle tracking
+3-D magnetic force to propel the magnetic particle in aque-
+                                                                                   and visual servo control, running at 200 Hz with nanometer
+ous solutions. The inverse model is implemented in a high-
+speed field programmable gate array system to realize the                          resolution [21]. The acquired particle motion was then used in
+real-time current allocation, which is used to render the                          the feedback control laws, designed to adjust actuating currents
+feedback stabilization of the magnetic trap. The accurate                          and thus alter the field potential, to trap and steer a microscopic
+and effective 3-D force production through the optimal cur-                        magnetic particle in aqueous solutions [22], [23]. The magnetic
+rent allocation is experimentally validated.
+                                                                                   particle was employed to serve as a measurement probe, which
+   Index Terms—Current allocation, electromagnetic actua-                          was steered to interact with live cells in media to characterize
+tion, inverse modeling, motion control.                                            their mechanical properties [24].
+                                                                                      Multipole electromagnetic actuators are overactuated and
+                             I. INTRODUCTION                                       strongly coupled nonlinear systems, wherein the number of input
+      LECTROMAGNETIC actuating systems use electromag-                             currents is greater than that of output force components, and the
+E     nets to control the magnetic field and exert the controllable
+magnetic force on microscopic magnetic objects. They have led
+                                                                                   resulting magnetic force field is nonlinearly related to the input
+                                                                                   currents and has strong spatial heterogeneity. The capability and
+to the development of modern instruments that enable advanced                      performance of these actuators rely on the accurate and effective
+techniques employed in biomedical research. With precalibrated                     inverse modeling of the multipole electromagnetic actuation,
+force functions, some were used as force appliers to manip-                        which is essential for the superior current allocation and active
+ulate biological macromolecules [1]–[3] or magnetic particles                      feedback control.
+[4], [5], to probe cell membranes [6]–[8], or to characterize                         While stable magnetic trapping and motion control were suc-
+                                                                                   cessfully demonstrated [22], [23], the simplification adopted in
+                                                                                   inverse modeling severely limited the performance of the devel-
+  Manuscript received June 8, 2020; revised August 17, 2020 and Octo-
+ber 5, 2020; accepted November 16, 2020. Date of publication Novem-
+                                                                                   oped actuating systems on two fronts. First, constant constraints
+ber 19, 2020; date of current version October 14, 2021. Recommended                are used to remove redundancies to derive the simple inverse
+by Technical Editor X. Zhang and Senior Editor Y. Li. (Corresponding               model, which is valid at the center of the workspace, resulting
+author: Chia-Hsiang Menq.)
+  Fei Long was with the Ohio State University, Columbus, OH 43210
+                                                                                   in the excessive current flow in the coil. It significantly degrades
+USA. He is now a staff engineer at UBTECH Robotics North America                   the force generation capability of the actuating system. Second,
+Research and Development Center, Pasadena, CA 91101 USA (e-mail:                   extending the inverse model at the center to the entire workspace
+long.926@osu.edu).
+  Peng Cheng, Ta-Min Meng, and Chia-Hsiang Menq are with the De-
+                                                                                   through the linear approximation in the spatial domain leads to
+partment of Mechanical and Aerospace Engineering, The Ohio State                   significant errors when generating the magnetic force exerting
+University, Columbus, OH 43210 USA (e-mail: cheng.329@osu.edu;                     on the magnetic particle placed away from the center of the
+meng.350@osu.edu; menq.1@osu.edu).
+  Color versions of one or more of the figures in this article are available
+                                                                                   workspace.
+online at https://doi.org/10.1109/TMECH.2020.3039258.                                 This article presents the optimal inverse modeling to enable
+  Digital Object Identifier 10.1109/TMECH.2020.3039258                             the real-time current allocation in the multipole electromagnetic
+                     1083-4435 © 2020 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                   See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+       Authorized licensed use limited to: National Taiwan University. Downloaded on February 01,2024 at 07:44:08 UTC from IEEE Xplore. Restrictions apply.
+LONG et al.: OPTIMAL CURRENT ALLOCATION RENDERING 3-D MAGNETIC FORCE PRODUCTION                                                                              2409
+
+
+
+                                                                                 that their tips enclose the workspace, wherein the specimen cells
+                                                                                 and the magnetic particle are placed. Two coordinate systems,
+                                                                                 i.e., the measurement coordinate and actuation coordinate, are
+                                                                                 defined for the purpose of measurement and of actuation mod-
+                                                                                 eling, respectively. They are shown in Fig. 1(b). The z-axis of
+                                                                                 the measurement coordinate is aligned to the optical axis of
+                                                                                 the microscope employed for the particle tracking. Three pairs
+                                                                                 of electromagnetic poles are aligned along the three orthog-
+                                                                                 onal axes of the actuation coordinate. Through a rigid body
+Fig. 1. Hexapole electromagnetic actuator. (a) Arrangement of the six
+                                                                                 rotation, tips of the six poles are on two parallel horizontal
+electromagnetic poles. (b) Measurement coordinate {xm , ym , zm } and            planes in the measurement coordinate, i.e., one upper plane and
+actuation coordinate {xa , ya , za } associated with the six pole tips.          the other lower plane, and the blockage of the optical path is
+                                                                                 avoided.
+                                                                                    The pole tips are used to concentrate the magnetic flux into
+actuation. A hexapole electromagnetic actuating system is used                   the workspace to generate and control the magnetic field and
+as a model system to investigate the mathematical relationship                   exert the controllable magnetic force on the magnetic particle.
+between the desired 3-D magnetic force exerting on the magnetic                  The resulting magnetic field can be obtained by summing the
+particle and the six required input currents. It also serves as an               magnetic field contributed by each individual pole. Fig.1(b)
+experimental platform to demonstrate the effective 3-D magnetic                  shows the association between the six pole tips and six input
+force production as the hexapole actuating system being used to                  currents, wherein I2 , I4 , and I5 are associated with the three
+achieve stable magnetic trapping.                                                upper poles and I1 , I3 , and I6 with the three lower poles. Without
+   The rest of this article is organized as follows. Section II                  being magnetized to saturation, the 3-D magnetic force exerted
+presents the experimental apparatus, including the hexapole                      on a superparamagnetic microscopic particle placed in the field
+electromagnetic actuating system [25], the 3-D particle track-                   is described by the gradient force F = ( 21 )∇(m · B), where B
+ing system, and the field programmable gate array (FPGA)                         is the vector of the resulting magnetic flux density at the parti-
+based real-time implementation. Section III presents the inverse                 cle’s location, denoted as p, and m the effective magnetization
+modeling and the optimal current allocation. Experimental in-                    of the magnetic particle. The gradient force produced by the
+vestigations of the effective 3-D force production through the                   six input currents, denoted as I, can be cast into a quadratic
+optimal current allocation are presented in Section IV, wherein                  form [25]
+the hexapole system is used to achieve the magnetic trapping
+                                                                                                              T
+                                                                                                                                               
+and motion control. Experimental results associated with the                         F (p, I) = gI Imax
+                                                                                                      2
+                                                                                                          ÎKI L (p̂) KI Î = gI Imax
+                                                                                                                                   2
+                                                                                                                                      F̂ p̂, Î   (1)
+actuation current, the Brownian motion [26], [27], and the posi-
+tioning and tracking error are also discussed. Finally, Section V                where p̂ is the position vector normalized with respect to the
+concludes this article.                                                          effective workspace radius , Î the normalized current vector,
+                                                                                 i.e., Î = I/Imax , and Imax the maximum current specified for the
+                  II. EXPERIMENTAL APPARATUS                                     safety operation. The 6 × 6 symmetric flux distribution matrix
+                                                                                 KI could be determined through three distinct approaches: 1)
+   The experimental apparatus is a magnetic particle trapping
+                                                                                 magnetic circuit analysis [19]; 2) finite-element analysis [25];
+system, consisting of a hexapole actuating system, a 3-D particle
+                                                                                 and 3) experimental calibration [25]. The distance from the
+tracking system, and a real-time control system.
+                                                                                 workspace center to the tips of all six poles is adjustable, i.e.,
+                                                                                 between 200 and 1000 μm. The effective workspace radius,
+A. Hexapole Electromagnetic Actuating System
+                                                                                 however, needs to be determined through either the second
+   The system is designed for use with live cell experiments.                    or the third approach. Nonetheless, associated with the design
+It employs six sharp-tipped electromagnetic poles, made of                       of the hexapole actuating system, L(p̂) is known. It characterizes
+cone-shaped 1018 steel rod (0.18% carbon) steel with a high                      the position-dependency of the 3-D magnetic force experienced
+saturation limit (over 2 T). All the poles are magnetically con-                 by the magnetic particle in the normalized workspace. It is worth
+nected through a magnetic yoke. Each pole is actuated using                      noting that the three components of the force, presented in [25],
+an individual coil, having 70 turns with the current limitation                  are combined into a single vector in (1). Therefore, L(p̂) consists
+being 3 A. The distance from the workspace center to the tips                    of three 6 × 6 matrices. The force gain, i.e., gI , is characterized
+of all six poles is adjustable due to the flexibility achieved in the            by the size and magnetic property of the magnetic particle and
+design. Its nominal value of 500 μm is used in all analyses and                  that of the magnetic circuit. It is often determined through the
+experiments reported in this article. With the design [25], the                  experimental calibration [25].
+magnitude of the resulting magnetic flux density at the center of                   It is evident that gI Imax
+                                                                                                             2
+                                                                                                                  in (1) determines the force generation
+the workspace is about 100 Gauss (0.01 T) when applying 1-A                      capability of the actuating system, whereas the dimensionless
+current to one of the six poles.                                                 force field, i.e., F̂(p̂, Î), characterizes the nonlinearity, coupling,
+   Fig. 1(a) shows the top view of the hexapole magnetic ac-                     position-dependence, and redundancy of the hexapole electro-
+tuator. The six poles are arranged in a 3-D configuration such                   magnetic actuation.
+
+      Authorized licensed use limited to: National Taiwan University. Downloaded on February 01,2024 at 07:44:08 UTC from IEEE Xplore. Restrictions apply.
+2410                                                                         IEEE/ASME TRANSACTIONS ON MECHATRONICS, VOL. 26, NO. 5, OCTOBER 2021
+
+
+
+                                                                                   and y-directions when a 60× lens is used and 0.6 nm when a 40×
+                                                                                   lens is used. Two important objectives are achieved. First, the
+                                                                                   real-time estimation of the 3-D position matches the maximum
+                                                                                   frame rate of the camera. Second, the timing of the output data
+                                                                                   stream of the system is precisely controlled.
+
+
+
+                                                                                   C. Real-Time Control System
+                                                                                      A DE2-115 FPGA (Terasic Inc.) is used as the main FPGA
+                                                                                   to implement the developed control algorithms, wherein the
+                                                                                   six desired control currents are calculated. The six control
+                                                                                   signals are sent to six linear power amplifiers (Micro Dynamics,
+                                                                                   BTA-28V-6A) through DA converters (DAC8814 EVM, Texas
+                                                                                   Instruments) to generate control currents to actuate individual
+                                                                                   coils. A dual-bead tracking system is implemented using two
+                                                                                   TR4-230 FPGAs (Terasic Inc.), in which the real-time image
+                                                                                   processing is performed to calculate the respective positions
+                                                                                   of two magnetic beads, namely the reference bead and the
+                                                                                   control bead, associated with each incoming image frame. The
+Fig. 2. (a) Hexapole actuator integrated with an inverted microscope.
+(b) FPGA-based controller and real-time image processor. (c) Real-time             integration of the image processing FPGA with the main FPGA
+image display of the reference bead and the control bead.                          is shown in Fig. 2(b), wherein the necessary position feedback
+                                                                                   is provided to the real-time control algorithms through the
+                                                                                   real-time image processing. The connections of USB modules
+B. 3-D Particle Tracking System                                                    (DLP-USB1232H, FTDI) are established and programmed to
+   A real-time system achieving the high-speed 3-D particle                        realize the PC-FPGA communication, rendering control param-
+tracking with nanometer resolution was reported in [28]. This                      eters downloading. A VGA port of the main FPGA is connected
+system has been implemented with two major improvements in                         to a monitor to display the image in real time. Fig. 2(c) shows
+this study to track the 3-D motion of the magnetic particle in                     a snapshot of the monitor, displaying the dual-bead tracking,
+aqueous solutions with subnanometer resolution. It comprises                       wherein the reference bead is affixed to the coverslip surface
+a complementary metal-oxide-semiconductor (CMOS) camera,                           and measured simultaneously along with the bead moving in
+an FPGA, and real-time image processing programs. As shown                         the 3-D workspace. The dual-bead tracking approach enables the
+in Fig. 2(a), the hexapole electromagnetic actuator is integrated                  drift compensation and the low frequency vibration cancelation.
+upon an inverted microscope (Olympus IX81) and the CMOS                            Since a larger region of interest, i.e., 512 × 512 pixels, is needed
+camera is used to grab images for real-time motion tracking.                       for the dual-bead approach, the maximum achievable sampling
+   The CMOS camera has high photosensitivity and superior                          rate used in the real-time control is 1606 Hz.
+signal-to-noise ratio. In the new experimental setup, a super
+luminescent diode (SLD) illumination system instead of a stan-
+dard 100-W halogen lamp is used to further enhance the image
+                                                                                                   III. OPTIMAL CURRENT ALLOCATION
+sensitivity [29]. The vision system is, therefore, able to acquire
+images of 256 × 120 pixels at a frame rate of up to 10 000 frames                     The force model is then used in the inverse modeling to render
+per second (fps). Since the SLD has a long coherence length, an                    the optimal current allocation of the overactuated hexapole
+enhanced diffraction pattern can be generated, improving the                       electromagnetic actuating system, minimizing the 2-norm of the
+measurement resolution in both the lateral direction and axial                     input current vector when applied to produce the desired 3-D
+direction.                                                                         magnetic force in the workspace. The optimal current allocation
+   The real-time image stream is downloaded to the FPGA                            is then realized in real time to enable the feedback linearization.
+[Fig. 2(b)], wherein a 3-D particle-tracking algorithm is imple-                   The stable magnetic trapping and precise motion control of
+mented to calculate the 3-D positions of the particle in real time.                the microscopic magnetic particle in the fluid environment are
+Upon receiving each incoming image, the second improvement                         demonstrated in experiments.
+is to use the continuous image registration method [30] to
+determine the lateral position of the spherical particle, and an
+optimal matching technique [31] is employed to compare the
+                                                                                   A. Current Allocation Based on Constant Constraints
+off-focus 2-D image with an object-specific model to estimate
+the axial position. The achieved optical resolution is about 0.003                    An inverse model based on constant constraints was proposed
+pixels in the x- and y-directions, and sub-nm in the z-direction.                  in [23] to remove redundancies. It is briefly summarized here.
+The CMOS camera used in this system has 8-μm pixel size.                           The normalized force, i.e., (1), can be significantly simplified at
+Therefore, the visual sensing resolution is about 0.4 nm in the x-                 the center of the workspace due to the symmetrical configuration
+
+       Authorized licensed use limited to: National Taiwan University. Downloaded on February 01,2024 at 07:44:08 UTC from IEEE Xplore. Restrictions apply.
+LONG et al.: OPTIMAL CURRENT ALLOCATION RENDERING 3-D MAGNETIC FORCE PRODUCTION                                                                              2411
+
+
+
+of the magnetic poles in the actuation coordinate frame                             the six currents while generating the accurate 3-D magnetic
+⎧                                                                        force is essentially an optimization problem under nonlinear
+⎪
+⎪  F̂     0, ˆ
+             I   = 2   ˆ
+                       I   − ˆ
+                             I      2   Iˆ  + ˆ
+                                              I    −  ˆ
+                                                      I   + ˆ
+                                                            I    −  ˆ
+                                                                    I   + ˆ
+                                                                          I
+⎪
+⎪
+      x                  1     2          1     2       3     4       5     6       equality constraints. From (1), due to the quadratic relation-
+⎨                                                                        ship between the magnetic force and the input currents, i.e.,
+   F̂y 0, Iˆ = 2 Iˆ3 − Iˆ4 2 Iˆ3 + Iˆ4 − Iˆ1 + Iˆ2 − Iˆ5 + Iˆ6 .
+⎪
+⎪                                                                        ||F̂(p̂, Î)|| ∝ ||Î||2 , expressing the desired force in magnitude
+⎪
+⎪                                                                                   and direction, i.e., F̂d = ||F̂d ||r̂(ϕ, θ) at the specified position
+⎩F̂z 0, Iˆ = 2 Iˆ5 − Iˆ6 2 Iˆ5 + Iˆ6 − Iˆ1 + Iˆ2 − Iˆ3 + Iˆ4
+                                                                                    p̂, leads to a scalable optimal inverse solution, i.e.
+                                                                              (2)                               
+     Letting δ Î = [δ Iˆx , δ Iˆy , δ Iˆz ]T = [Iˆ1 − Iˆ2 , Iˆ3 − Iˆ4 , Iˆ5 −                    Îopt F̂d , p̂ = F̂d 1/2 Îopt (r̂ (ϕ, θ) , p̂)   (6)
+Iˆ6 ]T as effective actuation currents and employing three linear
+constraints, i.e., c = [cx , cy , cz ]T = [Iˆ1 + Iˆ2 , Iˆ3 + Iˆ4 , Iˆ5 +            where r̂(ϕ, θ) is the unit desired force represented as an unit
+Iˆ6 ]T , to remove redundancies, an exact linear relationship be-                   radial vector in the spherical coordinate system. This scalable
+tween the effective actuation current and the force is derived                      relationship allows one to focus only on the direction, not the
+                                                                                  magnitude, of the desired force when finding the optimal current
+                      F̂ 0, δ Î = JδÎ δ Î = 2Jδ Î                         (3)   allocation. Therefore, the objective of optimization is to mini-
+                                                                                    mize the 2-norm of the 6 × 1 input current vector, namely Î2 ,
+where J = 3 · diag[cx , cy , cz ] − (cx + cy + cz ) · diag[1, 1, 1].
+                                                                                    that produces the desired unit force, i.e., r̂(ϕ, θ) = ÎT N(p̂)Î.
+The effective actuation current δ Î can, therefore, be analytically                The method of Lagrange multipliers is employed to minimize the
+determined when the bead is at the workspace center. While                          objective function subject to equality constraints [32]. Specif-
+it is not straightforward to obtain the exact inverse solution                      ically, Lagrange multipliers λT = [λx , λy , λz ] are used to con-
+for the entire workspace, by keeping the first-order terms in                       struct the following Lagrange function:
+Taylor expansion of (1), a linear approximation of the magnetic                                                                                
+force around the center can be cast as F̂(p̂, δ Î) ≈ JδÎ δ Î + Jp̂ p̂,                   L (ϕ, θ, p̂) = Î2 + λT ÎT N (p̂) Î − r̂ (ϕ, θ)    (7)
+wherein Jp̂ = 2 · J2 . The effective actuation current required to
+produce the desired force is then derived                                           wherein ÎT N(p̂)Î − r̂(ϕ, θ) = 0 are three equality constraints
+                                 1 −1                                               and Î2 the objective function.
+                        δ Î ≈     J F̂d (p̂) − Jp̂.                        (4)        The use of the Lagrange function converts the constrained
+                                 2
+                                                                                    problem into a form such that the derivative test can be applied.
+  The effective actuation current δ Î along with the three linear                  At a given position of the magnetic bead, minimizing Î2 in (7)
+                                                                                    yields the optimal inverse solution, represented by Îunit   opt (ϕ, θ, p̂)
+constraints can be employed to calculate the required actuation
+current, i.e.                                                                       and associated with the unit force, i.e., F̂d = r̂(ϕ, θ, p̂).
+                         I = Inverse (Fd , p, c) .                          (5)        The inverse solution is exact within the specified workspace
+                                                                                    as nonlinear equality constraints, i.e., r̂(ϕ, θ) = ÎT N(p̂)Î, are
+   It is worth noting that the desired force Fd and the spatial                     satisfied. Moreover, the 2-norm of the input current vector is
+location p are associated with the actuation coordinate frame.                      minimum as the objective function is minimized. To illustrate
+While employing (5) to realize the inverse model calculation,                       the importance of the optimal current allocation, two limitations
+the rotational matrix am R between the two coordinate frames                        of previous approaches [23], [25] are presented below.
+needs to be applied to both vectors.                                                   First, the excessive input current attributed to the use of
+                                                                                    constant constraints is illustrated. For simplicity, the force pro-
+B. Current Allocation Through Optimization                                          duction at the center of the workspace is examined. At the
+   As shown in (1), the resulting magnetic force nonlinearly                        center, since the inverse solution associated with the three
+relates to the six input currents and strongly depends on                           constraints (c) is known, i.e., p̂ = 0 in (4), the optimal cur-
+the position of the magnetic bead. Employing (5) to allocate                        rent can be obtained by finding three optimal constraints, i.e.,
+the six input currents has two severe limitations that degrade the                  c(ϕ, θ), that minimize the 2-norm of the input current vector,
+desired capability of the actuating system. First, whereas the use                  i.e., Î(ϕ, θ)2 . Since δ Î = [Iˆ1 − Iˆ2 , Iˆ3 − Iˆ4 , Iˆ5 − Iˆ6 ]T and
+of constant constraints leads to a simple and accurate inverse                      c = [Iˆ1 + Iˆ2 , Iˆ3 + Iˆ4 , Iˆ5 + Iˆ6 ]T , the squared norm of the input
+model at the center, it results in excessive current flow in the                    current vector is related to the effective input current vector and
+coil and significantly degrades the force generation capability                     three constraints as
+of the actuating system. Second, extending the inverse model at                                                      1
+                                                                                                 Î (ϕ, θ) 2 =         δ Î (ϕ, θ) 2 + c2             (8)
+the center to the entire workspace through the first-order Taylor                                                    2
+expansion in the spatial domain leads to significant errors when
+                                                                                    where δ Î(ϕ, θ) = 21 J−1 r̂(ϕ, θ) according to (3). The objective
+generating the magnetic force exerting on the magnetic particle
+                                                                                    function can then be cast as
+placed away from the center of the workspace.
+                                                                                                                1                    1
+   It is, therefore, desirable to devise an approach that renders                               J (c, ϕ, θ) = J−1 r̂ (ϕ, θ) 2 + c2             (9)
+the optimal current allocation, wherein the inverse modeling                                                    8                    2
+is accurate within the specified workspace and the 2-norm of                        which involves three variables, significantly less complicated
+the six input currents is minimized. Minimizing the 2-norm of                       when compared to the one in (7).
+
+      Authorized licensed use limited to: National Taiwan University. Downloaded on February 01,2024 at 07:44:08 UTC from IEEE Xplore. Restrictions apply.
+2412                                                                         IEEE/ASME TRANSACTIONS ON MECHATRONICS, VOL. 26, NO. 5, OCTOBER 2021
+
+
+
+
+Fig. 3. Three direction-dependent optimal constraints (first row) and
+optimal allocation of six direction-dependent input currents (second and           Fig. 4. Percent error of inverse modeling. (a) Bead at (20,0,0) μm,
+third rows) compared with their corresponding results using constant               desired force F̂d = 1. (b) Bead at (20,0,0) μm, desired force F̂d = 10.
+constraints.                                                                       (c) Bead at (40,0,0) μm, desired force F̂d = 1. (d) Bead at (40,0,0) μm,
+                                                                                   desired force F̂d = 10.
+
+   Minimizing this objective function yields the three
+direction-dependent optimal constraints c(ϕ, θ). Employing                         (5) in two fronts, i.e., based on the direction-dependent optimal
+the optimal constraints, i.e., c(ϕ, θ), the optimal current                        current allocation at the center and using the second-order Taylor
+              opt (ϕ, θ), associated with the unit force, is then
+allocation, Îunit                                                                 expansion in the spatial domain. The analytical inverse model
+determined. Whereas it only provides the optimal current allo-                     is cast as the second order Taylor expansion for each individ-
+cation at the center of the workspace and needs to be extended
+                                                                                                        opt (ϕ, θ, p̂)i ≈ Îopt (ϕ, θ)i + Gi (ϕ, θ)p̂ +
+                                                                                   ual current, i.e., Îunit                unit
+to the entire workspace using (7), its result showcases that
+                                                                                   2 p̂ Hi (ϕ, θ)p̂, where i = 1, 2, . . . , 6 is the index of the six
+                                                                                   1 T
+using optimization offers significant advantages over constant
+                                                                                   input currents, Gi (ϕ, θ) the 3 × 1 gradient vector, and Hi (ϕ, θ)
+constraints used in [19] and [23]. They are displayed in Fig. 3,
+                                                                                   the 3 × 3 hessian matrix [33]. Denoting P = [x̂, ŷ, ẑ, 1]T as the
+reproduced from [25, Figs. 7 and 8], wherein the six input
+                                                                                   augmented position vector, the inverse model is expressed in the
+currents through the optimal current allocation are much smaller
+                                                                                   following quadratic form:
+than those obtained using constant constraints.
+   Second, whereas the inverse model is exact at the center of                                                          T Taylor
+the workspace, extending from the center through the first-order                                   Îunit
+                                                                                                     opt (ϕ, θ, p̂)i ≈ P Di      (ϕ, θ) P                     (10)
+Taylor expansion, i.e., (5), leads to a significant error as the
+ability of the force production strongly depends on the position                   where DTaylor
+                                                                                              i     (ϕ, θ) is the 4 × 4 inverse modeling matrix as-
+of the bead as shown in (1). Fig. 4 shows the error of the inverse                 sociated with the ith input current. It is constructed from
+                                                                                     opt (ϕ, θ)i , Gi (ϕ, θ), and Hi (ϕ, θ) as follows:
+                                                                                   Îunit
+modeling when employing (5) to allocate the input current. It
+shows that the error grows when moving the bead away from the
+center (from center to 20 μm and then 40 μm in the x-direction)
+                                                                                                                   2 Hi (ϕ, θ) 2 Gi (ϕ, θ)
+                                                                                                                   1           1
+and/or increasing the desired force (from 1 to 10).                                               DTaylor =                                        .          (11)
+                                                                                                   i
+                                                                                                                  2 Gi (ϕ, θ) Îopt (ϕ, θ)i
+                                                                                                                  1 T           unit
+
+C. Optimal Inverse Model for Real-Time Control
+   Minimizing J(ϕ, θ, p̂) in (7) to obtain the position-dependent                     The second approach starts with numerically finding the
+                                                                                   direction-dependent optimal current allocation at spatial posi-
+                                            opt (ϕ, θ, p̂), involves
+optimal current allocation, denoted as Îunit
+nine variables, i.e., six currents and three Lagrange multipliers.                 tions predetermined in the 3-D workspace. Fig. 5 shows the
+The local minimum occurs at ∇(J(ϕ, θ, p̂)) = 0, still a nonlin-                    selected spatial positions in the first Octant of the 3-D workspace,
+ear function. Although the solution removes the error attributed                           opt (ϕ, θ, p̂) is numerically calculated using MATLAB
+                                                                                   where Îunit
+to the first-order Taylor approximation, it is not feasible to be                  optimization toolbox to minimize J(ϕ, θ, p̂) in (7). The spatial
+implemented for real-time control.                                                 range in the first Octant is a 45 μm × 45 μm × 45 μm cube. The
+   Two approaches are introduced here to achieve the inverse                       least squares fitting is then employed to construct an analytical
+modeling that renders real-time applications. Both approaches                      inverse model, wherein the format of (10) is kept for simplicity,
+employ the direction-dependent quadratic approximation to con-                     i.e.
+struct their respective analytical inverse models. The first ap-
+proach is viewed as an extension of the inverse model depicted by                                   Îunit
+                                                                                                      opt (ϕ, θ, p̂)i ≈ P Di (ϕ, θ) P.
+                                                                                                                         T LS
+                                                                                                                                                              (12)
+
+       Authorized licensed use limited to: National Taiwan University. Downloaded on February 01,2024 at 07:44:08 UTC from IEEE Xplore. Restrictions apply.
+LONG et al.: OPTIMAL CURRENT ALLOCATION RENDERING 3-D MAGNETIC FORCE PRODUCTION                                                                              2413
+
+
+
+
+Fig. 5. Spatial positions where solutions of optimal current allocation          Fig. 7. Force production volumes (a) at (0,0,0) μm, (b) at (20,0,0) μm,
+are to be obtained.                                                              and (c) at (40,0,0) μm.
+
+
+                                                                                 2) redundancy, 3) nonlinearity, and 4) position-dependency but
+                                                                                 also significantly increases the capability of the force production,
+                                                                                 which is measured by the force production volume. Any desired
+                                                                                 force vector within the force production volume can be produced
+                                                                                 by the actuator under the limit specified for the input current. The
+                                                                                 capability with the current limitation being three amperes using
+                                                                                 the optimal inverse model [see (12)] and that using the inverse
+                                                                                 model based on constant constraints [see (5)] are compared in
+                                                                                 Fig. 7 at three distinct positions. It is seen that the capability of
+                                                                                 the force production is position-dependent and that the optimal
+                                                                                 inverse modeling significantly increases the size of the force
+                                                                                 production volume.
+
+                                                                                            IV. 3-D MAGNETIC FORCE PRODUCTION IN
+Fig. 6.   Percent error of force production using the two inverse models.                            HEXAPOLE ACTUATION
+                                                                                    With the inverse modeling, i.e., (5) or (12), being implemented
+   The matrix DLS    i (ϕ, θ) follows the same format of                         in a high-speed FPGA system, the real-time current allocation
+  Taylor
+Di       (ϕ, θ) in (10), but the entries of DLS i (ϕ, θ) are deter-              can be realized to make the hexapole actuating system behave
+mined through the least squares fitting to minimize the 2-norm                   like a decoupled three-axis force producer to enable the active
+of the error within the specified 3-D spatial range.                             control of the magnetic particle. Experimental investigations of
+   To evaluate the accuracy of the inverse modeling, the error                   the effective 3-D magnetic force production through the optimal
+of the force production is examined at various positions within                  current allocation are presented in this section.
+the 45 μm × 45 μm × 45 μm cube in the first Octant. At each
+position, the desired force (Fd ) is specified in numerous distinct              A. Feedback Stabilization of Magnetic Trap
+directions. Each of the two inverse models is then applied to
+                                                                                    In the experiment, the hexapole actuating system is used to
+obtain the six input currents. The force model is then employed to
+                                                                                 trap and move a magnetic particle in aqueous solutions. A block
+calculate the real force (Freal ) produced by the actuation current.
+                                                                                 diagram of the feedback control system is shown in Fig. 8. It
+The percent error of the force production is shown in Fig. 6,
+                                                                                 is worth noting that the objective of the control system imple-
+wherein R is the distance from the center, i.e., R = p, and the
+                                                                                 mented in the experiment is to examine the actuation current and
+percent error is defined as |ΔF/Fd | × 100, referred to Fig. 6(a).
+                                                                                 to evaluate the force error from the point of view of the force
+The maximum force modeling error at each location is selected
+                                                                                 production.
+and plotted in Fig. 6(b). It can be clearly seen that the percent
+                                                                                    The dynamics of a microscopic bead moving in aqueous
+error grows with respect to R when using the Taylor expansion,
+                                                                                 solutions is governed by the Langevin equation at low Reynolds
+whereas it remains under 5% in the case that the inverse model
+                                                                                 numbers [34], driven by the controllable electromagnetic force
+be constructed through the least squares fitting.
+                                                                                 FMT and subject to random thermal forces FT , i.e.
+   The optimal inverse modeling not only solves four difficulties
+in using multipole electromagnetic actuation, i.e., 1) coupling,                                 γ ṗ (t) = FMT (p (t) , I (t)) + FT (t)                     (13)
+
+      Authorized licensed use limited to: National Taiwan University. Downloaded on February 01,2024 at 07:44:08 UTC from IEEE Xplore. Restrictions apply.
+2414                                                                         IEEE/ASME TRANSACTIONS ON MECHATRONICS, VOL. 26, NO. 5, OCTOBER 2021
+
+
+
+
+Fig. 8. Block diagram of the feedback control system: pd is the desired
+position, pm the measured position, e the error signal, Fd the desired
+force determined by the control law, τa the effective actuator delay, τm
+the measurement delay, FMT the magnetic force, ΔF the error of force
+production, and FT the thermal force.
+
+
+where γ is the drag coefficient, characterized by Stokes’ law, p
+the position vector, and I the input current vector. The total
+time delay (τD ) of the feedback system is the combination                         Fig. 9. Magnetic bead is moved to and stabilized at 75 distinct po-
+                                                                                   sitions, distributed in three planes at distinct z height, in the 3-D
+of the actuator delay (τA ), the measurement delay (τm ), and                      workspace (result using optimal current allocation).
+the zero-order-hold delay (τZOH ), i.e., τD = τA + τm + τZOH .
+Moreover, the effective actuator delay is denoted as τa , i.e.,                    wherein the measurement delay equals to two sampling peri-
+τa = τA + τZOH . Therefore, the bead dynamics is expressed as                      ods of the control system being considered, i.e., τD = 2T , the
+follows:                                                                           characteristic equation of the discrete system is as follows:
+ γ ṗ (t) = FMT (p (t) , I (Fd (t) , p (t − τm ))) + FT (t) (14)                                                              T
+                                                                                                             1 + Kp z −2
+                                                                                                                              γ
+                                                                                                                                   =0                         (17)
+wherein I(Fd (t), p(t − τm )) denotes the current allocation                                                               z−1
+in real time. The input/output relationship of the feedback                        wherein z −2 is attributed to the two-step measurement delay and
+linearized actuator is cast as FMT = Fd + ΔF, wherein ΔF                           T /γ(z − 1) the discrete model of the digital-to-analog converter
+characterizes the error of the force production and is dictated by                 combined with the bead dynamics. The stability range can be
+the error of force modeling and that of the inverse modeling. It                   determined through Jury’s stability test [35], i.e.,
+is seen that when using the optimal current allocation to control                                                     √
+                                                                                                              −1 + 5 γ ∼             γ
+the magnetic particle makes the dynamics of the feedback loop                                     0 < Kp <                  = 0.618 .             (18)
+very simple and the stability of the control system is dictated by                                                 2     T           T
+ΔF and τD .                                                                           It is worth noting that the simplicity in the stability analysis
+   A      proportional      control     law,     i.e.,   Fd (t) =                  is attributed to the optimal inverse modeling, which solves the
+Kp (pd (t) − p(t − τm )), along with the current allocation was                    four major challenges in the current allocation and achieves the
+realized and applied to achieve stabilization in experiments.                      accurate force production.
+Considering the effective actuator delay and the error of the
+modeling and of the inverse modeling, the equation of motion                       B. Actuation Current and Force Error
+of the actively controlled bead is cast below                                         In case the stabilized positioning pd (t) is constant and the
+                                                                                   steady-state error of positioning, denoted as ess , is inversely
+ γ ṗ (t) = Kp (pd (t − τa ) − p (t − τD )) + ΔF (t) + FT (t) .
+                                                                                   proportional to the control gain employed, i.e., ess = −ΔF/Kp ,
+                                                                (15)
+                                                                                   it is seen that the steady-state positioning error serves as a
+   As the error of the force modeling could be significantly
+                                                                                   quantitative measue of ΔF, indicating the error of modeling
+reduced through the experimental calibration [25], a great part
+                                                                                   and of inverse modeling.
+of ΔF is caused by the error of the inverse modeling. If constant
+                                                                                      In the experiment of the stabilized positioning, the magnetic
+constraints were being employed, as illustrated in Fig. 4, the error
+                                                                                   bead is moved to and stabilized at 75 distinct positions, dis-
+of the inverse modeling, and, thus, ΔF, is obvious. However,
+                                                                                   tributed in three planes, in the 3-D workspace, as shown in Fig. 9.
+when using the optimal inverse modeling, the error of the force
+                                                                                   The magnetic bead is stabilized at each point for 10 s, and then
+production ΔF could be significantly smaller, as shown in Fig. 6.
+                                                                                   steered at 5 μm/s by 10 μm to the next point. It is first stabilized
+   Therefore, with the proposed optimal current allocation, the
+                                                                                   at the lower left corner and steered to follow a zigzag path until
+stability of the feedback loop is practically dictated by the time
+                                                                                   reaching the last point in the plane. It is then steered back to
+delay of the feedback loop. The characteristic equation of the
+                                                                                   the starting point and moved to the first point in the next plane.
+simplified continuous-time feedback loop is cast as follows:
+                                                                                   After the transient response vanished at each position, the input
+                                  Kp e−τD s                                        current and the bead position associated with the last 7 s were
+                            1+              = 0.                          (16)     selected, analyzed, and plotted.
+                                     γs
+                                                                                      The current allocation based on the optimal inverse modeling
+The Nyquist stability criterion requires that Kp be smaller than                   and that using constant constraints were implemented at a sam-
+γπ/2τD . When implementing the controller in digital form,                         pling rate of 1606 Hz. The value of the control gain was selected
+       Authorized licensed use limited to: National Taiwan University. Downloaded on February 01,2024 at 07:44:08 UTC from IEEE Xplore. Restrictions apply.
+LONG et al.: OPTIMAL CURRENT ALLOCATION RENDERING 3-D MAGNETIC FORCE PRODUCTION                                                                             2415
+
+
+
+
+Fig. 10. Actuation current for positioning: based on optimal inverse            Fig. 12. Positioning error: based on optimal inverse modeling (blue)
+modeling (blue) and using constant constraints (red).                           and using constant constraints (red).
+
+
+
+
+Fig. 11. Standard deviation of Brownian motion: based on optimal
+inverse modeling (blue) and using constant constraints (red).
+                                                                                Fig. 13.   Trajectory tracking in the 3-D workspace.
+
+
+to be half of the stability limit. Fig. 10 compares the actuation               C. Actuation Current and Motion Error
+current of the two approaches employed in the experiment. It
+                                                                                   A PI controller is implemented to render motion control to
+is seen that the current allocation based on the optimal inverse
+                                                                                further validate the effectiveness of the proposed inverse mod-
+modeling requires significantly smaller actuation current than
+                                                                                eling. In the experiment, the optimal current allocation along
+that using constant constraints. It is worth mentioning that I5
+                                                                                with the linear controller is applied to control the moving bead
+and I6 are negative when using constant constraints, but they
+                                                                                at different regions and along distinct directions. The ability to
+have much larger absolute values when compared with the result
+                                                                                steer the magnetic bead in the workspace is necessary if it is to
+based on the optimal inverse modeling.
+                                                                                be used as a scanning probe.
+   The standard deviation of the bead’s Brownian motion at each
+                                                                                   In the experiment, the magnetic bead is steered at 5 μm/s to
+stabilized position was calculated and shown in Fig. 11. It is
+                                                                                track various circular trajectories, i.e., three in the xy-plane at
+seen that the current allocation based on the optimal inverse
+                                                                                distinct positions, five in the yz-plane at distinct positions, and
+modeling achieves superior Brownian motion control than that
+                                                                                five in the zx-plane at distinct positions. The bead is first steered
+using constant constraints. It is worth noting that the current
+                                                                                to track the circle (D = 40 μm) in the lowest the xy-plane,
+allocation using constant constraints results in larger actuation
+                                                                                then moved to the middle plane, being 5 μm above. After
+current, leading to greater error of force production and thus
+                                                                                tracking the circle in the middle plane, the bead is moved to
+greater positioning fluctuation.
+                                                                                the highest plane to track the circular trajectory. After that, it
+   The positioning error of the bead is shown in Fig. 12. It is
+                                                                                is moved back to the middle plane and steered to track the
+seen that the current allocation based on the optimal inverse
+                                                                                circular trajectory (D = 10 μm) labeled as 0 in the xz-plane
+modeling results in much smaller positioning errors. Since the
+                                                                                and the other one labeled as 0 in the yz-plane. It is worth
+steady-state error of positioning is inversely proportional to the
+                                                                                mentioning that the circular trajectories in the yz-plane and the
+control gain employed, i.e., ess = −ΔF/Kp , the experimental
+                                                                                xz-plane are plotted separately in Fig. 13 for clarity, whereas
+result validates that the current allocation based on the optimal
+                                                                                the sequence of trajectory tracking is alternating between the
+inverse modeling leads to smaller ΔF, which is attributed to the
+                                                                                yz-plane and the xz-plane, following the trajectory label of 0, 1,
+error of modeling and of inverse modeling.
+                                                                                2, 3, 4.
+
+     Authorized licensed use limited to: National Taiwan University. Downloaded on February 01,2024 at 07:44:08 UTC from IEEE Xplore. Restrictions apply.
+2416                                                                         IEEE/ASME TRANSACTIONS ON MECHATRONICS, VOL. 26, NO. 5, OCTOBER 2021
+
+
+
+                                                                                      3) nonlinearity;
+                                                                                      4) position-dependency.
+                                                                                      It makes the six-input hexapole actuating system behave like a
+                                                                                   three-axis force producer to enable applications in active control.
+                                                                                      Since optimal current allocation is able to minimize the 2-
+                                                                                   norm of the 6 × 1 input current vector when applied to pro-
+                                                                                   duce the desired 3-D magnetic force, it greatly increases the
+                                                                                   capability of the force production of the actuator, theoretically
+                                                                                   demonstrated through using the force production volume to
+                                                                                   serve a quantitative measure. Compared with the current al-
+                                                                                   location using constant constraints, the scheme based on the
+                                                                                   optimal inverse modeling significantly reduces the error of
+                                                                                   the force production, which is demonstrated theoretically and
+Fig. 14. Actuation current for trajectory tracking: based on optimal               experimentally.
+inverse modeling (blue) and using constant constraints (red).                         Specifically, the stabilized positioning and trajectory tracking
+                                                                                   were experimentally investigated to show that compared to the
+                                                                                   current allocation using constant constraints, the optimal cur-
+                                                                                   rent allocation required significantly smaller actuation currents,
+                                                                                   achieved the superior Brownian motion control, and resulted in
+                                                                                   much smaller errors when applied to realize the active control
+                                                                                   for positioning and tracking.
+                                                                                      There are still several aspects that need to be investigated to
+                                                                                   improve the capability of the magnetic actuator and to enhance
+                                                                                   the control of the magnetic bead to serve as a scanning probe.
+                                                                                   First, a Hall effect sensor needs to be integrated to each individ-
+                                                                                   ual magnetic pole to provide the feedback signal to reduce the
+                                                                                   effect of hysteresis and other modeling error. Second, advanced
+                                                                                   control laws could be designed and implemented to realize more
+                                                                                   advanced applications, such as the rapid steering and controlled
+Fig. 15. Tracking error in three axes: based on optimal inverse model-             manipulation. In case that the probe is to interact with samples
+ing (black) and using constant constraints (green).                                or environment, it is necessary to estimate in real time the
+                                                                                   probe−sample interaction or the spatially dependent physical
+   It is seen from Fig. 14 that the current allocation based                       quantities to enable the self-tuning adaptive control. Specifically,
+on the optimal inverse modeling requires significantly smaller                     the spatial-dependent parameter, such as drag coefficient, needs
+actuation currents to perform the 3-D trajectory tracking, which                   to be estimated in real time to enhance the control of the moving
+is as expected. Moreover, it results in much smaller tracking                      probe. Moreover, the real-time estimation of the probe−sample
+errors, which is shown in Fig. 15. It is worth noting that the                     interaction needs to be realized to enable the automatic scanning.
+bead is constantly under the excitation of the random thermal
+force FT (t). Therefore, the Brownian motion is a significant
+component of the tracking error depicted in Fig. 15, wherein the                                                 REFERENCES
+mean of the tracking error is relatively small as a PI controller is                 [1] C. Haber and D. Wirtz, “Magnetic tweezers for DNA micromanipulation,”
+employed. It is seen that by using the optimal inverse modeling                          Rev. Sci. Instrum., vol. 71, no. 12, pp. 4561–4570, 2000.
+                                                                                     [2] J. Zlatanova and S. H. Leuba, “Magnetic tweezers: A sensitive tool to
+to realize the current allocation, the standard deviation of the                         study DNA and chromatin at the single-molecule level,” Biochem. Cell
+Brownian motion reduced to (57.82, 43.81,and 42.01 nm) from                              Biol., vol. 81, pp. 151–159, 2003.
+(123.10, 63.08, and 109.83 nm).                                                      [3] C.-H. Chiou, Y.-Y. Huang, M.-H. Chiang, H.-H. Lee, and G.-B. Lee,
+                                                                                         “New magnetic tweezers for investigation the mechanical properties
+                                                                                         of single DNA molecules,” Nanotechnology, vol. 17, pp. 1217–1224,
+                              V. CONCLUSION                                              2006.
+                                                                                     [4] J. K. Fisher et al., “Thin-foil magnetic force system for high-numerical-
+   A current allocation scheme based on the optimal inverse                              aperture microscopy,” Rev. Sci. Instrum., vol. 77, 2006, Art. no. 023702.
+modeling of hexapole electromagnetic actuation is devised                            [5] J.-A. Seon, Z. Cenev, and Q. Zhou, “Automatic noncontact extraction
+                                                                                         and independent manipulation of magnetic particles using electromagnetic
+through the numerical optimization and least squares fitting,                            needle,” IEEE/ASME Trans. Mechatron., vol. 25, no. 2, pp. 931–941,
+realized in a high-speed FPGA system for the real-time cur-                              Apr. 2020.
+rent allocation rendering 3-D magnetic force production, and                         [6] A. R. Bausch, F. Ziemann, A. A. boulbitch, K. Jacobson, and E. Sackmann,
+                                                                                         “Local measurements of viscoelastic parameters of adherent cell surfaces
+validated through experimental investigations. It solves the fol-                        by magnetic bead microrheometry,” Biophys. J., vol. 76, pp. 2038–2049.
+lowing four main difficulties in the multipole electromagnetic                           Oct. 1998.
+actuation:                                                                           [7] F. J. Alenghat, B. Fabry, K. Y. Tsai, W. H. Goldmann, and D. E. Ingber,
+                                                                                         “Analysis of cell mechanics in single vinculin-deficient cells using a
+   1) redundancy;                                                                        magnetic tweezer,” Biochem. Biophys. Res. Commun., vol. 277, pp. 93–99,
+   2) coupling;                                                                          2000.
+
+       Authorized licensed use limited to: National Taiwan University. Downloaded on February 01,2024 at 07:44:08 UTC from IEEE Xplore. Restrictions apply.
+LONG et al.: OPTIMAL CURRENT ALLOCATION RENDERING 3-D MAGNETIC FORCE PRODUCTION                                                                                2417
+
+
+
+ [8] H. Huang, C. Y. Dong, H.-S. Kwon, J. D. Sutin, R. D. Kamm, and P. T. C.         [32] R. T. Rockafellar, “Lagrange multipliers and optimality,” SIAM Rev.,
+     So, “Three-dimensional cellular deformation analysis with a two-photon               vol. 35, pp. 183–238, 1993.
+     magnetic manipulator workstation,” Biophys. J., vol. 82, pp. 2211–2223,         [33] W. C. Thacker, “The role of the Hessian matrix in fitting models to
+     2002.                                                                                measurements,” J. Geophys. Res., Oceans, vol. 94, pp. 6177–6196, 1989.
+ [9] A. R. Bausch, W. Moller, and E. Sackmann, “Measurement of local                 [34] W. Coffey, Y. P. Kalmykov, and J. Waldron, The Langevin Equation: With
+     viscoelasticity and forces in living cells by magnetic tweezers,” Biophys.           Applications to Stochastic Problems in Physics in Chemistry and Electrical
+     J., vol. 76, pp. 573–579, 1999.                                                      Engineering, 2nd ed., Singapore: World Scientific Publishing Company,
+[10] B. G. Hosu, K. Jakab, P. Banki, and F. I. Toth, “Magnetic tweezers for in-           2004.
+     tracellular applications,” Rev. Sci. Instrum., vol. 74, no. 9, pp. 4158–4163,   [35] G. F. Franklin, J. D. Powell, and M. Workman, Digital Control of Dynamic
+     2003.                                                                                Systems, 3rd ed., Menlo Park, CA, USA: Addison-Wesley, 1998.
+[11] A. H. B. de Vries, B. E. Krenn, R. van Driel, and J. S. Kanger, “Micro
+     magnetic tweezers for nanomanipulation inside live cells,” Biophys J.,
+     vol. 88, no. 3, pp. 2137–2144, 2005.
+[12] J. S. Kanger, V. Subramaniam, and R. van Driel, “Intracellular manipula-
+     tion of chromatin using magnetic nanoparticles,” Chromosome Res., 16,
+     pp. 511–522, 2008.
+[13] T. Honda, K.I. Arai, and K. Ishiyama, “Micro swimming mechanisms                                          Fei Long received the B.S. degree from Shang-
+     propelled by external magnetic fields,” IEEE Trans. Magn., vol. 32, no. 5,                                hai Jiao Tong University, Shanghai, China, in
+     pp. 5085–5087, Sep. 1996.                                                                                 2009, and the Ph.D. degree from The Ohio State
+[14] L. Zhang, J. J. Abbott, L. X. Dong, B. E. Kratochvil, D. Bell, and B. J.                                  University, Columbus, OH, USA, in 2016, both in
+     Nelson, “Artificial bacterial flagella: Fabrication and magnetic control,”                                mechanical engineering.
+     Appl. Phys. Lett., vol. 94, 2009, Art. no. 064107.                                                           Currently, he is with the UBTECH Robotics
+[15] J. Yu and L. Zhang, “Reversible swelling and shrinking of paramagnetic                                    North America Research and Development
+     nanoparticle swarms in biofluids with high ionic strength,” IEEE/ASME                                     Center, Shenzhen, China, as a Staff Engineer.
+     Trans. Mechatron., vol. 24, no. 1, pp. 154–163, Feb. 2019.                                                His research interests include modeling, con-
+[16] M. P. Kumar, J. J. Abbott, B. E. Kratochvil, R. Borer, A. Sengul, and                                     trol, and sensing of electro-mechanical systems,
+     B. J. Nelson, “OctoMag: An electromagnetic system for 5-DOF wireless                                      robot motion control, and motion planning.
+     micromanipulation,” IEEE Trans. Robot., vol. 26, no. 6, pp. 1006–1017,
+     Dec. 2010.
+[17] C. Bergeles, B. E. Kratochvil, and B. J. Nelson, “Visually servoing
+     magnetic intraocular microdevices,” IEEE Trans. Robot., vol. 28, no. 4,                                   Peng Cheng received the B.S. degree in theory
+     pp. 798–809, Aug. 2012.                                                                                   and applied mechanics and the Ph.D. degree in
+[18] Z. Zhang, K. Huang, and C.-H. Menq, “Design, implementation, and                                          solid mechanics from the University of Science
+     force modeling of quadrupole magnetic tweezers,” ASME/IEEE Trans.                                         and Technology of China, Hefei, China, in 2002
+     Mechatron., vol. 15, no. 5, pp. 704–713, Oct. 2010.                                                       and 2007, respectively.
+[19] Z. Zhang and C.-H. Menq, “Design and modeling of a 3-D magnetic actu-                                        He is currently a Research Associate with
+     ator for magnetic microbead manipulation,” IEEE/ASME Trans. Mecha-                                        The Ohio State University, Columbus, OH, USA.
+     tron., vol. 16, no. 3, pp. 421–430, Jun. 2011.                                                            His primary research interests include opti-
+[20] S. Earnshaw, “On the nature of the molecular forces which regulate the                                    cal metrology, microscopic imaging and im-
+     constitution of the luminiferous ether,” Trans. Camb. Phil. Soc., vol. 7,                                 age analysis, and visual-sensing-based real-
+     pp. 97–112, 1842.                                                                                         time high-speed multi-DOF motion tracking.
+[21] Z. Zhang and C.-H. Menq, “Three-dimensional particle tracking with
+     subnanometer resolution using off-focus images,” Appl. Opt., vol. 47,
+     no. 14, pp. 2361–2370, 2008.
+[22] Z. Zhang, Y. Huang, and C.-H. Menq, “Actively controlled manipulation of                                  Ta-Min Meng received the B.S. degree in power
+     a magnetic microbead using quadrupole magnetic tweezers,” IEEE Trans.                                     mechanical engineering from the National Tsing
+     Robot., vol. 26, no. 3, pp. 531–541, Jun. 2010.                                                           Hua University, Hsinchu, Taiwan, in 2015. He
+[23] Z. Zhang, F. Long, and C.-H. Menq, “Three-dimensional visual servo con-                                   is currently working toward the Ph.D. degree in
+     trol of a magnetically propelled microscopic bead,” IEEE Trans. Robot.,                                   modeling and control of electromagnetic actu-
+     vol. 29, no. 2, pp. 373–382, Apr. 2013.                                                                   ation with the Department of Mechanical and
+[24] Z. Zhang, Y. Shi, S. M. Jhiang, and C.-H. Menq, “Mechanical anisotropy                                    Aerospace Engineering, The Ohio State Univer-
+     and adaptation of metastatic cells probed by magnetic microbeads,” in                                     sity, Columbus, OH, USA.
+     Proc. Imag, Manipulat., Anal. Biomolecules, Cells, Tissues VIII, vol. 7568,                                  His research interests include modeling, con-
+     San Francisco, CA, USA, Feb. 2010. [Online]. Available: https://doi.org/                                  trol, and estimation of precision electromechan-
+     10.1117/12.842086                                                                                         ical systems.
+[25] F. Long, D. Matsuura, and C.-H. Menq, “Actively controlled hexapole elec-
+     tromagnetic actuating system enabling 3-D force manipulation in aqueous
+     solutions,” IEEE/ASME Trans. Mechatron., vol. 21, no. 3, pp. 1540–1551,
+     Jun. 2016.
+[26] P. Mörters and Y. Peres, Brownian Motion. Cambridge, U.K.: Cambridge                                      Chia-Hsiang Menq received the Ph.D. degree
+     Univ. Press, Apr. 2010.                                                                                   in mechanical engineering from Carnegie Mel-
+[27] Y. Huang, Z. Zhang, and C.-H. Menq, “Minimum-variance Brownian                                            lon University, Pittsburgh, PA, USA, in 1985.
+     motion control of an optically trapped probe,” Appl. Opt., vol. 48, pp. 5871–                                Since 1985, he has been with the Ohio State
+     5880, 2009.                                                                                               University, where he is currently Professor and
+[28] P. Cheng, S. M. Jhiang, and C. H. Menq, “Real-time visual sensing system                                  Ralph W. Kurtz Endowed Chair in Mechani-
+     achieving high-speed 3D particle tracking with nanometer resolution,”                                     cal Engineering. His research has four areas
+     Appl. Opt., vol. 52, no. 31, pp. 7530–7539, Nov. 2013.                                                    of focus; control, sensing, and instrumentation;
+[29] B. M. Lansdorp, S. J. Tabrizi, A. Dittmore, and O. A. Saleh, “A high-speed                                metrology, precision engineering, and manufac-
+     magnetic tweezer beyond 10,000 frames per second,” Rev. Sci. Instrum.,                                    turing; imaging and mechanical characterization
+     vol. 84, no. 4, Apr. 2013.                                                                                of live cells; and visual sensing and visual servo
+[30] P. Cheng and C. H. Menq, “Real-time continuous image registration               control.
+     enabling ultra-precise two-dimensional motion tracking,” IEEE Trans.              Prof. Menq has been the holder of the Ralph W. Kurtz Endowed
+     Image Process., vol. 22, no. 5, pp. 2081–2090, May 2013.                        Chair in Mechanical Engineering with The Ohio State University since
+[31] P. Cheng and C. H. Menq, “Visual tracking of six-axis motion rendering          2006. He is a Fellow of the American Society of Mechanical Engineers
+     ultraprecise visual servoing of microscopic objects,” IEEE/ASME Trans.          (ASME), the Association for the Advancement of Science (AAAS), and
+     Mechatron., vol. 23, no. 4, pp. 1564–1572, Aug. 2018.                           the Society of Manufacturing Engineers (SME).
+
+
+       Authorized licensed use limited to: National Taiwan University. Downloaded on February 01,2024 at 07:44:08 UTC from IEEE Xplore. Restrictions apply.
+
