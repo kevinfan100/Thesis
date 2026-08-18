@@ -48,7 +48,6 @@ Ch.1 有實質散文，Ch.2–5 只有 section 標題與少量段落，全書 **
 | 1 | `f_{B,f}` / `f_{B,c}` / `f_{B,e}` 三個頻寬參數的下標各代表什麼？ | `docs/NOTATION.md` §7 只能寫推測；Ch.4 無法展開 |
 | 2 | 極間距 594 μm 與工作空間半徑 ℓ = 500 μm 的關係？ | `docs/NOTATION.md` §8；Ch.2 硬體描述無法定稿 |
 | 3 | 結論要不要從 Ch.5 獨立出來成第 6 章？ | Ch.5 的骨架設計 |
-| 4 | `codex/thesis-foundation-map-v1` 分支可否刪除？ | 它已 100% 含於 `main`，留著只會再造成混淆 |
 
 ## 最近做了什麼
 
@@ -62,6 +61,8 @@ Ch.1 有實質散文，Ch.2–5 只有 section 標題與少量段落，全書 **
 - 移除 worktree 並行模式，改為單目錄單主線接力
 - 國科會計畫報告 NSTC 114-2223-E-007-005 納入 `docs/research/`
 - 建立 `AGENTS.md`、`docs/NOTATION.md`、本檔
+- 刪除已失效的 `.claude/WORKFLOW.md` 與 `.claude/rules/`（內容已併入 `AGENTS.md`）
+- 刪除 `codex/thesis-foundation-map-v1` 分支（已 100% 含於 `main`）
 
 ## 環境備忘
 
