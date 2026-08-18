@@ -37,6 +37,9 @@ latexmk -c       # 清除輔助檔
 
 手動鏈：`xelatex → biber → xelatex → xelatex`。
 
+輔助檔（`.aux` `.log` `.toc` …）集中在 `build/`（`.latexmkrc` 的 `$aux_dir`），
+`main.pdf` 與 `main.synctex.gz` 留在根目錄。`build/` 已 gitignore。
+
 **必須用 XeLaTeX**（中文封面需要 xeCJK）。現況基準：**38 頁、18 筆 bib、0 未定義引用**。
 任何改動後編譯結果若偏離此基準，先查清楚原因再繼續。
 
@@ -51,6 +54,7 @@ contents/             ★ 論文本體 chapter01~05.tex
 front/                摘要、致謝、符號列表、授權書
 back/                 附錄、references.bib（唯一 bib）
 figures/              ch01~ch05 分章存放
+build/                編譯輔助檔（gitignored，可隨時整個刪掉）
 docs/                 給人與 agent 讀的資料（不編譯）
   NOTATION.md         ★ 符號表
   research/           已驗證事實（唯讀）

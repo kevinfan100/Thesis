@@ -28,6 +28,9 @@
 *-blx.bib
 missfont.log
 
+# 輔助檔集中目錄（見 .latexmkrc）
+build/
+
 # 編譯輸出 PDF（可重現，不入庫）
 main.pdf
 thesis.pdf

@@ -11,3 +11,7 @@ $bibtex_use = 2;
 # `latexmk -c` 額外清除的輔助檔
 $clean_ext = 'synctex.gz synctex.gz(busy) run.xml tex.bak bbl bcf fdb_latexmk run tdo '
            . 'glo ist nlo nls ilg acn acr alg glg gls %R-blx.bib';
+
+# 輔助檔集中到 build/，PDF 與 synctex 留在根目錄
+# （PDF 路徑不變，外部工具與雙擊開啟都不受影響）
+$aux_dir = 'build';

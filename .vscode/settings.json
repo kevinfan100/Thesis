@@ -7,21 +7,25 @@
         "-xelatex",
         "-synctex=1",
         "-interaction=nonstopmode",
-        "-halt-on-error",
         "-file-line-error",
         "%DOC%"
       ]
     }
   ],
   "latex-workshop.latex.recipes": [
-    {
-      "name": "latexmk (xelatex)",
-      "tools": ["latexmk"]
-    }
+    { "name": "latexmk (xelatex)", "tools": ["latexmk"] }
   ],
   "latex-workshop.latex.recipe.default": "latexmk (xelatex)",
   "latex-workshop.latex.autoBuild.run": "never",
   "latex-workshop.latex.outDir": "%DIR%",
   "latex-workshop.message.log.show": false,
-  "latex-workshop.view.pdf.viewer": "tab"
+  "latex-workshop.view.pdf.viewer": "tab",
+
+  // 側邊欄把編譯產物摺疊到 main.tex 底下
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.expand": false,
+  "explorer.fileNesting.patterns": {
+    "main.tex": "main.pdf, main.synctex.gz, main.aux, main.log, main.toc, main.lof, main.lot, main.out, main.bbl, main.bcf, main.blg, main.run.xml, main.fls, main.fdb_latexmk, main.xdv, main.glo, main.ist, main.nlo",
+    "*.tex": "${capture}.pdf, ${capture}.synctex.gz, ${capture}.aux, ${capture}.log"
+  }
 }
