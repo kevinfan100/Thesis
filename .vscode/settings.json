@@ -21,11 +21,11 @@
   "latex-workshop.message.log.show": false,
   "latex-workshop.view.pdf.viewer": "tab",
 
-  // 側邊欄把編譯產物摺疊到 main.tex 底下
+  // 側邊欄摺疊編譯雜訊。
+  // main.pdf 刻意「不」摺 —— 那是你最需要一眼看到的檔案。
   "explorer.fileNesting.enabled": true,
   "explorer.fileNesting.expand": false,
   "explorer.fileNesting.patterns": {
-    "main.tex": "main.pdf, main.synctex.gz, main.aux, main.log, main.toc, main.lof, main.lot, main.out, main.bbl, main.bcf, main.blg, main.run.xml, main.fls, main.fdb_latexmk, main.xdv, main.glo, main.ist, main.nlo",
-    "*.tex": "${capture}.pdf, ${capture}.synctex.gz, ${capture}.aux, ${capture}.log"
+    "main.tex": "main.synctex.gz, main.aux, main.log, main.toc, main.lof, main.lot, main.out, main.bbl, main.bcf, main.blg, main.run.xml, main.fls, main.fdb_latexmk, main.xdv, main.glo, main.ist, main.nlo"
   }
 }
